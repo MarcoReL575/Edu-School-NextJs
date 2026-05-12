@@ -20,7 +20,7 @@ export default async function ClasePage({ params }: Props) {
             Grupo: {grade} {group} {level}
         </p>
         <section className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div className="flex flex-col gap-y-4 rounded-lg bg-gray-100 items-center justify-center py-4 border-2 border-gray-400">
+            <div className="flex flex-col gap-y-4 rounded-lg bg-gray-50 items-center justify-center py-4 border-2 border-gray-400">
                 <p className="flex items-center gap-x-2"><IconClockHour3/><span>Horarios</span></p>
                 {
                     horariosList.length 
@@ -31,6 +31,10 @@ export default async function ClasePage({ params }: Props) {
                         ))
                     : <p>Aún no hay horarios para esta clase</p>
                 }
+            </div>
+            <div className="flex flex-col gap-y-4 rounded-lg bg-gray-50 items-center justify-center py-4 border-2 border-gray-400">
+                <p>Promedio General</p>
+                <span>8.5</span>
             </div>
             
         </section>

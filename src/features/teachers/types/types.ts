@@ -10,3 +10,14 @@ export type TeachersClases = {
     grade: string;
     level: string;
 }
+
+
+export type TeachersClasesAllInfo = {
+    id: string;
+    subjectName: string;
+    grade: string;
+    group: string;
+    level: string;
+    teacherName: string; 
+    teacherLastName: string;
+}

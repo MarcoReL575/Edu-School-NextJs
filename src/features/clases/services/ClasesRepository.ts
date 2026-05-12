@@ -2,7 +2,7 @@ import { db } from "@/src/db"
 import { clases, group, horarios, subjects, teachers } from "@/src/db/schema"
 import { ClasesInfoComplete, ClasesInsertType, ClasesSelectType, ClassesByGroup, GroupCompleteInfo, HorariosClases, HorariosInsertType, HorariosSelectType } from "../types/types"
 import { asc, eq } from "drizzle-orm";
-import { TeachersClases } from "../../teachers/types/types";
+import { TeachersClases, TeachersClasesAllInfo } from "../../teachers/types/types";
 
 
 export interface IClasesRepository {
@@ -12,6 +12,7 @@ export interface IClasesRepository {
     selectClaseById(claseId: string): Promise<ClasesInfoComplete>;
     selectClasesByGroup(groupId: string): Promise<ClassesByGroup[]>;
     selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]>;
+    selectAllInfoTeachersClases(claseId: string): Promise<TeachersClasesAllInfo>
     selectHorarioById(horarioId: string): Promise<HorariosSelectType>;
     selectHorarios(claseId: string): Promise<HorariosSelectType[]>;
     deleteHorario(horarioId: string): Promise<void>;
@@ -110,6 +111,25 @@ class ClasesRepository implements IClasesRepository {
             .innerJoin(subjects, eq(subjects.id, clases.subjectId))
             .innerJoin(group, eq (group.id, clases.groupId))
         return clasesList;
+    }
+
+    async selectAllInfoTeachersClases(claseId: string): Promise<TeachersClasesAllInfo> {
+        const [teachersClases] = await db
+            .select({
+                id: clases.id,
+                subjectName: subjects.name,
+                grade: group.grade,
+                group: group.group,
+                level: group.level,
+                teacherName: teachers.name,
+                teacherLastName: teachers.lastName
+            })
+            .from(clases)
+            .innerJoin(subjects, eq(subjects.id, clases.subjectId))
+            .innerJoin(group, eq(group.id, clases.groupId))
+            .innerJoin(teachers, eq(teachers.id, clases.teacherId))
+            .where(eq(clases.id, claseId))
+        return teachersClases
     }
 
     async selectHorarioById(horarioId: string): Promise<HorariosSelectType> {

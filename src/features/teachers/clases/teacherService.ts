@@ -1,7 +1,5 @@
-import { db } from "@/src/db";
 import { ITeacherRepository, teacherRepository } from "./teacherRepository";
 import { TeachersClases, TeachersSelectType } from "../types/types";
-import { ClasesSelectType } from "../../clases/types/types";
 import { clasesRepository, IClasesRepository } from "../../clases/services/ClasesRepository";
 
 class TeacherService {
@@ -29,6 +27,10 @@ class TeacherService {
 
         const teachersClases = await this.clasesRepository.selectClasesByTeachersId(teacherId);
         return { success: true, message: '', clases: teachersClases };
+    }
+
+    async getAllInfoClase(claseId: string) {
+       return await this.clasesRepository.selectAllInfoTeachersClases(claseId);
     }
 }
 

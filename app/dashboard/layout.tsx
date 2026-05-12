@@ -4,7 +4,6 @@ import { SiteHeader } from "@/src/shared/components/dashboard/SiteHeader";
 import { SidebarInset, SidebarProvider } from "@/src/shared/components/ui/sidebar";
 import { redirect } from "next/navigation";
 
-
 export default async function DashboardLayout({ children, }: { children: React.ReactNode }) {
 
   const { session } = await requireAuth();

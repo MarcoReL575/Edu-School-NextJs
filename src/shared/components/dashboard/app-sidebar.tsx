@@ -11,8 +11,8 @@ export function AppSidebar({ userRole, ...props }: { userRole: Role } & React.Co
     <TooltipProvider>
       <Sidebar collapsible="offcanvas" {...props}>
         <SidebarContent>
-          <NavMain />
           {userRole === 'admin' && <NavAdmin />}
+          {userRole === 'estudiante' || userRole === 'maestro' ? <NavMain /> : null}
           <NavSecondary />
         </SidebarContent>
       </Sidebar>

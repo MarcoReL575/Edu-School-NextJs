@@ -1,11 +1,11 @@
+
 import { IconBell } from "@tabler/icons-react";
 import { Separator } from "../ui/separator";
 import { SidebarTrigger } from "../ui/sidebar";
 import { NavUser } from "./NavUser";
 import { requireAuth } from "@/src/lib/auth-server";
 import { redirect } from "next/navigation";
-import { usersService } from "@/src/features/clases/services/UsersService";
-
+import { DynamicBreadcrumbs } from "./DynamicBreadcrumbs";
 
 export async function SiteHeader() {
 
@@ -20,7 +20,7 @@ export async function SiteHeader() {
           orientation="vertical"
           className="mx-2 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-base font-medium">Documents</h1>
+        <DynamicBreadcrumbs />
         <div className="ml-auto flex items-center gap-x-4">
           <div className="rounded-full flex items-center justify-center p-1 border border-black cursor-pointer hover:bg-gray-100">
             <IconBell />

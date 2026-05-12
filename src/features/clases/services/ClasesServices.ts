@@ -33,6 +33,9 @@ class ClasesServices {
         return await this.clasesRepository.selectAllInfoByGroup(groupId);
     }
 
+    async getClasesByStudents(groupId: string) {
+        return await this.clasesRepository.selectClasesByGroup(groupId)
+    }
     
     async createHorario(input: HorariosInsertType) {
         await this.clasesRepository.createHorario(input);
@@ -59,9 +62,6 @@ class ClasesServices {
         return await this.clasesRepository.selectHorarios(claseId);
     }
 
-    async getClasesByStudents(groupId: string) {
-        return await this.clasesRepository.selectClasesByGroup(groupId)
-    }
 
 }
 

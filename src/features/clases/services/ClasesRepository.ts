@@ -1,7 +1,8 @@
 import { db } from "@/src/db"
-import { clases, group, horarios, students, subjects, teachers } from "@/src/db/schema"
-import { ClasesInfoComplete, ClasesInsertType, ClassesByGroup, GroupCompleteInfo, HorariosClases, HorariosInsertType, HorariosSelectType } from "../types/types"
+import { clases, group, horarios, subjects, teachers } from "@/src/db/schema"
+import { ClasesInfoComplete, ClasesInsertType, ClasesSelectType, ClassesByGroup, GroupCompleteInfo, HorariosClases, HorariosInsertType, HorariosSelectType } from "../types/types"
 import { asc, eq } from "drizzle-orm";
+import { TeachersClases } from "../../teachers/types/types";
 
 
 export interface IClasesRepository {
@@ -10,6 +11,7 @@ export interface IClasesRepository {
     selectAllClases(): Promise<ClasesInfoComplete[]>;
     selectClaseById(claseId: string): Promise<ClasesInfoComplete>;
     selectClasesByGroup(groupId: string): Promise<ClassesByGroup[]>;
+    selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]>;
     selectHorarioById(horarioId: string): Promise<HorariosSelectType>;
     selectHorarios(claseId: string): Promise<HorariosSelectType[]>;
     deleteHorario(horarioId: string): Promise<void>;
@@ -92,6 +94,22 @@ class ClasesRepository implements IClasesRepository {
             .leftJoin(subjects, eq(clases.subjectId, subjects.id))
             .where(eq(clases.groupId, groupId ))
         return result
+    }
+
+    async selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]> {
+        const clasesList = await db
+            .select({
+                id: clases.id,
+                subjectName: subjects.name,
+                grade: group.grade,
+                group: group.group,
+                level: group.level
+            })
+            .from(clases)
+            .where(eq(clases.teacherId, teacherId))
+            .innerJoin(subjects, eq(subjects.id, clases.subjectId))
+            .innerJoin(group, eq (group.id, clases.groupId))
+        return clasesList;
     }
 
     async selectHorarioById(horarioId: string): Promise<HorariosSelectType> {

@@ -15,7 +15,7 @@ export default async function MisClases() {
   console.log(session.user.role);
 
   return (
-    <div className="flex flex-col space-y-4 max-w-6xl mx-auto">
+    <div className="flex flex-col space-y-4 w-full max-w-7xl mx-auto">
       {session.user.role === 'estudiante' && <MisClasesStudentPage session={session} />}
       {session.user.role === 'maestro' && <MisClasesTechaerPage session={session} />}
     </div>

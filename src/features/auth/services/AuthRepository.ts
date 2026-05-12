@@ -11,6 +11,7 @@ export interface IAuthRepository {
     signin(data: SignInProps): Promise<void>;
     selectStudent(input: SignUpProps): Promise<InfoStudent>;
     insertStudentId(id: string, matricula:string): Promise<void>;
+    insertTeacherId(id: string, matricula:string): Promise<void>;
     userExists(email: string): Promise<User | undefined>;
     
     selectTeacher(input: SignUpProps): Promise<TeacherInfo>;
@@ -76,6 +77,15 @@ class AuthRepository implements IAuthRepository {
             user_id: id
         })
         .where(eq(students.matricula, matricula))
+    }
+
+    async insertTeacherId(id: string, matricula: string): Promise<void> {
+        await db
+            .update(teachers)
+            .set({
+                userId: id
+            })
+            .where(eq(teachers.code_teacher, matricula))
     }
 
     async selectTeacher(input: SignUpProps): Promise<TeacherInfo> {

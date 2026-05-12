@@ -13,9 +13,6 @@ export type GroupInsertType = typeof group.$inferInsert;
 export type SubjetcsSelectType = typeof subjects.$inferSelect;
 export type SubjetcsInsertType = typeof subjects.$inferInsert;
 
-export type TeachersSelectType = typeof teachers.$inferSelect;
-export type TeachersInsertType = typeof teachers.$inferInsert;
-
 export type StudentsSelectType = typeof students.$inferSelect;
 export type StudentsInsertType = typeof students.$inferInsert;
 

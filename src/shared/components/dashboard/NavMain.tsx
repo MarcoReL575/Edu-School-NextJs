@@ -10,7 +10,7 @@ import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, Side
 const items = [
   { title: "Inicio", url: "home", icon: IconHome },
   { title: "Mis Clases", url: "mis-clases", icon: IconBooks },
-  { title: "Tareas", url: "#", icon: IconNotes },
+  { title: "Tareas", url: "tareas", icon: IconNotes },
   { title: "Trabajos", url: "#", icon: IconNotes },
   { title: "Examenes", url: "#", icon: IconClipboardText },
   { title: "Asistencias", url: "#", icon: IconUserCheck },

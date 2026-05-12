@@ -3,7 +3,6 @@ import { Role, SignInProps, SignUpProps } from "../types/auth-types";
 import { IAuthRepository, authRepository } from "./AuthRepository";
 import { auth } from "@/src/lib/auth";
 import { headers } from "next/headers";
-import { user } from "@/src/db/schema";
 
 
 class AuthService {
@@ -42,13 +41,14 @@ class AuthService {
  
             if(role === 'maestro') {
                 const { enrolledTeacher, teacherInfo } = await this.teacherExists(input);
+                console.log({enrolledTeacher, teacherInfo});
                 if(!enrolledTeacher || !teacherInfo) return { success: false, message: '*Error en los datos ingresados' } 
                 
                 if(teacherInfo.code_teacher === roleId && teacherInfo.name === input.name && teacherInfo.lastName === input.lastname ){
-                    await this.signUp(input);
-                    console.log(user);
+                    const { user, success, message } = await this.signUp(input);
+                    console.log(user, success, message);
                     await authRepository.roleAssign(role, input.email);
-                    // 
+                    await authRepository.insertTeacherId(user.id, roleId);
                     return { success: true, message: 'Cuenta creada' }
                 }
             };

@@ -29,6 +29,20 @@
       "when": 1778446349879,
       "tag": "0003_outgoing_joystick",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1778630761719,
+      "tag": "0004_glossy_loa",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1778631739332,
+      "tag": "0005_clammy_colleen_wing",
+      "breakpoints": true
     }
   ]
 }

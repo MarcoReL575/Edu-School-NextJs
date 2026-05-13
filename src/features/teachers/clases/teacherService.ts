@@ -21,9 +21,7 @@ class TeacherService {
         return { success: true, message: '', teacher: infoTechaer  }
     }
 
-    async getTeachersClases(userId: string, teacherId: string ) {
-        const isExists = await this.teacherExists(userId);
-        if(!isExists) return { success: false, message: 'El maestro no existe', clases: [] as TeachersClases[] };
+    async getTeachersClases(teacherId: string ) {
 
         const teachersClases = await this.clasesRepository.selectClasesByTeachersId(teacherId);
         return { success: true, message: '', clases: teachersClases };

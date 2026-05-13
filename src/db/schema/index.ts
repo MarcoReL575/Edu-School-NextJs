@@ -5,4 +5,5 @@ export * from './horariosSchema'
 export * from "./parentsSchema"
 export * from "./studentsSchema"
 export * from "./subjectsSchema"
+export * from "./tasks-schema"
 export * from "./teachersSchema"

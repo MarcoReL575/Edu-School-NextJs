@@ -1,10 +1,12 @@
 import ButtonOpenModalTask from "@/src/features/tasks/components/ButtonOpenModalTask";
-import { teacherService } from "@/src/features/teachers/clases/teacherService";
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 
 
 export default async function TareasPage() {
+
+    const { session } = await requireAuth();
+    const role = session.user.role
 
   return (
     <>
@@ -14,7 +16,7 @@ export default async function TareasPage() {
                 <p className="text-gray-500">Gestiona tus tareas. Crea y da seguimiento a las tareas que has dejado.</p>
             </div>
             <div>
-                <ButtonOpenModalTask  />
+                {role === 'maestro' && <ButtonOpenModalTask  />}
             </div>
         </div>
     </>

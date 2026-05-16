@@ -1,22 +1,39 @@
 'use client'
 
-import { Form, FormError, FormInput, FormLabel, FormSubmit } from "@/src/shared/components/form";
 import { useForm } from "react-hook-form";
-import { CreateTask } from "../types/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CreateTaskSchema } from "../schemas/schemas";
+import toast from "react-hot-toast";
+import { createTaskAction } from "../actions/tasksAction";
 import { useTasksStore } from "../store/useTasksStore";
+import { useModalStore } from "@/src/shared/store/useModalStore";
+import { Form, FormError, FormInput, FormLabel, FormSubmit } from "@/src/shared/components/form";
+import { CreateTask } from "../types/types";
+import { CreateTaskSchema } from "../schemas/schemas";
 
 export default function FormCreateTask() {
   
-  const teachersClases = useTasksStore((state)=> state.teachersClases)
+  const teachersClases = useTasksStore((state)=> state.teachersClases);
+  const closeModal = useModalStore((state)=> state.closeModal);
   const { register, reset, handleSubmit, formState: { errors } } = useForm<CreateTask>({
     resolver: zodResolver(CreateTaskSchema),
-    mode: 'onBlur'
+    mode: 'onBlur',
+    defaultValues: {
+      title: '',
+      description: '',
+      claseId: '',
+      fechaEntrega: ''
+    }
   });
 
   const handleCreateTask = async(data: CreateTask)=> {
-    console.log(data)
+    const { success, message } = await createTaskAction(data);
+    if(!success) {
+      toast.error(message);
+    }
+    if(success){
+      toast.success(message);
+      closeModal();
+    }
   }
 
   return (
@@ -36,8 +53,10 @@ export default function FormCreateTask() {
       <FormLabel htmlFor="clase">Materia</FormLabel>
       <select {...register('claseId')} id="clase" className='border p-2 rounded-lg'>
         <option value="">--Selecciona una materia--</option>
-        {teachersClases.length && teachersClases.map((clase)=> (
-          <option key={clase.id} value={clase.id}>{clase.subjectName}: {clase.grade} {clase.group} {clase.level}</option>
+        {teachersClases && teachersClases.map((clase)=> (
+          <option key={clase.id} value={clase.id}>
+            {clase.subjectName}: {clase.grade} {clase.group} {clase.level}
+          </option>
         ))}
       </select>
       {errors.claseId && <FormError>{errors.claseId.message}</FormError>}

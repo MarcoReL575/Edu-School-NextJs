@@ -1,4 +1,4 @@
-import { TaskInsert } from "../types/types";
+import { TaskDetails, TaskInsert } from "../types/types";
 import { ITaskRepository, taskRepository } from "./taskRepository";
 
 class TaskService {
@@ -15,6 +15,15 @@ class TaskService {
             return { success: false, message: 'Se produjo un error en base de datos, vuelva a intentarlo' };
         }
     }
+
+    async getAllTasks(groupId: string) {
+        try {
+            const taskList = await this.taskRepository.selectTasks(groupId);
+            return { success: true, message: '', data: taskList };
+        } catch (error) {
+            return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', data: {} as TaskDetails[] };
+        }
+    } 
 }
 
 export const taskService = new TaskService(taskRepository)

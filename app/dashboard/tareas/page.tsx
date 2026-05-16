@@ -1,4 +1,5 @@
 import ButtonOpenModalTask from "@/src/features/tasks/components/ButtonOpenModalTask";
+import TaskGrid from "@/src/features/tasks/components/TaskGrid";
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 
@@ -19,6 +20,9 @@ export default async function TareasPage() {
                 {role === 'maestro' && <ButtonOpenModalTask  />}
             </div>
         </div>
+        <main>
+            { role === 'estudiante' && <TaskGrid userId={session.user.id} /> }
+        </main>
     </>
   )
 }

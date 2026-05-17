@@ -15,6 +15,11 @@ class StudentsService {
         return exists;
     }
 
+    async selectStudent(usrId: string) {
+        const exists = await this.studentsRepository.selectStudentByUserId(usrId);
+        return exists
+    }
+
     async getAllStudents() {
         return await this.studentsRepository.selectAllStudents();
     }

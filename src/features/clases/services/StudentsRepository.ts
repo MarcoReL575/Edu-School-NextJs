@@ -7,6 +7,7 @@ import { CreateStudent } from "../schema/clasesSchemas";
 export interface IStudentsRepository{
     createStudent(student: CreateStudent): Promise<void>;
     selectStudentById(studentId: string): Promise<StudentsSelectType>;
+    selectStudentByUserId(userId: string): Promise<StudentsSelectType>;
     setStudent(student: StudentsInsertType): Promise<void>;
     deleteStudentById(studentId: string): Promise<void>;
     selectAllStudents(): Promise<StudentsTable[]>;
@@ -27,6 +28,14 @@ class StudentsRepository implements IStudentsRepository {
             .where(eq(students.id, studentId))
         return  student;
     };
+
+    async selectStudentByUserId(userId: string): Promise<StudentsSelectType> {
+        const [student] = await db
+            .select()
+            .from(students)
+            .where(eq(students.user_id, userId))
+        return  student;
+    }
 
     async setStudent(student: StudentsInsertType): Promise<void> {
         await db

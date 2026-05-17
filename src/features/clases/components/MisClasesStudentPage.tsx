@@ -16,7 +16,6 @@ export default async function MisClasesStudentPage({ session }:Props) {
     const queryClient = new QueryClient();
 
     const infoStudent = await studentsService.getInfoStudentById(session.user.id);
-    console.log(infoStudent)
 
     if (infoStudent.groupId === null) return <div>El alumno no cuenta con materias asignadas</div>
 
@@ -26,7 +25,6 @@ export default async function MisClasesStudentPage({ session }:Props) {
     })
 
     const horariosStudent = await clasesServices.getAllClasessByGroup(infoStudent.groupId)
-    console.log(horariosStudent);
 
     return (
         <>

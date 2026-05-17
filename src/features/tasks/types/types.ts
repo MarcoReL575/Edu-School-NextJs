@@ -7,6 +7,8 @@ export type CreateTask = z.input<typeof CreateTaskSchema>;
 export type TaskSelect = typeof tasks.$inferSelect;
 export type TaskInsert = typeof tasks.$inferInsert;
 
+export type StatusTask = 'pendiente' | 'en progreso' | 'terminada'
+
 export type TaskDetails = {
     id: string;
     subjectName: string;
@@ -17,4 +19,5 @@ export type TaskDetails = {
     taskDescription: string;
     taskFechaEntrega: Date;
     taskCreatedAt: Date;
+    taskStatus: StatusTask
 }

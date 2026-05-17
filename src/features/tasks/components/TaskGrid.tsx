@@ -13,7 +13,7 @@ export default async function TaskGrid({ userId }: Props) {
     if(!success) return <div>El alumno no cuenta con tareas asignadas</div>
 
     return (
-        <section className="grid grid-cols-2 xl:grid-cols-3 gap-4">
+        <section className="grid grid-cols-2 3xl:grid-cols-3 gap-4">
             {taskList && taskList.map((task)=> (
                 <TaskCard key={task.id} task={task} />
             ))}

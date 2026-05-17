@@ -29,7 +29,7 @@ class TaskRepository implements ITaskRepository {
                 taskCreatedAt: tasks.createdAt
             })
             .from(tasks)
-            .innerJoin(clases, eq(clases.groupId, group.id))
+            .innerJoin(clases, eq(tasks.claseId, clases.id))
             .innerJoin(group, eq(group.id, clases.groupId))
             .innerJoin(subjects, eq(subjects.id, clases.subjectId))
             .innerJoin(teachers, eq(teachers.id, clases.teacherId))

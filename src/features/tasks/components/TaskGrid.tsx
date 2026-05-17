@@ -7,8 +7,8 @@ type Props = {
 }
 
 export default async function TaskGrid({ userId }: Props) {
-
-    const userInfo = await studentsService.studentsExists(userId)
+    
+    const userInfo = await studentsService.selectStudent(userId)
     const { success, message, data: taskList } = await getTasksWithDetailsAction(userInfo.groupId);
     if(!success) return <div>El alumno no cuenta con tareas asignadas</div>
 

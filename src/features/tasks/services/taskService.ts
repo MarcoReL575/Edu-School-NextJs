@@ -21,6 +21,7 @@ class TaskService {
             const taskList = await this.taskRepository.selectTasks(groupId);
             return { success: true, message: '', data: taskList };
         } catch (error) {
+            console.error(error)
             return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', data: {} as TaskDetails[] };
         }
     } 

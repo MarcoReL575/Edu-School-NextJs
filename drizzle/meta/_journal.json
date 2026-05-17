@@ -43,6 +43,13 @@
       "when": 1778631739332,
       "tag": "0005_clammy_colleen_wing",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1778988091254,
+      "tag": "0006_equal_wraith",
+      "breakpoints": true
     }
   ]
 }

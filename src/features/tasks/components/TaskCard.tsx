@@ -10,12 +10,11 @@ type Props = {
 }
 
 export default function TaskCard({ task }: Props) {
-  console.log(task.taskCreatedAt)
   return (
     <div className="border border-gray-300 p-4 rounded-lg">
       <div className="flex items-center justify-between">
         <Heading level={3} className="text-sm text-gray-500">{task.subjectName}</Heading>
-        <DropdownMenuStatusTask />
+        <DropdownMenuStatusTask taskId={task.taskId} />
       </div>
 
       <Heading level={4}>{task.taskTitle}</Heading>

@@ -1,11 +1,12 @@
 import { db } from "@/src/db";
-import { TaskDetails, TaskInsert } from "../types/types";
+import { StatusTask, TaskDetails, TaskInsert } from "../types/types";
 import { clases, group, subjects, tasks, teachers } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
 
 export interface ITaskRepository{
     insertTask(taskInput: TaskInsert): Promise<void>;
-    selectTasks(groupId: string): Promise<TaskDetails[]>
+    selectTasks(groupId: string): Promise<TaskDetails[]>;
+    setTaskSatus(taskId: number, statusTask: StatusTask): Promise<void>;
 }
 
 class TaskRepository implements ITaskRepository {
@@ -37,6 +38,13 @@ class TaskRepository implements ITaskRepository {
             .where(eq(group.id, groupId))
             
         return taskList
+    }
+
+    async setTaskSatus(taskId: number, statusTask: StatusTask): Promise<void> {
+        await db
+            .update(tasks)
+            .set({ status: statusTask })
+            .where(eq(tasks.id, taskId))
     }
 }
 

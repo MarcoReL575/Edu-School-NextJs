@@ -1,4 +1,4 @@
-import { TaskDetails, TaskInsert } from "../types/types";
+import { StatusTask, TaskDetails, TaskInsert } from "../types/types";
 import { ITaskRepository, taskRepository } from "./taskRepository";
 
 class TaskService {
@@ -24,6 +24,11 @@ class TaskService {
             return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', data: {} as TaskDetails[] };
         }
     } 
+
+    async updateTaskStatus(taskId: number, statusTask: StatusTask) {
+        await this.taskRepository.setTaskSatus(taskId, statusTask);
+        return { success: true, message: 'El estatus fue modificado' };
+    }
 }
 
 export const taskService = new TaskService(taskRepository)

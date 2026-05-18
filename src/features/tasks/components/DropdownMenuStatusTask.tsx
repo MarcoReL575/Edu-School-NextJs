@@ -1,24 +1,37 @@
 'use client'
 
-import { Button } from "@/src/shared/components/ui/button"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuShortcut, DropdownMenuTrigger } from "@/src/shared/components/ui/dropdown-menu"
-import { IconChevronDown, IconPencil } from "@tabler/icons-react"
+import { redirect } from "next/navigation";
 import { ChangeEvent, useState } from "react"
+import toast from "react-hot-toast";
+import { changeStatusTaskAction } from "../actions/tasksAction";
+import { StatusTask } from "../types/types";
 
-export function DropdownMenuStatusTask() {
+type Props = {
+  taskId: number;
+}
 
-  const [statusTask, setStatusTask] = useState('');
+export function DropdownMenuStatusTask({ taskId }: Props) {
 
-  const handleChangeStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+  const [ statusTask, setStatusTask ]= useState('');
+
+  const handleChangeStatus = async (e: ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
-    setStatusTask(e.target.value);
-    console.log(statusTask);
+    const { success, message } = await changeStatusTaskAction(taskId, e.target.value as StatusTask);
+    if(!success) {
+      toast.error(message);
+    }
+    if(success){
+      toast.success(message);
+      setStatusTask('');
+      redirect('/dashboard/tareas');
+    }
   }
 
   return (
     <select 
       className="border border-gray-300 rounded-lg p-2 transition-all focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-blue-500"
       onChange={handleChangeStatus }
+      value={statusTask}
     >
       <option value="">Modificar Status</option>
       <option value="pendiente">Pendiente</option>

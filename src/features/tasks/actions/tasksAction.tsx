@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/src/lib/auth-server";
 import { taskService } from "../services/taskService";
-import { CreateTask } from "../types/types";
+import { CreateTask, StatusTask } from "../types/types";
 import { CreateTaskSchema } from "../schemas/schemas";
 
 export async function createTaskAction(taskInput: CreateTask) {
@@ -17,4 +17,8 @@ export async function createTaskAction(taskInput: CreateTask) {
 
 export async function getTasksWithDetailsAction(groupId: string) {
     return await taskService.getAllTasks(groupId);
+}
+
+export async function changeStatusTaskAction(taskId: number, statusTask: StatusTask) {
+    return await taskService.updateTaskStatus(taskId, statusTask);
 }

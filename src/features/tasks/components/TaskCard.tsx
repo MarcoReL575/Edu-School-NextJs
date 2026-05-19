@@ -32,7 +32,7 @@ export default function TaskCard({ task }: Props) {
         </p>
         <p className={clsx('flex items-center gap-x-2 capitalize font-semibold',
           task.taskStatus === 'pendiente' && 'text-red-500',
-          task.taskStatus === 'en progreso' && 'text-blue-500',
+          task.taskStatus === 'en progreso' && 'text-yellow-500',
           task.taskStatus === 'terminada' && 'text-green-500'
         )}>
           <IconClipboardList size={25} />{task.taskStatus}

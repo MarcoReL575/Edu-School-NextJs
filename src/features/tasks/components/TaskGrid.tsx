@@ -1,4 +1,4 @@
-import { IconChecklist } from "@tabler/icons-react";
+import { IconChecklist, IconClipboardOff, IconClipboardText } from "@tabler/icons-react";
 import { studentsService } from "../../clases/services/StudentsService";
 import { getTasksWithDetailsAction } from "../actions/tasksAction"
 import CardStatsTask from "./CardStatsTask";
@@ -21,8 +21,8 @@ export default async function TaskGrid({ userId }: Props) {
     return (
         <main className="flex flex-col space-y-4">
             <section className="grid grid-cols-2 lg:grid-cols-3 gap-4" >
-                <CardStatsTask title="Tareas Pendientes" status="pendiente" icon={<IconChecklist />} number={pending.length} />
-                <CardStatsTask title="Tareas En Progreso" status="en progreso" icon={<IconChecklist />} number={inProgress.length}/>
+                <CardStatsTask title="Tareas Pendientes" status="pendiente" icon={<IconClipboardOff />} number={pending.length} />
+                <CardStatsTask title="Tareas En Progreso" status="en progreso" icon={<IconClipboardText />} number={inProgress.length}/>
                 <CardStatsTask title="Tareas teminadas" status="terminada" icon={<IconChecklist />} number={finished.length} />
             </section>
             <section className="grid grid-cols-2 3xl:grid-cols-3 gap-4">

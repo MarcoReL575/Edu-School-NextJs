@@ -13,13 +13,13 @@ type Props = {
 
 export default function CardStatsTask({ title, status, icon, number}: Props) {
   return (
-    <div className={clsx("border border-gray-400 rounded-lg p-4 space-y-2", {
+    <div className={clsx("border rounded-lg p-4 space-y-2", {
         'bg-red-50 border-red-600': status === 'pendiente',
         'bg-yellow-50 border-yellow-600': status === 'en progreso',
         'bg-green-50 border-green-600':  status === 'terminada' 
     })}>
         <div className="flex items-center justify-between">
-            <span className="p-2 rounded-lg bg-gray-300 text-white border-gray-400">
+            <span className="p-2 rounded-lg bg-black text-white border-gray-400">
                 {icon}
             </span>
             <span className={clsx("rounded-xl px-1 capitalize border-2", {
@@ -30,8 +30,8 @@ export default function CardStatsTask({ title, status, icon, number}: Props) {
                 {status}
             </span>
         </div>
-        <Heading level={4}>{title}</Heading>
-        <p className="text-5xl text-center">
+        <Heading level={4} className="text-center">{title}</Heading>
+        <p className="text-4xl text-center font-bold">
             {number}
         </p>
     </div>

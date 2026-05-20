@@ -1,6 +1,6 @@
 {
-  "id": "bc7df22a-459d-4bae-8de2-9543628d20b4",
-  "prevId": "cb46a681-e831-44f4-b45a-a5296e50f679",
+  "id": "9a671687-6ea6-4140-b580-0c9e53d71966",
+  "prevId": "bc7df22a-459d-4bae-8de2-9543628d20b4",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
@@ -941,8 +941,8 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.task_attachments": {
-      "name": "task_attachments",
+    "public.task_attachment": {
+      "name": "task_attachment",
       "schema": "",
       "columns": {
         "id": {
@@ -986,9 +986,9 @@
       },
       "indexes": {},
       "foreignKeys": {
-        "task_attachments_taskSubmission_id_task_submissions_id_fk": {
-          "name": "task_attachments_taskSubmission_id_task_submissions_id_fk",
-          "tableFrom": "task_attachments",
+        "task_attachment_taskSubmission_id_task_submissions_id_fk": {
+          "name": "task_attachment_taskSubmission_id_task_submissions_id_fk",
+          "tableFrom": "task_attachment",
           "tableTo": "task_submissions",
           "columnsFrom": [
             "taskSubmission_id"

@@ -19,10 +19,6 @@ export async function getTasksWithDetailsAction(groupId: string) {
     return await taskService.getAllTasks(groupId);
 }
 
-export async function changeStatusTaskAction(taskId: number, statusTask: StatusTask) {
-    return await taskService.updateTaskStatus(taskId, statusTask);
-}
-
 export async function getTasksTeacherAction(teacherId: string) {
     const { session } = await requireAuth();
     if(session.user.role !== 'maestro') return {} as TaskTeacher[];

@@ -6,7 +6,6 @@ import { asc, eq } from "drizzle-orm";
 export interface ITaskRepository{
     insertTask(taskInput: TaskInsert): Promise<void>;
     selectTasks(groupId: string): Promise<TaskDetails[]>;
-    setTaskSatus(taskId: number, statusTask: StatusTask): Promise<void>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
 }
 
@@ -39,13 +38,6 @@ class TaskRepository implements ITaskRepository {
             .where(eq(group.id, groupId))
             
         return taskList
-    }
-
-    async setTaskSatus(taskId: number, statusTask: StatusTask): Promise<void> {
-        await db
-            .update(tasks)
-            .set({ status: statusTask })
-            .where(eq(tasks.id, taskId))
     }
 
     async selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]> {

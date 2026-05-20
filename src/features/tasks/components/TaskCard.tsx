@@ -3,7 +3,8 @@ import { TaskDetails } from "../types/types"
 import { IconCalendar, IconClipboardList } from "@tabler/icons-react";
 import { getCorrectDate } from "../helpers/getCorrectDate";
 import clsx from "clsx";
-import { DropdownMenuStatusTask } from "./DropdownMenuStatusTask";
+import ModalSubmittedTask from "./ModalSubmittedTask";
+import ButtonOpenModal from "@/src/shared/components/ButtonOpenModal";
 
 type Props = {
   task: TaskDetails;
@@ -14,9 +15,8 @@ export default function TaskCard({ task }: Props) {
     <div className="border border-gray-300 p-4 rounded-lg">
       <div className="flex items-center justify-between">
         <Heading level={3} className="text-sm text-gray-500">{task.subjectName}</Heading>
-        <DropdownMenuStatusTask taskId={task.taskId} />
+        <ButtonOpenModal nameModal="modalSubmittedTask" nameButton="Enviar tarea" />
       </div>
-
       <Heading level={4}>{task.taskTitle}</Heading>
       
       <div className="text-gray-500">

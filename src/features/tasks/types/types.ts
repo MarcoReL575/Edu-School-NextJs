@@ -1,6 +1,6 @@
 import z from "zod";
 import { tasks } from "@/src/db/schema";
-import { CreateTaskSchema } from "../schemas/schemas";
+import { CreateTaskSchema, StudentSubmissionSchema } from "../schemas/schemas";
 import { taskAttachments } from "@/src/db/schema/taskAttachments-schema";
 
 export type CreateTask = z.input<typeof CreateTaskSchema>;
@@ -11,7 +11,9 @@ export type TaskInsert = typeof tasks.$inferInsert;
 export type TaskAttachmentSelect = typeof taskAttachments.$inferSelect;
 export type TaskAttachmentInsert = typeof taskAttachments.$inferInsert;
 
-export type StatusTask = 'pendiente' | 'en progreso' | 'terminada'
+export type StatusTask = 'pendiente' | 'en progreso' | 'terminada';
+
+export type StudentSubmissionInput = z.infer<typeof StudentSubmissionSchema>;
 
 export type TaskDetails = {
     id: string;

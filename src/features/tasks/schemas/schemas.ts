@@ -9,4 +9,17 @@ export const CreateTaskSchema = createInsertSchema(tasks, {
     fechaEntrega: z.coerce.date().refine((date) => date > new Date(), "La fecha de entrega debe de tener al menos 1 día de diferencia con la fecha de creación"), 
 }).omit({
     createdAt: true
-})
+});
+
+export const AttachmentSchema = z.object({
+  fileUrl: z.string().url("La URL del archivo no es válida"),
+  fileName: z.string().min(1, "El nombre del archivo es obligatorio"),
+  fileType: z.string().min(1, "El tipo de archivo es obligatorio"),
+});
+
+export const StudentSubmissionSchema = z.object({
+  taskId: z.number({message: "ID de tarea inválido"}),
+  studentId: z.string().uuid("ID de estudiante inválido"),
+  attachments: z.array(AttachmentSchema)
+    .min(1, "Debes adjuntar al menos un archivo o imagen para enviar la tarea"),
+});

@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/src/lib/auth-server";
 import { taskService } from "../services/taskService";
-import { CreateTask, StatusTask } from "../types/types";
+import { CreateTask, StatusTask, TaskTeacher } from "../types/types";
 import { CreateTaskSchema } from "../schemas/schemas";
 
 export async function createTaskAction(taskInput: CreateTask) {
@@ -21,4 +21,11 @@ export async function getTasksWithDetailsAction(groupId: string) {
 
 export async function changeStatusTaskAction(taskId: number, statusTask: StatusTask) {
     return await taskService.updateTaskStatus(taskId, statusTask);
+}
+
+export async function getTasksTeacherAction(teacherId: string) {
+    const { session } = await requireAuth();
+    if(session.user.role !== 'maestro') return {} as TaskTeacher[];
+
+    return await taskService.getTasksTeacher(teacherId)
 }

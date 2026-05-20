@@ -1,12 +1,13 @@
 import { db } from "@/src/db";
-import { StatusTask, TaskDetails, TaskInsert } from "../types/types";
+import { StatusTask, TaskDetails, TaskInsert, TaskTeacher } from "../types/types";
 import { clases, group, subjects, tasks, teachers } from "@/src/db/schema";
-import { eq } from "drizzle-orm";
+import { asc, eq } from "drizzle-orm";
 
 export interface ITaskRepository{
     insertTask(taskInput: TaskInsert): Promise<void>;
     selectTasks(groupId: string): Promise<TaskDetails[]>;
     setTaskSatus(taskId: number, statusTask: StatusTask): Promise<void>;
+    selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
 }
 
 class TaskRepository implements ITaskRepository {
@@ -45,6 +46,30 @@ class TaskRepository implements ITaskRepository {
             .update(tasks)
             .set({ status: statusTask })
             .where(eq(tasks.id, taskId))
+    }
+
+    async selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]> {
+        const taskTeachers = await db
+            .select({
+                id: tasks.id,
+                title: tasks.title,
+                description: tasks.description,
+                createdAt: tasks.createdAt,
+                fechaEntrega: tasks.fechaEntrega,
+                status: tasks.status,
+                claseId: clases.id,
+                subjectName: subjects.name,
+                groupName: group.group,
+                gradeName: group.grade,
+                level:  group.level
+            })
+            .from(tasks)
+            .innerJoin(clases, eq(clases.id, tasks.claseId))
+            .innerJoin(subjects, eq(clases.subjectId, subjects.id))
+            .innerJoin(group, eq(clases.groupId, group.id))
+            .where(eq (clases.teacherId, teacherId))
+            .orderBy(asc(tasks.fechaEntrega))
+        return taskTeachers;
     }
 }
 

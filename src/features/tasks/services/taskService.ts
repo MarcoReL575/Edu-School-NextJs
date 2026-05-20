@@ -1,4 +1,4 @@
-import { StatusTask, TaskDetails, TaskInsert } from "../types/types";
+import { StatusTask, TaskDetails, TaskInsert, TaskTeacher } from "../types/types";
 import { ITaskRepository, taskRepository } from "./taskRepository";
 
 class TaskService {
@@ -28,6 +28,15 @@ class TaskService {
     async updateTaskStatus(taskId: number, statusTask: StatusTask) {
         await this.taskRepository.setTaskSatus(taskId, statusTask);
         return { success: true, message: 'El estatus fue modificado' };
+    }
+
+    async getTasksTeacher(teacherId: string) {
+        try {
+            const tasksList = await this.taskRepository.selectTasksTeacher(teacherId);
+            return tasksList
+        } catch (error) {
+            return {} as TaskTeacher[]
+        }
     }
 }
 

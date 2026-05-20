@@ -21,3 +21,17 @@ export type TaskDetails = {
     taskCreatedAt: Date;
     taskStatus: StatusTask
 }
+
+export type TaskTeacher = {
+    id: number;
+    title: string;
+    description: string;
+    createdAt: Date;
+    fechaEntrega: Date;
+    status: StatusTask;
+    claseId: string;
+    subjectName: string;
+    groupName: string;
+    gradeName: string;
+    level: string  
+}

@@ -1,5 +1,7 @@
 import ButtonOpenModalTask from "@/src/features/tasks/components/ButtonOpenModalTask";
+import PageTasksTeacher from "@/src/features/tasks/components/PageTasksTeacher";
 import TaskGrid from "@/src/features/tasks/components/TaskGrid";
+import { teacherService } from "@/src/features/teachers/clases/teacherService";
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 
@@ -7,8 +9,8 @@ import Heading from "@/src/shared/components/typography/Heading";
 export default async function TareasPage() {
 
     const { session } = await requireAuth();
-    const role = session.user.role
-
+    const role = session.user.role;
+    
   return (
     <>
         <div className="flex items-center justify-between">
@@ -22,7 +24,15 @@ export default async function TareasPage() {
         </div>
         <main>
             { role === 'estudiante' && <TaskGrid userId={session.user.id} /> }
+            { role === 'maestro'  && <TechaerTasksList userId={session.user.id} /> }
         </main>
     </>
   )
+}
+
+//Componente Auxiliar
+async function TechaerTasksList({ userId }: { userId: string }) {
+    const { teacher } = await teacherService.getTeacherByUserId(userId);
+    if(!teacher) return <div>No se encontró información del profesor</div>;
+    return <PageTasksTeacher teacherId={teacher.id} />
 }

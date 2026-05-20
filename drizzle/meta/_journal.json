@@ -5,57 +5,8 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1777411773713,
-      "tag": "0000_workable_the_twelve",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "7",
-      "when": 1778177513000,
-      "tag": "0001_medical_scarlet_witch",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1778178463378,
-      "tag": "0002_vengeful_major_mapleleaf",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1778446349879,
-      "tag": "0003_outgoing_joystick",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "7",
-      "when": 1778630761719,
-      "tag": "0004_glossy_loa",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "7",
-      "when": 1778631739332,
-      "tag": "0005_clammy_colleen_wing",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "7",
-      "when": 1778988091254,
-      "tag": "0006_equal_wraith",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "7",
-      "when": 1779216713801,
-      "tag": "0007_swift_agent_brand",
+      "when": 1779254128616,
+      "tag": "0000_chemical_ghost_rider",
       "breakpoints": true
     }
   ]

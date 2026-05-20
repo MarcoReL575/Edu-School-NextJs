@@ -1,4 +1,16 @@
 CREATE TYPE "public"."day_of_week" AS ENUM('lunes', 'martes', 'miercoles', 'jueves', 'viernes');--> statement-breakpoint
+CREATE TYPE "public"."task_status" AS ENUM('pendiente', 'en progreso', 'terminada');--> statement-breakpoint
+CREATE TABLE "attendance" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"date" date NOT NULL,
+	"status" text NOT NULL,
+	"remarks" text,
+	"student_id" uuid NOT NULL,
+	"clase_id" uuid NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
 CREATE TABLE "account" (
 	"id" text PRIMARY KEY NOT NULL,
 	"account_id" text NOT NULL,
@@ -78,7 +90,7 @@ CREATE TABLE "parents" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"last_name" text NOT NULL,
-	"stuednt_id" uuid NOT NULL,
+	"student_id" uuid NOT NULL,
 	"user_id" text NOT NULL
 );
 --> statement-breakpoint
@@ -89,7 +101,7 @@ CREATE TABLE "students" (
 	"matricula" text NOT NULL,
 	"inscrito" boolean DEFAULT true NOT NULL,
 	"nivel_estudios" text NOT NULL,
-	"group_id" uuid,
+	"group_id" uuid NOT NULL,
 	"user_id" text,
 	CONSTRAINT "students_matricula_unique" UNIQUE("matricula")
 );
@@ -98,6 +110,25 @@ CREATE TABLE "subjects" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"name" text NOT NULL,
 	"nivel_academico" text NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "tasks" (
+	"id" bigint PRIMARY KEY GENERATED ALWAYS AS IDENTITY (sequence name "tasks_id_seq" INCREMENT BY 1 MINVALUE 1 MAXVALUE 9223372036854775807 START WITH 1 CACHE 1),
+	"title" text NOT NULL,
+	"description" text NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"fecha_entrega" timestamp NOT NULL,
+	"status" "task_status" DEFAULT 'pendiente' NOT NULL,
+	"clase_id" uuid NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE "task_attachments" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"task_id" bigint NOT NULL,
+	"file_url" text NOT NULL,
+	"file_name" text NOT NULL,
+	"file_type" text NOT NULL,
+	"uploaded_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE "teachers" (
@@ -110,16 +141,20 @@ CREATE TABLE "teachers" (
 	CONSTRAINT "teachers_code_teacher_unique" UNIQUE("code_teacher")
 );
 --> statement-breakpoint
+ALTER TABLE "attendance" ADD CONSTRAINT "attendance_student_id_students_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."students"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "attendance" ADD CONSTRAINT "attendance_clase_id_clases_id_fk" FOREIGN KEY ("clase_id") REFERENCES "public"."clases"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "account" ADD CONSTRAINT "account_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "session" ADD CONSTRAINT "session_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "clases" ADD CONSTRAINT "clases_group_id_group_id_fk" FOREIGN KEY ("group_id") REFERENCES "public"."group"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "clases" ADD CONSTRAINT "clases_subject_id_subjects_id_fk" FOREIGN KEY ("subject_id") REFERENCES "public"."subjects"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "clases" ADD CONSTRAINT "clases_teacher_id_teachers_id_fk" FOREIGN KEY ("teacher_id") REFERENCES "public"."teachers"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "horarios" ADD CONSTRAINT "horarios_clase_id_clases_id_fk" FOREIGN KEY ("clase_id") REFERENCES "public"."clases"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
-ALTER TABLE "parents" ADD CONSTRAINT "parents_stuednt_id_students_id_fk" FOREIGN KEY ("stuednt_id") REFERENCES "public"."students"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "parents" ADD CONSTRAINT "parents_student_id_students_id_fk" FOREIGN KEY ("student_id") REFERENCES "public"."students"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "parents" ADD CONSTRAINT "parents_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "students" ADD CONSTRAINT "students_group_id_group_id_fk" FOREIGN KEY ("group_id") REFERENCES "public"."group"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "students" ADD CONSTRAINT "students_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "tasks" ADD CONSTRAINT "tasks_clase_id_clases_id_fk" FOREIGN KEY ("clase_id") REFERENCES "public"."clases"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
+ALTER TABLE "task_attachments" ADD CONSTRAINT "task_attachments_task_id_tasks_id_fk" FOREIGN KEY ("task_id") REFERENCES "public"."tasks"("id") ON DELETE cascade ON UPDATE no action;--> statement-breakpoint
 ALTER TABLE "teachers" ADD CONSTRAINT "teachers_user_id_user_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."user"("id") ON DELETE no action ON UPDATE no action;--> statement-breakpoint
 CREATE INDEX "account_userId_idx" ON "account" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX "session_userId_idx" ON "session" USING btree ("user_id");--> statement-breakpoint

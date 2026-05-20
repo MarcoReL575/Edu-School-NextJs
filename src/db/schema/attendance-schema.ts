@@ -4,7 +4,7 @@ import { students } from "./studentsSchema";
 import { clases } from "./clasesSchemas";
 
 export const attendance = pgTable("attendance", {
-  id: bigint("id", { mode: "number" }).primaryKey().generatedAlwaysAsIdentity(),
+  id: uuid("id").primaryKey().defaultRandom(),
   date: date("date").notNull(), 
   status: text("status").$type<"asistencia" | "falta" | "retardo" | "justificado" >().notNull(),  
   remarks: text("remarks"), // Nota opcional (ej: "Trajo justificatorio médico")

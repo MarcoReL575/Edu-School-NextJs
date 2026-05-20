@@ -7,6 +7,6 @@ export const parents = pgTable('parents', {
     name: text("name").notNull(),
     lastName: text("last_name").notNull(),
     
-    studentId: uuid('stuednt_id').notNull().references(()=> students.id),
+    studentId: uuid('student_id').notNull().references(()=> students.id),
     user_id: text('user_id').notNull().references(()=> user.id)
 });

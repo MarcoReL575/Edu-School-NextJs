@@ -27,7 +27,7 @@ export type TaskDetails = {
 }
 
 export type TaskTeacher = {
-    id: number;
+    id: string;
     title: string;
     description: string;
     createdAt: Date;

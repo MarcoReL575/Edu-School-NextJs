@@ -8,6 +8,13 @@
       "when": 1779254128616,
       "tag": "0000_chemical_ghost_rider",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1779290078774,
+      "tag": "0001_steady_morlocks",
+      "breakpoints": true
     }
   ]
 }

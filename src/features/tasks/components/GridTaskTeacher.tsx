@@ -20,13 +20,15 @@ export default function GridTaskTeacher({ teacherId }: Props) {
     if(isError) return <div>Error al cargar los datos, Vuelva a intentarlo</div>;
 
   return (
-    <section className="grid grid-cols-2 lg:grid-cols-3 gap-4">
-        { Array.isArray(taskList)   
-            ?   taskList.map((task)=> (
-                    <CardTaskTeacher key={task.id} task={task} />
-                ))
-            :   <div>No hay tareas Disponibles</div>
+    <>
+        { taskList?.length 
+            ?   <section className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+                    { Array.isArray(taskList) && taskList.map((task)=> (
+                        <CardTaskTeacher key={task.id} task={task} />
+                    ))}
+                </section>
+            :   <div className="text-center font-semibold text-xl text-gray-400 mt-5">No hay tareas Disponibles, crea tareas para administrarlas aquí</div>
         }
-    </section>
-  )
+    </>
+    )
 }

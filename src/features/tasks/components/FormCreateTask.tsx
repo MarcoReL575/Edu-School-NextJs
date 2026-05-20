@@ -1,18 +1,22 @@
 'use client'
 
 import { useForm } from "react-hook-form";
+import { QueryClient } from "@tanstack/react-query";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
 import { createTaskAction } from "../actions/tasksAction";
 import { useTasksStore } from "../store/useTasksStore";
 import { useModalStore } from "@/src/shared/store/useModalStore";
 import { Form, FormError, FormInput, FormLabel, FormSubmit } from "@/src/shared/components/form";
-import { CreateTask } from "../types/types";
 import { CreateTaskSchema } from "../schemas/schemas";
+import { CreateTask } from "../types/types";
+import { redirect } from "next/navigation";
 
 export default function FormCreateTask() {
+  const queryClient = new QueryClient();
   
   const teachersClases = useTasksStore((state)=> state.teachersClases);
+  const teacherId = useTasksStore((state)=> state.teacherId);
   const closeModal = useModalStore((state)=> state.closeModal);
   const { register, reset, handleSubmit, formState: { errors } } = useForm<CreateTask>({
     resolver: zodResolver(CreateTaskSchema),
@@ -31,8 +35,10 @@ export default function FormCreateTask() {
       toast.error(message);
     }
     if(success){
+      queryClient.invalidateQueries({ queryKey: ['tasksList', teacherId] });
       toast.success(message);
       closeModal();
+      redirect('/dashboard/tareas');
     }
   }
 

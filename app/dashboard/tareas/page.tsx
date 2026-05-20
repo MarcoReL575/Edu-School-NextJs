@@ -19,7 +19,7 @@ export default async function TareasPage() {
                 <p className="text-gray-500">Gestiona tus tareas. Crea y da seguimiento a las tareas que has dejado.</p>
             </div>
             <div>
-                {role === 'maestro' && <ButtonOpenModalTask  />}
+                {role === 'maestro' && <ButtonOpenModalTask teacherId={session.user.id} />}
             </div>
         </div>
         <main>

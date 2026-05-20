@@ -6,14 +6,20 @@ import { IconCirclePlus } from "@tabler/icons-react";
 import { getTeachersSubjectsAction } from "../../teachers/actions/teachersActions";
 import { useTasksStore } from "../store/useTasksStore";
 
-export default function ButtonOpenModalTask() {
+type Props = {
+  teacherId: string;
+}
+
+export default function ButtonOpenModalTask({ teacherId }: Props) {
   const openModal = useModalStore((state)=> state.openModal);
-  const setteachersClases = useTasksStore((state)=> state.setteachersClases)
+  const setteachersClases = useTasksStore((state)=> state.setteachersClases);
+  const setTeacherId = useTasksStore((state)=> state.setTeacherId);
 
   const handleOpenModal = async()=> {
-    const { success, clases } = await  getTeachersSubjectsAction();
+    const { success, clases } = await getTeachersSubjectsAction();
     if(success) {
-      setteachersClases(clases)
+      setteachersClases(clases);
+      setTeacherId(teacherId);
       openModal("modalCreateTask");
     }
   }

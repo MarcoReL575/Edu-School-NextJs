@@ -1,11 +1,9 @@
 import { bigint, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { tasks } from "./tasks-schema";
+import { taskSubmission } from "./taskSubmissions-schema";
 
 export const taskAttachments = pgTable("task_attachments", {
     id: uuid("id").primaryKey().defaultRandom(),
-    taskId: bigint("task_id", { mode: "number" })
-        .references(() => tasks.id, { onDelete: "cascade" })
-        .notNull(),
+    taskSubmissionId: uuid("taskSubmission_id").references(() => taskSubmission.id).notNull(),
     fileUrl: text("file_url").notNull(),   
     fileName: text("file_name").notNull(), 
     fileType: text("file_type").notNull(),   

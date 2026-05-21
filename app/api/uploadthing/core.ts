@@ -5,14 +5,18 @@ import { requireAuth } from "@/src/lib/auth-server";
 const f = createUploadthing();
 
 export const ourFileRouter = {
-    imageUploader: f({
+    fileUploader: f({
         image: {
-        maxFileSize: "4MB",
-        maxFileCount: 1,
+            maxFileSize: "4MB",
+            maxFileCount: 1,
         },
         pdf: {
             maxFileSize: "1024KB",
             maxFileCount: 5
+        },
+        blob: { 
+            maxFileSize: "16MB", 
+            maxFileCount: 4 
         }
     })
     .middleware(async ({ req }) => {

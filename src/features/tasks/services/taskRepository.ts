@@ -1,12 +1,17 @@
 import { db } from "@/src/db";
-import { StatusTask, TaskDetails, TaskInsert, TaskTeacher } from "../types/types";
-import { clases, group, subjects, tasks, teachers } from "@/src/db/schema";
-import { asc, eq } from "drizzle-orm";
+import { StatusTask, StudentSubmissionInput, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInsert, TaskSubmissionSelect, TaskTeacher } from "../types/types";
+import { clases, group, students, subjects, taskAttachments, tasks, teachers } from "@/src/db/schema";
+import { asc, eq, not, sql } from "drizzle-orm";
+import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
 
 export interface ITaskRepository{
     insertTask(taskInput: TaskInsert): Promise<void>;
     selectTasks(groupId: string): Promise<TaskDetails[]>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
+    insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect>;
+    setStatusTask(taskId: number, status: StatusTask): Promise<void>;
+    selectSubmissionTasktudents(groupId: string): Promise<SubmitTasksStudents[]>;
+    selectGroupIdByTaskId(taskId: number): Promise<string>;
 }
 
 class TaskRepository implements ITaskRepository {
@@ -63,6 +68,62 @@ class TaskRepository implements ITaskRepository {
             .orderBy(asc(tasks.fechaEntrega))
         return taskTeachers;
     }
-}
 
+    async insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect> {
+        const [result] = await db
+            .insert(taskSubmission)
+            .values({
+                studentId,
+                taskId,
+                status: 'entregada',
+                submittedAt: new Date(),
+            })
+            .returning()
+        return result;
+    }
+
+    async setStatusTask(taskId: number, status: StatusTask): Promise<void> {
+        await db
+            .update(tasks)
+            .set({ status })
+            .where(eq(tasks.id, taskId))
+    }
+
+    async selectSubmissionTasktudents(groupId: string): Promise<SubmitTasksStudents[]> {
+        const taskList = await db
+            .select({
+                student: {
+                    id: students.id,
+                    name: students.name,
+                    last_name: students.lastName,
+
+                },
+                submission: {
+                    id: taskSubmission.id,
+                    status: sql<SubmitTaskStatus>`${taskSubmission.status}`,
+                    submittedAt: taskSubmission.submittedAt,
+                    calificacion: taskSubmission.calificacion,
+                    feedback: taskSubmission.feedback
+                }
+            })
+            .from(students)
+            .innerJoin(taskSubmission, eq(taskSubmission.studentId, students.id))
+            .innerJoin(group, eq(students.groupId, group.id))
+            .where(eq(group.id, groupId))
+            .orderBy(asc(students.name))
+        return taskList;
+    }
+
+    async selectGroupIdByTaskId(taskId: number): Promise<string> {
+        const [result] = await db
+            .select({
+                groupId: group.id
+            })
+            .from(tasks)
+            .innerJoin(clases, eq(clases.id, tasks.claseId))
+            .innerJoin(group, eq(group.id, clases.groupId))
+            .where(eq(tasks.id, taskId))
+        return result.groupId;
+    }
+}
 export const taskRepository = new TaskRepository()

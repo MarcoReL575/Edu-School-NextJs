@@ -1,8 +1,9 @@
 import { db } from "@/src/db";
-import { StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
-import { group, students } from "@/src/db/schema";
+import { StudentsInsertType, StudentsSelectType, StudentsTable, SubmitTasksStudents } from "../types/types";
+import { group, students, subjects } from "@/src/db/schema";
 import { asc, desc, eq } from "drizzle-orm";
 import { CreateStudent } from "../schema/clasesSchemas";
+import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
 
 export interface IStudentsRepository{
     createStudent(student: CreateStudent): Promise<void>;
@@ -85,7 +86,6 @@ class StudentsRepository implements IStudentsRepository {
 
         return student;
     };
-
 };
 
 export const studentsRepository = new StudentsRepository();

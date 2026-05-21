@@ -1,7 +1,7 @@
-import { db } from "@/src/db";
-import { GroupInsertType, GroupSelectType } from "../types/types"
-import { group, students, user } from "@/src/db/schema";
 import { eq } from "drizzle-orm";
+import { db } from "@/src/db";
+import { clases, group, students, user } from "@/src/db/schema";
+import { GroupInsertType, GroupSelectType } from "../types/types"
 
 export interface IGroupRepository {
     selectGroups(): Promise<GroupSelectType[]>;
@@ -10,6 +10,7 @@ export interface IGroupRepository {
     setGroup(groupInput: GroupSelectType): Promise<void>;
     editGroupStudnet(studentId: string, groupId: string): Promise<void>;
     selectActualGroupByStudentId(groupId: string): Promise<GroupSelectType>;
+    selectGroupByClaseId(claseId: string): Promise<GroupSelectType>;
 }
 
 class GroupRepository implements IGroupRepository {
@@ -59,6 +60,20 @@ class GroupRepository implements IGroupRepository {
             .from(group)
             .where(eq(group.id, groupId))
         return result;
+    }
+
+    async selectGroupByClaseId(claseId: string): Promise<GroupSelectType> {
+        const [groupInfo] =  await db
+            .select({
+                id: group.id,
+                grade: group.grade,
+                group: group.group,
+                level: group.level
+            })
+            .from(group)
+            .innerJoin(clases, eq(clases.groupId, group.id))
+            .where(eq(clases.id, claseId))
+        return groupInfo;
     }
 }
 

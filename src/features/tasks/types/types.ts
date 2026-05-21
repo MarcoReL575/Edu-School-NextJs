@@ -59,4 +59,10 @@ export type SubmitTasksStudents = {
     submittedAt: Date | null;
     calificacion: string | null;
     feedback: string | null;
+    attachments: {
+        id: string;
+        fileUrl: string;
+        fileName: string;
+        fileType: string;
+    }[] | null;
 }

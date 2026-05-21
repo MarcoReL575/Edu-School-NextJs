@@ -7,8 +7,10 @@ import { SubmitTasksStudents } from "../types/types";
 import { useMemo } from "react";
 import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/src/shared/components/ui/button";
-import { IconArrowsUpDown } from "@tabler/icons-react";
+import { IconArrowsUpDown, IconFileText } from "@tabler/icons-react";
 import { getCorrectDate } from "../helpers/getCorrectDate";
+import Link from "next/link";
+import { Route } from "next";
 
 type Props = {
   groupId: string;
@@ -44,7 +46,25 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
     {
       accessorKey: 'submittedAt',
       header: () => <span>Fecha de Entrega</span>,
-      cell: ({ row }) => <div className="font-medium">{getCorrectDate(row.getValue("submittedAt"))?? '-'}</div>,
+      cell: ({ row }) => <span className="font-medium">{getCorrectDate(row.getValue("submittedAt"))?? '-'}</span>,
+    },
+    {
+      accessorKey: 'attachments',
+      header: () => <span>Archivos Adjuntos</span>,
+      cell: ({ row }) => {
+        const attachments = row.original.attachments || [];
+        if(attachments.length === 0) return <span className="font-medium">-</span>;
+
+        return (
+          <div className="flex flex-col gap-2">
+            {attachments.map((file) => (
+              <Link key={file.id} href={file.fileUrl as Route} target="_blank" rel="noopener noreferrer" className="text-blue-500 justify-center hover:underline flex items-center gap-x-2 text-sm">
+                <IconFileText className="h-3.5 w-3.5 text-gray-600 shrink-0" />{file.fileName}
+              </Link>
+            ))}
+          </div>
+        );
+      }
     },
     {
       accessorKey: 'submissionStatus',
@@ -76,7 +96,7 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
         return (
           <div className="flex items-center justify-center gap-x-2">
             <Button variant="outline" size="sm">
-              Ver
+              Calificar
             </Button>
             <Button variant="outline" size="sm">
               Editar

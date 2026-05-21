@@ -99,7 +99,11 @@ class TaskRepository implements ITaskRepository {
                 submissionStatus: sql<SubmitTaskStatus>`${taskSubmission.status}`,
                 submittedAt: taskSubmission.submittedAt,
                 calificacion: taskSubmission.calificacion,
-                feedback: taskSubmission.feedback
+                feedback: taskSubmission.feedback,
+                attachmentId: taskAttachments.id,
+                attachmentFileUrl: taskAttachments.fileUrl,
+                attachmentsFileName: taskAttachments.fileName,
+                attachmentFileType: taskAttachments.fileType
             })
             .from(students)
             .where(eq(students.groupId, groupId))
@@ -107,9 +111,36 @@ class TaskRepository implements ITaskRepository {
                 eq(taskSubmission.studentId, students.id),
                 eq(taskSubmission.taskId, taskId)
             ))
-                
+            .leftJoin(taskAttachments, eq(taskAttachments.taskSubmissionId, taskSubmission.id))
             .orderBy(asc(students.name))
-        return taskList;
+
+        const grouped = taskList.reduce<Record<string, SubmitTasksStudents>>((acc, row) => {
+            if(!acc[row.studentId]) {
+                acc[row.studentId] = {
+                    studentId: row.studentId,
+                    studentName: row.studentName,
+                    studentLastname: row.studentLastname,
+                    submissionId: row.submissionId,
+                    submissionStatus: row.submissionStatus,
+                    submittedAt: row.submittedAt,
+                    calificacion: row.calificacion,
+                    feedback: row.feedback,
+                    attachments: []
+                };
+            }
+
+            if(row.attachmentId) {
+                acc[row.studentId].attachments!.push({
+                    id: row.attachmentId,
+                    fileUrl: row.attachmentFileUrl!,
+                    fileName: row.attachmentsFileName!,
+                    fileType: row.attachmentFileType!,
+                });
+            }
+            return acc;
+        }, {});
+
+        return Object.values(grouped);
     }
 
     async selectGroupIdByTaskId(taskId: number): Promise<string> {

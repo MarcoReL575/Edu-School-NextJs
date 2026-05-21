@@ -19,7 +19,6 @@ export const AttachmentSchema = z.object({
 
 export const StudentSubmissionSchema = z.object({
   taskId: z.number({message: "ID de tarea inválido"}),
-  studentId: z.string().uuid("ID de estudiante inválido"),
   attachments: z.array(AttachmentSchema)
     .min(1, "Debes adjuntar al menos un archivo o imagen para enviar la tarea"),
 });

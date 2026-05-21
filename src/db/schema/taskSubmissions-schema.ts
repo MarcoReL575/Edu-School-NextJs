@@ -13,6 +13,6 @@ export const taskSubmission = pgTable("task_submissions", {
     submittedAt: timestamp("submitted_at"), // Nulo hasta que suba la tarea
     
     // Evaluación del Maestro
-    calificacion: text("calificacion"), // Puede ser número "90" 
-    feedback: text("feedback"), // Los comentarios del maestro
+    calificacion: text("calificacion").default('Sin calificación').notNull(), // Puede ser número "90" 
+    feedback: text("feedback").default('Sin comentarios').notNull(), // Los comentarios del maestro
 });

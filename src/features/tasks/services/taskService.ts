@@ -60,9 +60,9 @@ class TaskService {
         }
     }
 
-    async getSubmissionTaskStudents(groupId: string) {
+    async getSubmissionTaskStudents(groupId: string, taskId: number) {
         try {
-            const taskList = await this.taskRepository.selectSubmissionTasktudents(groupId);
+            const taskList = await this.taskRepository.selectSubmissionTasktudents(groupId, taskId);
             return { success: true, message: '', data: taskList };
         } catch (error) {
             console.error(error);

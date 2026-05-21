@@ -1,7 +1,7 @@
 import { db } from "@/src/db";
 import { StatusTask, StudentSubmissionInput, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInsert, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { clases, group, students, subjects, taskAttachments, tasks, teachers } from "@/src/db/schema";
-import { asc, eq, not, sql } from "drizzle-orm";
+import { and, asc, eq, not, sql } from "drizzle-orm";
 import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
 
 export interface ITaskRepository{
@@ -10,7 +10,7 @@ export interface ITaskRepository{
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
     insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect>;
     setStatusTask(taskId: number, status: StatusTask): Promise<void>;
-    selectSubmissionTasktudents(groupId: string): Promise<SubmitTasksStudents[]>;
+    selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]>;
     selectGroupIdByTaskId(taskId: number): Promise<string>;
 }
 
@@ -89,27 +89,25 @@ class TaskRepository implements ITaskRepository {
             .where(eq(tasks.id, taskId))
     }
 
-    async selectSubmissionTasktudents(groupId: string): Promise<SubmitTasksStudents[]> {
+    async selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]> {
         const taskList = await db
             .select({
-                student: {
-                    id: students.id,
-                    name: students.name,
-                    last_name: students.lastName,
-
-                },
-                submission: {
-                    id: taskSubmission.id,
-                    status: sql<SubmitTaskStatus>`${taskSubmission.status}`,
-                    submittedAt: taskSubmission.submittedAt,
-                    calificacion: taskSubmission.calificacion,
-                    feedback: taskSubmission.feedback
-                }
+                studentId: students.id,
+                studentName: students.name,
+                studentLastname: students.lastName,
+                submissionId: taskSubmission.id,
+                submissionStatus: sql<SubmitTaskStatus>`${taskSubmission.status}`,
+                submittedAt: taskSubmission.submittedAt,
+                calificacion: taskSubmission.calificacion,
+                feedback: taskSubmission.feedback
             })
             .from(students)
-            .innerJoin(taskSubmission, eq(taskSubmission.studentId, students.id))
-            .innerJoin(group, eq(students.groupId, group.id))
-            .where(eq(group.id, groupId))
+            .where(eq(students.groupId, groupId))
+            .leftJoin(taskSubmission, and(
+                eq(taskSubmission.studentId, students.id),
+                eq(taskSubmission.taskId, taskId)
+            ))
+                
             .orderBy(asc(students.name))
         return taskList;
     }

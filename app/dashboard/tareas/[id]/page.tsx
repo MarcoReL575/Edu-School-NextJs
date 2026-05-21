@@ -17,12 +17,12 @@ export default async function PageTaskInformation({ params }: Props) {
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
     queryKey: ['tasks'],
-    queryFn: ()=> taskStudentAction(groupId),
+    queryFn: ()=> taskStudentAction(groupId, +taskId),
   })
 
   return (
     <HydrationBoundary state={dehydrate(queryClient )}>
-      <TableSubmitTasksStudent groupId={groupId} />
+      <TableSubmitTasksStudent groupId={groupId} taskId={+taskId} />
     </HydrationBoundary>
   )
 }

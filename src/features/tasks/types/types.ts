@@ -51,16 +51,12 @@ export type TaskTeacher = {
 
 
 export type SubmitTasksStudents = {
-    student: {
-        id: string;
-        name: string;
-        last_name: string;  
-    }
-    submission: {
-        id: string;
-        status: SubmitTaskStatus;
-        submittedAt: Date | null;
-        calificacion: string;
-        feedback: string;
-    } 
+    studentId: string;
+    studentName: string;
+    studentLastname: string;  
+    submissionId: string | null;
+    submissionStatus: SubmitTaskStatus;
+    submittedAt: Date | null;
+    calificacion: string | null;
+    feedback: string | null;
 }

@@ -66,3 +66,17 @@ export type SubmitTasksStudents = {
         fileType: string;
     }[] | null;
 }
+
+export type TaskInfoTeacher = {
+    id: number;
+    title: string;
+    description: string;
+    fechaEntrega: Date;
+    createdAt: Date;
+    status: StatusTask;
+    groupId: string;
+    subjectName: string;
+    grade: string;
+    level: string;
+    group: string;
+}

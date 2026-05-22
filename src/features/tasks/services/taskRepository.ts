@@ -1,5 +1,5 @@
 import { db } from "@/src/db";
-import { StatusTask, StudentSubmissionInput, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInsert, TaskSubmissionSelect, TaskTeacher } from "../types/types";
+import { StatusTask, StudentSubmissionInput, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { clases, group, students, subjects, taskAttachments, tasks, teachers } from "@/src/db/schema";
 import { and, asc, eq, not, sql } from "drizzle-orm";
 import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
@@ -7,6 +7,7 @@ import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
 export interface ITaskRepository{
     insertTask(taskInput: TaskInsert): Promise<void>;
     selectTasks(groupId: string): Promise<TaskDetails[]>;
+    selectTaskByTaksId(taskId: number): Promise<TaskInfoTeacher>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
     insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect>;
     setStatusTask(taskId: number, status: StatusTask): Promise<void>;
@@ -43,6 +44,29 @@ class TaskRepository implements ITaskRepository {
             .where(eq(group.id, groupId))
             
         return taskList
+    }
+
+    async selectTaskByTaksId(taskId: number): Promise<TaskInfoTeacher> {
+        const [task] = await db
+            .select({
+                id: tasks.id,
+                title: tasks.title,
+                description: tasks.description,
+                fechaEntrega: tasks.fechaEntrega,
+                createdAt: tasks.createdAt,
+                status: tasks.status,
+                groupId: group.id,
+                subjectName: subjects.name,
+                grade: group.grade,
+                level: group.level, 
+                group: group.group
+            })
+            .from(tasks)
+            .innerJoin(clases, eq(tasks.claseId, clases.id))
+            .innerJoin(group, eq(group.id, clases.groupId))
+            .innerJoin(subjects, eq(subjects.id, clases.subjectId))
+            .where(eq(tasks.id, taskId))
+        return task;
     }
 
     async selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]> {

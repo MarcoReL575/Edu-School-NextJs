@@ -1,5 +1,5 @@
 import { db } from "@/src/db";
-import { StudentsInsertType, StudentsSelectType, StudentsTable, SubmitTasksStudents } from "../types/types";
+import { StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
 import { group, students, subjects } from "@/src/db/schema";
 import { asc, desc, eq } from "drizzle-orm";
 import { CreateStudent } from "../schema/clasesSchemas";
@@ -86,7 +86,5 @@ class StudentsRepository implements IStudentsRepository {
 
         return student;
     };
-};
-
+}
 export const studentsRepository = new StudentsRepository();
-

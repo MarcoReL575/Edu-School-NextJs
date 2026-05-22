@@ -1,5 +1,5 @@
 import { db } from "@/src/db";
-import { StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskDetails, TaskInsert, TaskTeacher } from "../types/types";
+import { StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskTeacher } from "../types/types";
 import { ITaskRepository, taskRepository } from "./taskRepository";
 import { file } from "zod";
 import { group, students, taskAttachments } from "@/src/db/schema";
@@ -79,6 +79,16 @@ class TaskService {
             return { success: false, message: 'Se produjo un error al obtener el ID del grupo', groupId: '' };
         }
     }
+
+    async getTaskByTaskId(taskId: number) {
+        try {
+            const task = await this.taskRepository.selectTaskByTaksId(taskId);
+            return { success: true, message: '', data: task };
+        } catch (error) {
+            console.error(error);
+            return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', data: {} as TaskInfoTeacher };
+        }
+    }
 }
 
-export const taskService = new TaskService(taskRepository)
+export const taskService = new TaskService(taskRepository);

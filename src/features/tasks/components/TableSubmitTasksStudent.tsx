@@ -1,16 +1,20 @@
 'use client'
 
+import { Route } from "next";
+import Link from "next/link";
+import { useMemo } from "react";
 import { useQuery } from "@tanstack/react-query"
+import { ColumnDef } from "@tanstack/react-table";
+import { IconArrowsUpDown, IconChecklist, IconClipboardCheck, IconClipboardData, IconClipboardOff, IconFileText, IconPercentage40 } from "@tabler/icons-react";
 import { taskStudentAction } from "../actions/tasksAction"
 import TableComponent from "@/src/shared/components/table/Table";
-import { SubmitTasksStudents } from "../types/types";
-import { useMemo } from "react";
-import { ColumnDef } from "@tanstack/react-table";
 import { Button } from "@/src/shared/components/ui/button";
-import { IconArrowsUpDown, IconFileText } from "@tabler/icons-react";
 import { getCorrectDate } from "../helpers/getCorrectDate";
-import Link from "next/link";
-import { Route } from "next";
+import { Card, CardDescription, CardHeader } from "@/src/shared/components/ui/card";
+import Heading from "@/src/shared/components/typography/Heading";
+import { SubmitTasksStudents } from "../types/types";
+import CardStatsSubmittedTasks from "./CardStatsSubmittedTasks";
+import { Car } from "lucide-react";
 
 type Props = {
   groupId: string;
@@ -23,6 +27,38 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
     queryKey: ['tasks'],
     queryFn: () => taskStudentAction(groupId, taskId),
   });
+
+  const stats = useMemo(() => { 
+    const studentsList = data?.data || [];
+    const totalStudents = studentsList.length;
+    if(totalStudents === 0) return { entregadas: 0, pendientes: 0, calificadas: 0, promedio: "0.0", porcentajeEntregas: 0 };
+
+    let entregadas = 0;   
+    let calificadas = 0;
+    let totalCalificacion = 0;
+
+    studentsList.forEach((student) => {
+      if(student.submissionId) entregadas++;
+      if(student.calificacion) {
+        const nota = Number(student.calificacion);
+        if(!isNaN(nota)) {
+          calificadas++;
+          totalCalificacion += nota;
+        }
+      }
+    });
+    const promedio = totalStudents > 0 ? (totalCalificacion / calificadas).toFixed(1) : "0.0";
+    const porcentajeEntregas = totalStudents > 0 ? Math.round((entregadas / totalStudents) * 100) : 0;
+
+    return {
+      entregadas,
+      pendientes: totalStudents - entregadas,
+      calificadas,
+      promedio,
+      porcentajeEntregas
+    };
+
+  }, [data]); 
 
   const columns = useMemo<ColumnDef<SubmitTasksStudents>[]>(() => [
     {
@@ -46,14 +82,14 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
     {
       accessorKey: 'submittedAt',
       header: () => <span>Fecha de Entrega</span>,
-      cell: ({ row }) => <span className="font-medium">{getCorrectDate(row.getValue("submittedAt"))?? '-'}</span>,
+      cell: ({ row }) => <span className="font-medium">{getCorrectDate(row.getValue("submittedAt")) ?? '-'}</span>,
     },
     {
       accessorKey: 'attachments',
       header: () => <span>Archivos Adjuntos</span>,
       cell: ({ row }) => {
         const attachments = row.original.attachments || [];
-        if(attachments.length === 0) return <span className="font-medium">-</span>;
+        if (attachments.length === 0) return <span className="font-medium">-</span>;
 
         return (
           <div className="flex flex-col gap-2">
@@ -73,7 +109,7 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
           Status<IconArrowsUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div className="font-medium capitalize">{row.getValue("submissionStatus")?? "Pendiente"}</div>,
+      cell: ({ row }) => <div className="font-medium capitalize">{row.getValue("submissionStatus") ?? "Pendiente"}</div>,
     },
     {
       accessorKey: 'calificacion',
@@ -92,22 +128,31 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
     {
       accessorKey: 'submissionId',
       header: () => <span>Acciones</span>,
-      cell: ({ row }) => {
-        return (
-          <div className="flex items-center justify-center gap-x-2">
-            <Button variant="outline" size="sm">
-              Calificar
-            </Button>
-            <Button variant="outline" size="sm">
-              Editar
-            </Button>
-          </div>
-        );
-      }
+      cell: ({ row }) => (
+        <div className="flex items-center justify-center gap-x-2">
+          <Button variant="outline" size="sm">Calificar</Button>
+          <Button variant="outline" size="sm">Editar</Button>
+        </div>
+      )
     }
   ], [],);
 
   return (
-    <TableComponent columns={columns} data={data?.data || []} nameTable="tareas de Estudiantes" />
+    <>
+      <section className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <CardStatsSubmittedTasks title="entregadas" description="Con entrega" icon={<IconClipboardCheck size={30} />} value={stats.entregadas} />
+        <CardStatsSubmittedTasks title="pendientes" description="Sin entregar" icon={<IconClipboardOff size={30} />} value={stats.pendientes} />
+        <CardStatsSubmittedTasks title="porcentaje" description="Porcentaje de Entrega" icon={<IconPercentage40 size={30} />} value={stats.porcentajeEntregas} />
+        <CardStatsSubmittedTasks title="promedio" description="Promedio de calificaciones" icon={<IconClipboardData size={30} />} value={Number(stats.promedio)} />
+        <CardStatsSubmittedTasks title="calificadas" description="Tareas calificadas" icon={<IconChecklist size={30} />} value={stats.calificadas} />
+      </section>
+      <Card>
+        <CardHeader>
+          <Heading level={3}>Entrega De Tareas</Heading>
+          <CardDescription className="text-gray-400">Ve la información completa de la entrega de traeas de tus alumnos. Califica las tareas y agrega comentarios en caso de que se requieran.</CardDescription>
+        </CardHeader>
+        <TableComponent columns={columns} data={data?.data || []} nameTable="tareas de Estudiantes" />
+      </Card>
+    </>
   )
 }

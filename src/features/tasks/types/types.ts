@@ -1,6 +1,6 @@
 import z from "zod";
 import { tasks } from "@/src/db/schema";
-import { AttachmentSchema, CreateTaskSchema, StudentSubmissionSchema } from "../schemas/schemas";
+import { AttachmentSchema, CreateTaskSchema, GradeTaskSchema, StudentSubmissionSchema } from "../schemas/schemas";
 import { taskAttachments } from "@/src/db/schema/taskAttachments-schema";
 import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
 
@@ -21,6 +21,8 @@ export type StatusTask = 'pendiente' | 'en progreso' | 'terminada';
 
 export type StudentSubmissionInput = z.infer<typeof StudentSubmissionSchema>;
 export type AttachmentInput = z.infer<typeof AttachmentSchema>;
+
+export type GradeTasks = z.infer<typeof GradeTaskSchema>;
 
 export type TaskDetails = {
     id: string;

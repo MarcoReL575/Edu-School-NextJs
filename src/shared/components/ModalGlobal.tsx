@@ -10,6 +10,7 @@ import ModalDeleteGroup from "@/src/features/clases/components/ModalDeleteGroup"
 import ModalDeleteStudent from "@/src/features/clases/components/ModalDeleteStudent";
 import ModalHorarios from "@/src/features/clases/components/ModalHorarios"
 import ModalCreateTask from "@/src/features/tasks/components/ModalCreateTask";
+import ModalGradeTask from "@/src/features/tasks/components/ModalGradeTask";
 import ModalSubmittedTask from "@/src/features/tasks/components/ModalSubmittedTask";
 
 
@@ -25,6 +26,8 @@ const modalObject: any = {
   modalDeleteStudent: ModalDeleteStudent,
   modalCreateTask: ModalCreateTask,
   modalSubmittedTask: ModalSubmittedTask,
+  modalGradeTask: ModalGradeTask
+  
 };
 
 export const ModalProvider = () => {

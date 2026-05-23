@@ -8,6 +8,8 @@ interface TasksStore {
     teacherId: string;
     taskId: number | undefined;
     studentId: string;
+    taskSubmissionId: string;
+    setTaskSubmissionId: (taskSubmissionId: string)=> void;
     setTaskId: (taskId: number)=> void;
     setStudentId: (studentId: string)=> void;
     setTeacherId: (teacherId: string)=> void;
@@ -19,6 +21,8 @@ export const useTasksStore = create<TasksStore>()((set) => ({
     teacherId: '',
     taskId: undefined,
     studentId: '',
+    taskSubmissionId: '',
+    setTaskSubmissionId: (taskSubmissionId)=> set({ taskSubmissionId }),
     setTaskId: (taskId)=> set({ taskId }),
     setStudentId: (studentId)=> set({ studentId }),
     setTeacherId: (teacherId)=> set({ teacherId }),

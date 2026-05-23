@@ -15,6 +15,8 @@ import Heading from "@/src/shared/components/typography/Heading";
 import { SubmitTasksStudents } from "../types/types";
 import CardStatsSubmittedTasks from "./CardStatsSubmittedTasks";
 import { Car } from "lucide-react";
+import { useModalStore } from "@/src/shared/store/useModalStore";
+import { useTasksStore } from "../store/useTasksStore";
 
 type Props = {
   groupId: string;
@@ -23,10 +25,17 @@ type Props = {
 
 export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
 
+  const openModal = useModalStore((state)=> state.openModal);
+  const setTaskSubmissionId = useTasksStore((state)=> state.setTaskSubmissionId);
   const { data, isLoading, isError } = useQuery({
     queryKey: ['tasks'],
     queryFn: () => taskStudentAction(groupId, taskId),
   });
+
+  const handleGradeTask = (taskSubmissionId: string) => {
+    setTaskSubmissionId(taskSubmissionId);
+    openModal('modalGradeTask');
+  }
 
   const stats = useMemo(() => { 
     const studentsList = data?.data || [];
@@ -130,7 +139,7 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
       header: () => <span>Acciones</span>,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-x-2">
-          <Button variant="outline" size="sm">Calificar</Button>
+          <Button variant="outline" size="sm" onClick={() => handleGradeTask(row.getValue("submissionId"))}>Calificar</Button>
           <Button variant="outline" size="sm">Editar</Button>
         </div>
       )

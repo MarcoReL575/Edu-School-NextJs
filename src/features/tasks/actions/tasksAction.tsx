@@ -16,8 +16,8 @@ export async function createTaskAction(taskInput: CreateTask) {
     return await taskService.createTask(response.data);
 }
 
-export async function getTasksWithDetailsAction(groupId: string) {
-    return await taskService.getAllTasks(groupId);
+export async function getTasksWithDetailsAction(groupId: string, studentId: string) {
+    return await taskService.getAllTasks(groupId, studentId);
 }
 
 export async function getTasksTeacherAction(teacherId: string) {

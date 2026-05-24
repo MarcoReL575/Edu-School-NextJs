@@ -12,6 +12,7 @@ import { UploadButton } from "@/src/shared/utils/uploadthing";
 import { useTasksStore } from "../store/useTasksStore";
 import { StudentSubmissionSchema } from "../schemas/schemas";
 import { StudentSubmissionInput } from "../types/types";
+import { redirect } from "next/navigation";
 
 export default function FormSubmittedTask() {
     const taskId = useTasksStore((state)=> state.taskId);
@@ -41,6 +42,7 @@ export default function FormSubmittedTask() {
             toast.success(message);
             closeModal();
             queryClient.invalidateQueries({ queryKey: ['tasks', taskId] });
+            redirect('/dashboard/tareas');
         }
     }
 

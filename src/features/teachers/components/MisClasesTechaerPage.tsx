@@ -13,7 +13,7 @@ export default async function MisClasesTechaerPage({ session }: Props) {
   const teacherInfo = await teacherService.getTeacherByUserId(session.user.id);
   if(!teacherInfo.success || teacherInfo.teacher.userId === null) return <div>Error al cargar las materias del maestro</div>;
 
-  const listOfClases = await teacherService.getTeachersClases(teacherInfo.teacher.userId, teacherInfo.teacher.id);
+  const listOfClases = await teacherService.getTeachersClases(teacherInfo.teacher.id);
   console.log(listOfClases)
 
   return (

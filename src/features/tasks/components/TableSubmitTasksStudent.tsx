@@ -6,14 +6,14 @@ import { useQuery } from "@tanstack/react-query"
 import { ColumnDef } from "@tanstack/react-table";
 import { useMemo } from "react";
 import toast from "react-hot-toast";
-import { IconArrowsUpDown, IconCheck, IconChecklist, IconClipboardCheck, IconClipboardData, IconClipboardOff, IconFileText, IconPercentage40 } from "@tabler/icons-react";
+import { IconArrowsUpDown, IconCheck, IconChecklist, IconClipboardCheck, IconClipboardData, IconClipboardOff, IconFileText, IconHistoryToggle, IconPercentage40 } from "@tabler/icons-react";
 import { getActualGradeTaskAction, taskStudentAction } from "../actions/tasksAction"
 import TableComponent from "@/src/shared/components/table/Table";
 import { Button } from "@/src/shared/components/ui/button";
 import { getCorrectDate } from "../helpers/getCorrectDate";
 import { Card, CardDescription, CardHeader } from "@/src/shared/components/ui/card";
 import Heading from "@/src/shared/components/typography/Heading";
-import { SubmitTasksStudents } from "../types/types";
+import { GradeTasks, SubmitTasksStudents } from "../types/types";
 import CardStatsSubmittedTasks from "./CardStatsSubmittedTasks";
 import { useModalStore } from "@/src/shared/store/useModalStore";
 import { useTasksStore } from "../store/useTasksStore";
@@ -36,6 +36,7 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
 
   const handleGradeTask = (taskSubmissionId: string) => {
     setTaskEdit(false);
+    setTaskGraded({} as GradeTasks);
     setTaskSubmissionId(taskSubmissionId);
     openModal('modalGradeTask');
   }
@@ -137,7 +138,12 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
       ),
       cell: ({ row }) => (
         <div className="font-medium capitalize flex justify-start items-center">
-          {row.getValue("submissionStatus") === "entregada" ? <span className="flex items-center gap-x-1">Entregada <IconCheck /></span> : <span className="text-gray-500">Pendiente</span>}
+          {row.getValue("submissionStatus") === "entregada" 
+            ? <span className="flex items-center gap-x-1"><IconHistoryToggle />{row.getValue('submissionStatus')}</span>
+            : row.getValue("submissionStatus") === "calificada" 
+              ? <span className="flex items-center gap-x-1"><IconCheck />{row.getValue("submissionStatus")}</span>
+              : <span className="text-gray-500 flex items-center gap-x-1">{row.getValue("submissionStatus")}</span>
+          }
         </div>
       )
     },
@@ -160,8 +166,9 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
       header: () => <span>Acciones</span>,
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-x-2">
-          <Button variant="outline" size="sm" onClick={() => handleGradeTask(row.getValue("submissionId"))}>Calificar</Button>
-          <Button variant="outline" size="sm" onClick={() => handleEditTask(row.getValue("submissionId"))}>Editar</Button>
+          {row.getValue('submissionStatus') === null && '-'}
+          {row.getValue('submissionStatus') === 'entregada' && <Button variant="outline" size="sm" onClick={() => handleGradeTask(row.getValue("submissionId"))}>Calificar</Button> }
+          {row.getValue('submissionStatus') === 'calificada' && <Button variant="outline" size="sm" onClick={() => handleEditTask(row.getValue("submissionId"))}>Editar</Button>}
         </div>
       )
     }

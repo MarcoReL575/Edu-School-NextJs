@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import toast from 'react-hot-toast';
 import { gradeTaskAction, updateTaskGradedAction } from '../actions/tasksAction';
 import { useTasksStore } from '../store/useTasksStore'
@@ -34,8 +34,6 @@ export default function FormGradeTask() {
     })
   }, [taskGraded, reset]);
 
-  console.log(taskGraded);
-
   const handleGradeTask = async(input: GradeTasks) => {
     if(taskEdit) {
       const { success, message } = await updateTaskGradedAction(input);
@@ -62,7 +60,6 @@ export default function FormGradeTask() {
         await queryClient.invalidateQueries({ queryKey: ['tasksGrade'] });
       }
     }
-    
   }
 
   return (

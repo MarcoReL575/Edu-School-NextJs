@@ -2,7 +2,6 @@ import Heading from "@/src/shared/components/typography/Heading";
 import { TaskDetails } from "../types/types"
 import { IconCalendar, IconClipboardList } from "@tabler/icons-react";
 import { getCorrectDate } from "../helpers/getCorrectDate";
-import clsx from "clsx";
 import ButtonOpenModal from "@/src/shared/components/ButtonOpenModal";
 import TaskStatus from "./TaskStatus";
 

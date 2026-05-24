@@ -3,10 +3,11 @@ import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, Su
 import { clases, group, students, subjects, taskAttachments, tasks, teachers } from "@/src/db/schema";
 import { and, asc, eq, not, sql } from "drizzle-orm";
 import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
+import { task } from "better-auth/react";
 
 export interface ITaskRepository{
     insertTask(taskInput: TaskInsert): Promise<void>;
-    selectTasks(groupId: string): Promise<TaskDetails[]>;
+    selectTasks(groupId: string, studentId: string): Promise<TaskDetails[]>;
     selectTaskByTaksId(taskId: number): Promise<TaskInfoTeacher>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
     selectStatusTask(taskId: number): Promise<StatusTask>;
@@ -25,7 +26,7 @@ class TaskRepository implements ITaskRepository {
             .values(taskInput)
     }
 
-    async selectTasks(groupId: string): Promise<TaskDetails[]> {
+    async selectTasks(groupId: string, studentId: string): Promise<TaskDetails[]> {
         const taskList = await db
             .select({
                 id: clases.id,
@@ -37,15 +38,18 @@ class TaskRepository implements ITaskRepository {
                 taskDescription: tasks.description,
                 taskFechaEntrega: tasks.fechaEntrega,
                 taskCreatedAt: tasks.createdAt,
-                taskStatus: tasks.status
+                taskStatus: taskSubmission.status
             })
             .from(tasks)
             .innerJoin(clases, eq(tasks.claseId, clases.id))
             .innerJoin(group, eq(group.id, clases.groupId))
             .innerJoin(subjects, eq(subjects.id, clases.subjectId))
             .innerJoin(teachers, eq(teachers.id, clases.teacherId))
+            .leftJoin(taskSubmission, and(
+                eq(taskSubmission.taskId, tasks.id),
+                eq(taskSubmission.studentId, studentId)
+            ))
             .where(eq(group.id, groupId))
-            
         return taskList
     }
 
@@ -188,7 +192,8 @@ class TaskRepository implements ITaskRepository {
             .update(taskSubmission)
             .set({
                 calificacion: grade.toString(),
-                feedback
+                feedback,
+                status: 'calificada'
             })
             .where(eq(taskSubmission.id, submissionId))
     }

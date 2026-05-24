@@ -21,11 +21,12 @@ class TaskService {
         }
     }
 
-    async getAllTasks(groupId: string) {
+    async getAllTasks(groupId: string, studentId: string) {
         try {
-            const taskList = await this.taskRepository.selectTasks(groupId);
+            const taskList = await this.taskRepository.selectTasks(groupId, studentId);
             return { success: true, message: '', data: taskList };
         } catch (error) {
+            console.error(error)
             return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', data: {} as TaskDetails[] };
         }
     } 

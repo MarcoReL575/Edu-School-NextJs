@@ -34,7 +34,7 @@ export type TaskDetails = {
     taskDescription: string;
     taskFechaEntrega: Date;
     taskCreatedAt: Date;
-    taskStatus: StatusTask
+    taskStatus: SubmitTaskStatus
 }
 
 export type TaskTeacher = {

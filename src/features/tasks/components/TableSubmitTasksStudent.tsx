@@ -1,12 +1,13 @@
 'use client'
 
-import { Route } from "next";
 import Link from "next/link";
-import { useMemo } from "react";
+import { Route } from "next";
 import { useQuery } from "@tanstack/react-query"
 import { ColumnDef } from "@tanstack/react-table";
-import { IconArrowsUpDown, IconChecklist, IconClipboardCheck, IconClipboardData, IconClipboardOff, IconFileText, IconPercentage40 } from "@tabler/icons-react";
-import { taskStudentAction } from "../actions/tasksAction"
+import { useMemo } from "react";
+import toast from "react-hot-toast";
+import { IconArrowsUpDown, IconCheck, IconChecklist, IconClipboardCheck, IconClipboardData, IconClipboardOff, IconFileText, IconPercentage40 } from "@tabler/icons-react";
+import { getActualGradeTaskAction, taskStudentAction } from "../actions/tasksAction"
 import TableComponent from "@/src/shared/components/table/Table";
 import { Button } from "@/src/shared/components/ui/button";
 import { getCorrectDate } from "../helpers/getCorrectDate";
@@ -14,7 +15,6 @@ import { Card, CardDescription, CardHeader } from "@/src/shared/components/ui/ca
 import Heading from "@/src/shared/components/typography/Heading";
 import { SubmitTasksStudents } from "../types/types";
 import CardStatsSubmittedTasks from "./CardStatsSubmittedTasks";
-import { Car } from "lucide-react";
 import { useModalStore } from "@/src/shared/store/useModalStore";
 import { useTasksStore } from "../store/useTasksStore";
 
@@ -24,17 +24,33 @@ type Props = {
 }
 
 export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
-
   const openModal = useModalStore((state)=> state.openModal);
+  const setTaskEdit = useTasksStore((state)=> state.setTaskEdit);
+  const setTaskGraded = useTasksStore((state)=> state.setTaskGraded);
   const setTaskSubmissionId = useTasksStore((state)=> state.setTaskSubmissionId);
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['tasks'],
+    queryKey: ['tasksGrade'],
     queryFn: () => taskStudentAction(groupId, taskId),
   });
 
   const handleGradeTask = (taskSubmissionId: string) => {
+    setTaskEdit(false);
     setTaskSubmissionId(taskSubmissionId);
     openModal('modalGradeTask');
+  }
+
+  const handleEditTask = async(taskSubmissionId: string) => {
+    const{ success, message, data } = await getActualGradeTaskAction(taskSubmissionId);
+    if(!success) {
+      toast.error(message);
+      return
+    }
+    if(success && data) {
+      setTaskGraded(data);
+      setTaskEdit(true);
+      setTaskSubmissionId(taskSubmissionId);
+      openModal('modalGradeTask');
+    }
   }
 
   const stats = useMemo(() => { 
@@ -118,7 +134,11 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
           Status<IconArrowsUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
-      cell: ({ row }) => <div className="font-medium capitalize">{row.getValue("submissionStatus") ?? "Pendiente"}</div>,
+      cell: ({ row }) => (
+        <div className="font-medium capitalize flex justify-start items-center">
+          {row.getValue("submissionStatus") === "entregada" ? <span className="flex items-center gap-x-1">Entregada <IconCheck /></span> : <span className="text-gray-500">Pendiente</span>}
+        </div>
+      )
     },
     {
       accessorKey: 'calificacion',
@@ -140,7 +160,7 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
       cell: ({ row }) => (
         <div className="flex items-center justify-center gap-x-2">
           <Button variant="outline" size="sm" onClick={() => handleGradeTask(row.getValue("submissionId"))}>Calificar</Button>
-          <Button variant="outline" size="sm">Editar</Button>
+          <Button variant="outline" size="sm" onClick={() => handleEditTask(row.getValue("submissionId"))}>Editar</Button>
         </div>
       )
     }

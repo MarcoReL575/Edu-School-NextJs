@@ -1,5 +1,5 @@
 import { db } from "@/src/db";
-import { StatusTask, StudentSubmissionInput, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskSubmissionSelect, TaskTeacher } from "../types/types";
+import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { clases, group, students, subjects, taskAttachments, tasks, teachers } from "@/src/db/schema";
 import { and, asc, eq, not, sql } from "drizzle-orm";
 import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
@@ -13,6 +13,9 @@ export interface ITaskRepository{
     setStatusTask(taskId: number, status: StatusTask): Promise<void>;
     selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]>;
     selectGroupIdByTaskId(taskId: number): Promise<string>;
+    setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<void>;
+    selectTaskGraded(submissionId: string): Promise<GradeTasks>;
+    setTaskGraded(task: GradeTasks): Promise<void>;
 }
 
 class TaskRepository implements ITaskRepository {
@@ -178,5 +181,37 @@ class TaskRepository implements ITaskRepository {
             .where(eq(tasks.id, taskId))
         return result.groupId;
     }
+
+    async setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<void> {
+        await db
+            .update(taskSubmission)
+            .set({
+                calificacion: grade.toString(),
+                feedback
+            })
+            .where(eq(taskSubmission.id, submissionId))
+    }
+
+    async selectTaskGraded(submissionId: string): Promise<GradeTasks> {
+        const [result] = await db
+            .select({ 
+                taskGradedId: taskSubmission.id,
+                grade: taskSubmission.calificacion, 
+                feedback: taskSubmission.feedback 
+            })
+            .from(taskSubmission)
+            .where(eq(taskSubmission.id, submissionId))
+        return { grade: parseFloat(result.grade), feedback: result.feedback, taskSubmissionId: result.taskGradedId };
+    }
+
+    async setTaskGraded(taskGraded: GradeTasks): Promise<void> {
+        await db
+            .update(taskSubmission)
+            .set({
+                calificacion: taskGraded.grade.toString(),
+                feedback: taskGraded.feedback
+            })
+            .where(eq(taskSubmission.id, taskGraded.taskSubmissionId))
+    }
 }
-export const taskRepository = new TaskRepository()
+export const taskRepository = new TaskRepository();

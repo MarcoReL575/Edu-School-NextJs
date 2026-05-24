@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/src/lib/auth-server";
 import { taskService } from "../services/taskService";
-import { CreateTask, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskTeacher } from "../types/types";
+import { CreateTask, GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskTeacher } from "../types/types";
 import { CreateTaskSchema } from "../schemas/schemas";
 import { studentsService } from "../../clases/services/StudentsService";
 
@@ -42,4 +42,25 @@ export async function taskStudentAction(groupId: string, taskId:number) {
     if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas', data: [] as SubmitTasksStudents[] };
 
     return await taskService.getSubmissionTaskStudents(groupId, taskId);
+}
+
+export async function gradeTaskAction(submissionId: string, grade: number, feedback: string) {
+    const { session } = await requireAuth();
+    if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas' };
+
+    return await taskService.gradeTask(submissionId, grade, feedback);
+}
+
+export async function getActualGradeTaskAction(submissionId: string) {
+    const { session } = await requireAuth();
+    if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas', data: null };   
+
+    return await taskService.selectTaskGraded(submissionId);
+}
+
+export async function updateTaskGradedAction(taskGraded: GradeTasks) {
+    const { session } = await requireAuth();
+    if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas' };    
+    
+    return await taskService.updateTaskGraded(taskGraded);
 }

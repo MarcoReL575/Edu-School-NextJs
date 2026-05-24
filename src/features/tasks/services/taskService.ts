@@ -43,8 +43,6 @@ class TaskService {
         try {
             return await db.transaction(async (tx) => {
                 const submissionResult = await this.taskRepository.insertStudentSubmission(+task.taskId, studentId);
-                const updateStatusTask = await this.taskRepository.setStatusTask(+task.taskId, "terminada");
-
                 const attachmentsData = task.attachments.map((file) => ({
                     fileUrl: file.fileUrl,
                     fileName: file.fileName,
@@ -56,6 +54,15 @@ class TaskService {
             });
         } catch (error) {
             return { success: false, message: 'Se produjo un error al entregar la tarea, vuelva a intentarlo' }
+        }
+    }
+
+    async getStatusTask(taskId: number) {
+        try {
+            const status = await this.taskRepository.selectStatusTask(taskId);
+            return { success: true, message: '', data: status };
+        } catch (error) {
+            return { success: false, message: 'Se produjo un error al obtener el estado de la tarea', data: '' as StatusTask };
         }
     }
 

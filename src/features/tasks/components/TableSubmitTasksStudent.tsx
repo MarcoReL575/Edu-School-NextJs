@@ -72,7 +72,7 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
         }
       }
     });
-    const promedio = totalStudents > 0 ? (totalCalificacion / calificadas).toFixed(1) : "0.0";
+    const promedio = calificadas > 0 ? (+totalCalificacion / calificadas).toFixed(1) : "0";
     const porcentajeEntregas = totalStudents > 0 ? Math.round((entregadas / totalStudents) * 100) : 0;
 
     return {

@@ -9,8 +9,8 @@ export interface ITaskRepository{
     selectTasks(groupId: string): Promise<TaskDetails[]>;
     selectTaskByTaksId(taskId: number): Promise<TaskInfoTeacher>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
+    selectStatusTask(taskId: number): Promise<StatusTask>;
     insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect>;
-    setStatusTask(taskId: number, status: StatusTask): Promise<void>;
     selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]>;
     selectGroupIdByTaskId(taskId: number): Promise<string>;
     setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<void>;
@@ -109,11 +109,12 @@ class TaskRepository implements ITaskRepository {
         return result;
     }
 
-    async setStatusTask(taskId: number, status: StatusTask): Promise<void> {
-        await db
-            .update(tasks)
-            .set({ status })
-            .where(eq(tasks.id, taskId))
+    async selectStatusTask(taskId: number): Promise<StatusTask> {
+        const [result] = await db
+            .select({ status: taskSubmission.status })
+            .from(taskSubmission)
+            .where(eq(taskSubmission.taskId, taskId))
+        return result.status as StatusTask;
     }
 
     async selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]> {

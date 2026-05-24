@@ -31,7 +31,7 @@ export default function CardStatsTask({ title, status, icon, number}: Props) {
             </span>
         </div>
         <Heading level={4} className="text-center">{title}</Heading>
-        <p className="text-4xl text-center font-bold">
+        <p className="text-xl text-center font-bold">
             {number}
         </p>
     </div>

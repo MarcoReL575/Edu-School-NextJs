@@ -2,7 +2,7 @@
 
 import { create } from 'zustand'
 import { TeachersClases } from '../../teachers/types/types';
-import { GradeTasks } from '../types/types';
+import { GradeTasks, StatusTask } from '../types/types';
 
 interface TasksStore {
     teachersClases: TeachersClases[];
@@ -12,6 +12,8 @@ interface TasksStore {
     taskSubmissionId: string;
     taskEdit: boolean;
     taskGraded: GradeTasks;
+    statusTask: StatusTask;
+    setStatusTask: (statusTask: StatusTask)=> void;
     setTaskGraded: (taskGraded: GradeTasks)=> void;
     setTaskEdit: (taskEdit: boolean)=> void;
     setTaskSubmissionId: (taskSubmissionId: string)=> void;
@@ -29,6 +31,8 @@ export const useTasksStore = create<TasksStore>()((set) => ({
     taskSubmissionId: '',
     taskEdit: false,
     taskGraded: {} as GradeTasks,
+    statusTask: 'pendiente',
+    setStatusTask: (statusTask)=> set({ statusTask }),
     setTaskEdit: (taskEdit)=> set({ taskEdit }),
     setTaskSubmissionId: (taskSubmissionId)=> set({ taskSubmissionId }),
     setTaskId: (taskId)=> set({ taskId }),

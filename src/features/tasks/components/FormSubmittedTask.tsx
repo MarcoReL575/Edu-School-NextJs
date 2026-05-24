@@ -15,6 +15,7 @@ import { StudentSubmissionInput } from "../types/types";
 
 export default function FormSubmittedTask() {
     const taskId = useTasksStore((state)=> state.taskId);
+    const setStatusTask = useTasksStore((state)=> state.setStatusTask);
     const closeModal = useModalStore((state)=> state.closeModal);
     const queryClient = new QueryClient();
     const { getValues, setValue, handleSubmit, formState: { isSubmitting, errors }, control } = useForm<StudentSubmissionInput>({
@@ -36,6 +37,7 @@ export default function FormSubmittedTask() {
             toast.error(message);
         } 
         if(success) {
+            setStatusTask('terminada');
             toast.success(message);
             closeModal();
             queryClient.invalidateQueries({ queryKey: ['tasks'] });

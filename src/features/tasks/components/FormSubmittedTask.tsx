@@ -40,7 +40,7 @@ export default function FormSubmittedTask() {
             setStatusTask('terminada');
             toast.success(message);
             closeModal();
-            queryClient.invalidateQueries({ queryKey: ['tasks'] });
+            queryClient.invalidateQueries({ queryKey: ['tasks', taskId] });
         }
     }
 

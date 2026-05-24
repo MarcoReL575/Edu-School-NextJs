@@ -20,7 +20,7 @@ export default async function PageTaskInformation({ params }: Props) {
 
   const queryClient = new QueryClient();
   await queryClient.prefetchQuery({
-    queryKey: ['tasks'],
+    queryKey: ['ListTasksGrade', +taskId],
     queryFn: ()=> taskStudentAction(groupId, +taskId),
   })
 

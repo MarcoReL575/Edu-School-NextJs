@@ -25,11 +25,12 @@ type Props = {
 
 export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
   const openModal = useModalStore((state)=> state.openModal);
+  const taskEdit = useTasksStore((state)=> state.taskEdit);
   const setTaskEdit = useTasksStore((state)=> state.setTaskEdit);
   const setTaskGraded = useTasksStore((state)=> state.setTaskGraded);
   const setTaskSubmissionId = useTasksStore((state)=> state.setTaskSubmissionId);
   const { data, isLoading, isError } = useQuery({
-    queryKey: ['tasksGrade'],
+    queryKey: ['ListTasksGrade', taskId],
     queryFn: () => taskStudentAction(groupId, taskId),
   });
 

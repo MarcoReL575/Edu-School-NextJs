@@ -1,17 +1,22 @@
 'use client'
 
-import { useState } from "react";
-import { useTasksStore } from "../store/useTasksStore";
 import { IconClipboardList } from "@tabler/icons-react";
+import { SubmitTaskStatus } from "../types/types";
+import clsx from "clsx";
 
-export default function TaskStatus() {
+type Props = {
+  statusTask: SubmitTaskStatus
+}
 
-    const statusTask = useTasksStore((state)=> state.statusTask);
-
+export default function TaskStatus({ statusTask }: Props) {
   return (
-    <p className={`flex items-center gap-x-2 ${statusTask === 'terminada' ? 'text-green-500': 'text-red-500'}`}>
-        <IconClipboardList size={25} />
-        <span>{statusTask === 'terminada' ? 'Terminada': 'Pendiente'}</span>
+    <p className={clsx('flex items-center gap-x-2', 
+      statusTask === 'pendiente' && 'text-red-500',
+      statusTask === 'entregada' && 'text-yellow-500',
+      statusTask === 'calificada' && 'text-green-500',
+    )}>
+      <IconClipboardList size={25} />
+      <span className=" capitalize">{statusTask}</span>
     </p>
   )
 }

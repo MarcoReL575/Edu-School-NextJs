@@ -25,7 +25,7 @@ export default async function TaskGrid({ userId }: Props) {
                 <CardStatsTask title="Tareas Entregadas" status="entregada" icon={<IconClipboardText />} number={inProgress.length}/>
                 <CardStatsTask title="Tareas Calificadas" status="calificada" icon={<IconChecklist />} number={finished.length} />
             </section>
-            <section className="grid grid-cols-2 3xl:grid-cols-3 gap-4">
+            <section className="grid 2xl:grid-cols-2 gap-4">
                 {taskList && taskList.map((task)=> (
                     <TaskCard key={task.taskId} task={task} />
                 ))}

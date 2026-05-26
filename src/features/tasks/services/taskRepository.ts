@@ -38,7 +38,9 @@ class TaskRepository implements ITaskRepository {
                 taskDescription: tasks.description,
                 taskFechaEntrega: tasks.fechaEntrega,
                 taskCreatedAt: tasks.createdAt,
-                taskStatus: taskSubmission.status
+                taskStatus: taskSubmission.status,
+                taskGrade: taskSubmission.calificacion,
+                taskFeedback: taskSubmission.feedback
             })
             .from(tasks)
             .innerJoin(clases, eq(tasks.claseId, clases.id))

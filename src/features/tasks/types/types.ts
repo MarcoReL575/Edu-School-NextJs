@@ -35,6 +35,8 @@ export type TaskDetails = {
     taskFechaEntrega: Date;
     taskCreatedAt: Date;
     taskStatus: SubmitTaskStatus
+    taskGrade: string | null,
+    taskFeedback: string | null
 }
 
 export type TaskTeacher = {

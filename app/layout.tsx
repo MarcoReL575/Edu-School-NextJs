@@ -27,7 +27,7 @@ export default async function RootLayout({children}: Readonly<{children: React.R
     >
       <body className="min-h-full flex flex-col">
         <Providers>
-            <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
+          <NextSSRPlugin routerConfig={extractRouterConfig(ourFileRouter)} />
           {children}
           <ModalProvider />
         </Providers>

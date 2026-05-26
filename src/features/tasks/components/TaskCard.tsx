@@ -9,7 +9,7 @@ type Props = {
   task: TaskDetails;
 }
 
-export default async function TaskCard({ task }: Props) {
+export default function TaskCard({ task }: Props) {
   return (
     <div className="border border-gray-300 p-4 rounded-lg">
       <div className="flex items-center justify-between">

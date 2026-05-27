@@ -43,6 +43,20 @@
       "when": 1779327872851,
       "tag": "0005_petite_scourge",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1779838877536,
+      "tag": "0006_brown_absorbing_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1779839624197,
+      "tag": "0007_clammy_viper",
+      "breakpoints": true
     }
   ]
 }

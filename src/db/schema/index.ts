@@ -3,6 +3,7 @@ export * from "./auth-schema"
 export * from "./clasesSchemas"
 export * from "./groupSchema"
 export * from './horariosSchema'
+export * from './notifications-schema'
 export * from "./parentsSchema"
 export * from "./studentsSchema"
 export * from "./subjectsSchema"

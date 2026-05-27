@@ -13,6 +13,7 @@ export interface IStudentsRepository{
     deleteStudentById(studentId: string): Promise<void>;
     selectAllStudents(): Promise<StudentsTable[]>;
     selectInfoStudent(userId: string): Promise<StudentsSelectType>;
+    selectStudentsInGroup(groupId: string): Promise<StudentsSelectType[]>;
 };
 
 class StudentsRepository implements IStudentsRepository {
@@ -86,5 +87,13 @@ class StudentsRepository implements IStudentsRepository {
 
         return student;
     };
+
+    async selectStudentsInGroup(groupId: string): Promise<StudentsSelectType[]> {
+        const studentsList = await db
+            .select()
+            .from(students)
+            .where(eq(students.groupId, groupId))
+        return studentsList;
+    }
 }
 export const studentsRepository = new StudentsRepository();

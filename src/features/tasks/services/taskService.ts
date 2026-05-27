@@ -1,22 +1,41 @@
 import { db } from "@/src/db";
 import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskTeacher } from "../types/types";
 import { ITaskRepository, taskRepository } from "./taskRepository";
-import { file } from "zod";
-import { group, students, taskAttachments } from "@/src/db/schema";
-import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
-import { asc, eq } from "drizzle-orm";
+import { taskAttachments } from "@/src/db/schema";
+import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
+import { groupRepository, IGroupRepository } from "../../clases/services/GroupRepository";
+import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
 
 class TaskService {
     constructor(
-        private taskRepository: ITaskRepository
+        private taskRepository: ITaskRepository,
+        private notificationRepository : INotificationRepository,
+        private groupRepository: IGroupRepository,
+        private studentsRepository: IStudentsRepository
     ){}
 
     async createTask(taskInput: TaskInsert){
         try {
-            await this.taskRepository.insertTask(taskInput);
+            const task = await this.taskRepository.insertTask(taskInput);
+            //Creamos notificación
+            const group = await this.groupRepository.selectGroupByClaseId(task.claseId);
+            const listStudents = await this.studentsRepository.selectStudentsInGroup(group.id);
+            if(listStudents.length > 0) {
+                const notificationsPayload = listStudents.filter((student)=> student.user_id !== null).map((student)=>({
+                    userId: student.user_id as string,
+                    title: `Nueva tarea: ${task.title}`,
+                    message: `Se ha publicado una nueva tarea` ,
+                    type: 'task_created' as const ,
+                    isRead: false,
+                    redirectUrl: '/dashboard/tareas',
+                }))
+                // Insertamos todas las notificaciones en un solo query a la base de datos
+                if(notificationsPayload.length > 0) {
+                    const notifications = await this.notificationRepository.insertMany(notificationsPayload);
+                }
+            }
             return { success: true, message: 'La tarea fue creada' }        
         } catch (error) {
-            console.error(error);
             return { success: false, message: 'Se produjo un error en base de datos, vuelva a intentarlo' };
         }
     }
@@ -136,4 +155,4 @@ class TaskService {
     }
 }
 
-export const taskService = new TaskService(taskRepository);
+export const taskService = new TaskService(taskRepository, notificationRepository, groupRepository, studentsRepository);

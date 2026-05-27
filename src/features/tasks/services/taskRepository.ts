@@ -1,12 +1,11 @@
 import { db } from "@/src/db";
-import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskSubmissionSelect, TaskTeacher } from "../types/types";
+import { GradeTasks, StatusTask, SubmitTasksStudents, SubmitTaskStatus, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { clases, group, students, subjects, taskAttachments, tasks, teachers } from "@/src/db/schema";
 import { and, asc, eq, not, sql } from "drizzle-orm";
 import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
-import { task } from "better-auth/react";
 
 export interface ITaskRepository{
-    insertTask(taskInput: TaskInsert): Promise<void>;
+    insertTask(taskInput: TaskInsert): Promise<TaskSelect>;
     selectTasks(groupId: string, studentId: string): Promise<TaskDetails[]>;
     selectTaskByTaksId(taskId: number): Promise<TaskInfoTeacher>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
@@ -20,10 +19,12 @@ export interface ITaskRepository{
 }
 
 class TaskRepository implements ITaskRepository {
-    async insertTask(taskInput: TaskInsert): Promise<void> {
-        await db
+    async insertTask(taskInput: TaskInsert): Promise<TaskSelect> {
+        const [task] = await db
             .insert(tasks)
             .values(taskInput)
+            .returning()
+        return task
     }
 
     async selectTasks(groupId: string, studentId: string): Promise<TaskDetails[]> {

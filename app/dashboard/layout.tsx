@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children, }: { children: React.R
       >
         <AppSidebar userRole ={session.user.role} variant="inset" />
         <SidebarInset>
-          <SiteHeader />
+          <SiteHeader session={session} />
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 p-4 md:gap-6 md:py-6">

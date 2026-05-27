@@ -1,4 +1,4 @@
-import { clases, horarios, students, subjects, teachers } from "@/src/db/schema";
+import { clases, horarios, students, subjects, teachers, user } from "@/src/db/schema";
 import { group } from "@/src/db/schema/groupSchema";
 import z from "zod";
 import { CreateClasesSchema } from "../schema/clasesSchemas";
@@ -19,6 +19,9 @@ export type StudentsInsertType = typeof students.$inferInsert;
 export type ClasesSelectType = typeof clases.$inferSelect;
 export type ClasesInsertType = typeof clases.$inferInsert;
 export type ClasesInputType = z.infer <typeof CreateClasesSchema>;
+
+export type UserSelectType = typeof user.$inferSelect;
+export type UserInsertType = typeof user.$inferInsert;
 
 export type ClasesInfoComplete =  {
     id: string;

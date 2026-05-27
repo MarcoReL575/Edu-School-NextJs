@@ -4,7 +4,7 @@ import { Route } from "next"
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import clsx from "clsx"
-import { IconBooks, IconCalendar, IconChecklist, IconClipboardText, IconHome, IconMessage, IconNotes, IconSchool, IconSpeakerphone, IconUserCheck, IconUsers, IconUserShield, type Icon } from "@tabler/icons-react"
+import { IconBell, IconBooks, IconCalendar, IconChecklist, IconClipboardText, IconHome, IconMessage, IconNotes, IconSchool, IconSpeakerphone, IconUserCheck, IconUsers, IconUserShield, type Icon } from "@tabler/icons-react"
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar"
 
 const items = [
@@ -18,6 +18,7 @@ const items = [
   { title: "Eventos", url: "#", icon: IconCalendar },
   { title: "Mensajes", url: "#", icon: IconMessage },
   { title: "Anuncios", url: "#", icon: IconSpeakerphone },
+  { title: "Notificaciones", url: "notifications", icon: IconBell }
 ]
 
 

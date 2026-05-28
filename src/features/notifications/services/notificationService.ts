@@ -23,6 +23,15 @@ class NotificationService{
            return {} as NotificationSelect[]
         }
     }
+
+    async readNotification(userId: string) {
+        try {
+            await this.notificationRepository.setReadNotification(userId);
+            return { success: true, message: '' }
+        } catch (error) {
+            return { success: false, message: 'Error al encontrar la notificación' }
+        }
+    }
 }
 
 export const notificationService = new NotificationService(notificationRepository, usersRepository);

@@ -15,7 +15,7 @@ export default function TaskCard({ task }: Props) {
     <div className="border border-gray-300 p-4 rounded-lg">
       <div className="flex items-center justify-between">
         <Heading level={3} className="text-sm text-gray-500">{task.subjectName}</Heading>
-        <ButtonOpenModal nameModal="modalSubmittedTask" nameButton="Enviar tarea" taskId={task.taskId} />
+        <ButtonOpenModal nameModal="modalSubmittedTask" nameButton="Enviar tarea" task={task} teacherId={task.teacherUserId} />
       </div>
       <Heading level={4}>{task.taskTitle}</Heading>
       

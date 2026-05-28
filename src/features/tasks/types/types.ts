@@ -29,6 +29,7 @@ export type TaskDetails = {
     subjectName: string;
     teacherName: string;
     teachersLastName: string;
+    teacherUserId: string | null;
     taskId: number;
     taskTitle: string;
     taskDescription: string;

@@ -1,13 +1,14 @@
 import { db } from "@/src/db"
 import { NotificationInsert, NotificationSelect } from "../types/types"
 import { notifications, students, user } from "@/src/db/schema"
-import { and, eq } from "drizzle-orm"
+import { and, asc, desc, eq } from "drizzle-orm"
 
 export interface INotificationRepository {
     insertMany(notification: NotificationInsert[]): Promise<NotificationSelect[]>;
     selectByUser(userId: string): Promise<NotificationSelect[]>;
     selectCountByUser(userId: string): Promise<number>;
     setReadNotification(userId: string): Promise<void>;
+    insertNotificationSubmittedTask(notification: NotificationInsert): Promise<void>;
 }
 
 class NotificationRepository implements INotificationRepository {
@@ -24,7 +25,7 @@ class NotificationRepository implements INotificationRepository {
             .select()
             .from(notifications)
             .where(eq(notifications.userId, userId))
-            .orderBy(notifications.createdAt)
+            .orderBy(desc(notifications.createdAt))
         return notificationsUser;
     }
 
@@ -44,6 +45,12 @@ class NotificationRepository implements INotificationRepository {
                 isRead: true
             })
             .where(eq(notifications.userId, userId));
+    }
+
+    async insertNotificationSubmittedTask(notification: NotificationInsert): Promise<void> {
+        await db
+            .insert(notifications)
+            .values(notification)
     }
 }
 

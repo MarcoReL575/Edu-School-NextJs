@@ -13,16 +13,18 @@ import { useTasksStore } from "../store/useTasksStore";
 import { StudentSubmissionSchema } from "../schemas/schemas";
 import { StudentSubmissionInput } from "../types/types";
 import { redirect } from "next/navigation";
+import { notificationSubmittedTaskAction } from "../../notifications/actions/notificationsActions";
 
 export default function FormSubmittedTask() {
-    const taskId = useTasksStore((state)=> state.taskId);
+    const task = useTasksStore((state)=> state.task);
     const setStatusTask = useTasksStore((state)=> state.setStatusTask);
     const closeModal = useModalStore((state)=> state.closeModal);
+    const teacherUserId = useTasksStore((state)=> state.teacherUserId);
     const queryClient = new QueryClient();
     const { getValues, setValue, handleSubmit, formState: { isSubmitting, errors }, control } = useForm<StudentSubmissionInput>({
         resolver: zodResolver(StudentSubmissionSchema),
         defaultValues: {
-            taskId: taskId?? 0,
+            taskId: task.taskId?? 0,
             attachments: [],
         }
     });
@@ -38,15 +40,16 @@ export default function FormSubmittedTask() {
             toast.error(message);
         } 
         if(success) {
+            await notificationSubmittedTaskAction(task);
             setStatusTask('terminada');
             toast.success(message);
             closeModal();
-            queryClient.invalidateQueries({ queryKey: ['tasks', taskId] });
+            queryClient.invalidateQueries({ queryKey: ['tasks',task.taskId] });
             redirect('/dashboard/tareas');
         }
     }
 
-    if(!taskId) return <p className="text-red-500">No se pudo cargar la información de la tarea, vuelve a intentarlo</p>
+    if(!task.taskId) return <p className="text-red-500">No se pudo cargar la información de la tarea, vuelve a intentarlo</p>
 
   return (
     <Form onSubmit={handleSubmit(handleSubmitTask)}>

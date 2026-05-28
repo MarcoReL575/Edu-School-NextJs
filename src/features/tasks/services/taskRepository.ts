@@ -34,6 +34,7 @@ class TaskRepository implements ITaskRepository {
                 subjectName: subjects.name,
                 teacherName: teachers.name,
                 teachersLastName: teachers.lastName,
+                teacherUserId: teachers.userId,
                 taskId: tasks.id,
                 taskTitle: tasks.title,
                 taskDescription: tasks.description,

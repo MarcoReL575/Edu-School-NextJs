@@ -18,6 +18,7 @@ export default async function TaskGrid({ userId }: Props) {
     const pending = taskList.filter((task)=> task.taskStatus === 'pendiente' || task.taskStatus === null);
     const inProgress = taskList.filter((task)=> task.taskStatus === 'entregada');
     const finished = taskList.filter((task)=> task.taskStatus === 'calificada');
+    console.log(taskList)
 
     return (
         <main className="flex flex-col space-y-10">

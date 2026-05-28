@@ -5,7 +5,7 @@ import { eq } from "drizzle-orm"
 
 export interface INotificationRepository {
     insertMany(notification: NotificationInsert[]): Promise<NotificationSelect[]>;
-    selectByUserId(userId: string): Promise<NotificationSelect[]>;
+    selectByUser(userId: string): Promise<NotificationSelect[]>;
     selectCountByUser(userId: string): Promise<number>;
 }
 
@@ -18,11 +18,12 @@ class NotificationRepository implements INotificationRepository {
         return result;
     }
 
-    async selectByUserId(userId: string): Promise<NotificationSelect[]> {
+    async selectByUser(userId: string): Promise<NotificationSelect[]> {
         const notificationsUser = await db
             .select()
             .from(notifications)
             .where(eq(notifications.userId, userId))
+            .orderBy(notifications.createdAt)
         return notificationsUser;
     }
 

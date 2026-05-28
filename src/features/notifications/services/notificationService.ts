@@ -1,4 +1,5 @@
 import { IUsersRepository, usersRepository } from "../../clases/services/UsersRepository";
+import { NotificationSelect } from "../types/types";
 import { INotificationRepository, notificationRepository } from "./notificationRepository";
 
 class NotificationService{
@@ -12,6 +13,14 @@ class NotificationService{
             return await this.notificationRepository.selectCountByUser(userId);
         } catch (error) {
             return 0
+        }
+    }
+
+    async getUserNotifications(userId: string) {
+        try {
+            return await this.notificationRepository.selectByUser(userId);
+        } catch (error) {
+           return {} as NotificationSelect[]
         }
     }
 }

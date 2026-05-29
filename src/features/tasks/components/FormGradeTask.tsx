@@ -9,12 +9,14 @@ import { Form, FormError, FormInput, FormLabel, FormSubmit } from '@/src/shared/
 import { GradeTaskSchema } from '../schemas/schemas';
 import { GradeTasks } from '../types/types';
 import { useModalStore } from '@/src/shared/store/useModalStore';
+import { notificationGradedTask } from '../../notifications/actions/notificationsActions';
+import { task } from 'better-auth/react';
 
 export default function FormGradeTask() {
   const taskGraded = useTasksStore((state)=> state.taskGraded);
   const taskSubmissionId = useTasksStore((state)=> state.taskSubmissionId);
   const closeModal = useModalStore((state)=> state.closeModal);
-  const taskEdit = useTasksStore((state)=> state.taskEdit);
+  const taskId = useTasksStore((state)=> state.taskId)
   const queryClient = useQueryClient();
 
   const { register, handleSubmit, formState:{ errors }, reset } = useForm({
@@ -35,19 +37,20 @@ export default function FormGradeTask() {
   }, [taskGraded, reset]);
 
   const handleGradeTask = async(input: GradeTasks) => {
-    if(taskEdit) {
-      const { success, message } = await updateTaskGradedAction(input);
+    if(taskGraded.grade) {
+      const { success, message, task } = await updateTaskGradedAction(input);
       if(!success) {
         toast.error(message);
       }
       if(success) {
+        await notificationGradedTask(task);
         toast.success(message);
         reset(); 
         closeModal();
-        await queryClient.invalidateQueries({ queryKey: ['tasksGrade'] });
+        await queryClient.invalidateQueries({ queryKey: ['ListTasksGrade', taskId] });
       }
     }
-    if(!taskEdit) {  
+    if(!taskGraded.grade) {  
       const feedback = input.feedback || '';
       const { success, message } = await gradeTaskAction(input.taskSubmissionId, input.grade, feedback);
       if(!success) {
@@ -57,18 +60,18 @@ export default function FormGradeTask() {
         toast.success(message);
         reset(); 
         closeModal();
-        await queryClient.invalidateQueries({ queryKey: ['tasksGrade'] });
+        await queryClient.invalidateQueries({ queryKey: ['ListTasksGrade', taskId] });
       }
     }
   }
 
   return (
     <Form className='flex flex-col space-y-2' onSubmit={handleSubmit(handleGradeTask)}>
-      <FormLabel htmlFor='grade'>{taskEdit ? 'Editar calificación' : 'Calificación de la tarea'}</FormLabel>
+      <FormLabel htmlFor='grade'>{taskGraded.grade ? 'Editar calificación' : 'Calificación de la tarea'}</FormLabel>
       <FormInput {...register('grade', { valueAsNumber: true })} id='grade' type='number' max={10} min={0} step={0.1} placeholder='Ingresa la calificación de la tarea' />
       {errors.grade && <FormError>{errors.grade.message}</FormError>}
 
-      <FormLabel htmlFor='feedback'>{taskEdit ? 'Editar comentario' : 'Arega algún comentario(opcional)'}</FormLabel>
+      <FormLabel htmlFor='feedback'>{taskGraded.grade ? 'Editar comentario' : 'Arega algún comentario(opcional)'}</FormLabel>
       <textarea 
         {...register('feedback')}
         id='feedback' 
@@ -78,7 +81,7 @@ export default function FormGradeTask() {
       {errors.feedback && <FormError>{errors.feedback.message}</FormError>}
 
       <FormSubmit className=''>
-        {taskEdit ? 'Editar calificación' : 'Calificar tarea'}
+        {taskGraded.grade ? 'Editar calificación' : 'Calificar tarea'}
       </FormSubmit>
     </Form>
   )

@@ -2,7 +2,7 @@
 
 import { requireAuth } from "@/src/lib/auth-server";
 import { taskService } from "../services/taskService";
-import { CreateTask, GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskTeacher } from "../types/types";
+import { CreateTask, GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { CreateTaskSchema } from "../schemas/schemas";
 import { studentsService } from "../../clases/services/StudentsService";
 
@@ -60,7 +60,7 @@ export async function getActualGradeTaskAction(submissionId: string) {
 
 export async function updateTaskGradedAction(taskGraded: GradeTasks) {
     const { session } = await requireAuth();
-    if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas' };    
+    if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas', task: {} as TaskSubmissionSelect };    
     
     return await taskService.updateTaskGraded(taskGraded);
 }

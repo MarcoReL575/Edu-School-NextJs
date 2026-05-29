@@ -15,7 +15,7 @@ export interface ITaskRepository{
     selectGroupIdByTaskId(taskId: number): Promise<string>;
     setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<void>;
     selectTaskGraded(submissionId: string): Promise<GradeTasks>;
-    setTaskGraded(task: GradeTasks): Promise<void>;
+    setTaskGraded(task: GradeTasks): Promise<TaskSubmissionSelect>;
 }
 
 class TaskRepository implements ITaskRepository {
@@ -214,14 +214,16 @@ class TaskRepository implements ITaskRepository {
         return { grade: parseFloat(result.grade), feedback: result.feedback, taskSubmissionId: result.taskGradedId };
     }
 
-    async setTaskGraded(taskGraded: GradeTasks): Promise<void> {
-        await db
+    async setTaskGraded(taskGraded: GradeTasks): Promise<TaskSubmissionSelect> {
+        const [task] = await db
             .update(taskSubmission)
             .set({
                 calificacion: taskGraded.grade.toString(),
                 feedback: taskGraded.feedback
             })
             .where(eq(taskSubmission.id, taskGraded.taskSubmissionId))
+            .returning()
+        return task
     }
 }
 export const taskRepository = new TaskRepository();

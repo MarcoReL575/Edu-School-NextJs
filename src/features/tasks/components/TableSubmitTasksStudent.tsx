@@ -17,6 +17,7 @@ import { GradeTasks, SubmitTasksStudents } from "../types/types";
 import CardStatsSubmittedTasks from "./CardStatsSubmittedTasks";
 import { useModalStore } from "@/src/shared/store/useModalStore";
 import { useTasksStore } from "../store/useTasksStore";
+import { notificationGradedTask } from "../../notifications/actions/notificationsActions";
 
 type Props = {
   groupId: string;
@@ -25,19 +26,20 @@ type Props = {
 
 export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
   const openModal = useModalStore((state)=> state.openModal);
-  const taskEdit = useTasksStore((state)=> state.taskEdit);
-  const setTaskEdit = useTasksStore((state)=> state.setTaskEdit);
   const setTaskGraded = useTasksStore((state)=> state.setTaskGraded);
   const setTaskSubmissionId = useTasksStore((state)=> state.setTaskSubmissionId);
+  const setTaskId = useTasksStore((state)=> state.setTaskId)
   const { data, isLoading, isError } = useQuery({
     queryKey: ['ListTasksGrade', taskId],
     queryFn: () => taskStudentAction(groupId, taskId),
   });
 
-  const handleGradeTask = (taskSubmissionId: string) => {
-    setTaskEdit(false);
+  const handleGradeTask = async(submission: SubmitTasksStudents) => {
+    console.log(submission);
+    //actualizar el estado de la tarea en un storev
+    setTaskId(taskId);
     setTaskGraded({} as GradeTasks);
-    setTaskSubmissionId(taskSubmissionId);
+    setTaskSubmissionId(submission.submissionId?? '');
     openModal('modalGradeTask');
   }
 
@@ -49,7 +51,7 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
     }
     if(success && data) {
       setTaskGraded(data);
-      setTaskEdit(true);
+      //setTaskEdit(true);
       setTaskSubmissionId(taskSubmissionId);
       openModal('modalGradeTask');
     }
@@ -164,13 +166,16 @@ export default function TableSubmitTasksStudent({ groupId, taskId }: Props) {
     {
       accessorKey: 'submissionId',
       header: () => <span>Acciones</span>,
-      cell: ({ row }) => (
-        <div className="flex items-center justify-center gap-x-2">
-          {row.getValue('submissionStatus') === null && '-'}
-          {row.getValue('submissionStatus') === 'entregada' && <Button variant="outline" size="sm" onClick={() => handleGradeTask(row.getValue("submissionId"))}>Calificar</Button> }
-          {row.getValue('submissionStatus') === 'calificada' && <Button variant="outline" size="sm" onClick={() => handleEditTask(row.getValue("submissionId"))}>Editar</Button>}
-        </div>
-      )
+      cell: ({ row }) => {
+        const submission = row.original
+        return (
+          <div className="flex items-center justify-center gap-x-2">
+            {submission.submissionStatus === null && '-'}
+            {submission.submissionStatus === 'entregada' && <Button variant="outline" size="sm" onClick={() => handleGradeTask(submission)}>Calificar</Button> }
+            {submission.submissionStatus === 'calificada' && <Button variant="outline" size="sm" onClick={() => handleEditTask(row.getValue("submissionId"))}>Editar</Button>}
+          </div>
+        )
+      }
     }
   ], [],);
 

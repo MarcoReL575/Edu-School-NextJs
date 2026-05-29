@@ -2,10 +2,10 @@
 import Link from "next/link"
 import toast from "react-hot-toast"
 import { Route } from "next"
-import { cn } from "@/src/lib/utils"
 import { formatDateNotification } from "@/src/shared/utils/dateNotification"
-import { clearNotificationAction } from "../actions/notificationsActions"
 import { NotificationSelect } from "../types/types"
+import { clearSingleNotificationAction } from "../actions/notificationsActions"
+import clsx from "clsx"
 
 type Props = {
   notification: NotificationSelect
@@ -14,7 +14,7 @@ type Props = {
 export default function CardNotifications({ notification }: Props) {
 
   const handleClearNotification = async()=> {
-    const { success, message } = await clearNotificationAction();
+    const { success, message } = await clearSingleNotificationAction(notification.id);
     if(!success) {
       toast.error(message);
     }
@@ -22,7 +22,7 @@ export default function CardNotifications({ notification }: Props) {
 
   return (
     <>
-      <div className="flex items-center max-w-2xl border rounded-lg p-4 gap-x-4">
+      <div className={clsx("flex items-center max-w-2xl border rounded-lg p-4 gap-x-4 ", notification.isRead && 'bg-')}>
         {!notification.isRead && (
           <div className="h-2 w-2 rounded-full bg-blue-500 mt-2" />
         )}
@@ -32,12 +32,12 @@ export default function CardNotifications({ notification }: Props) {
             className="flex justify-between items-center w-full hover:underline transition-all duration-300 ease-in"
             onClick={handleClearNotification}
           >
-            <h4 className={cn("text-sm font-semibold", notification.isRead ? "text-gray-600" : "text-gray-900")}>
+            <h4 className={clsx("text-sm font-semibold", notification.isRead ? "text-gray-400" : "text-black")}>
               {notification.title}
             </h4>
             <span className="text-sm text-gray-400">{formatDateNotification(notification.createdAt)}</span>
           </Link>
-          <p className="text-xs text-gray-500 leading-relaxed">
+          <p className={clsx("text-xs leading-relaxed font-semibold", notification.isRead ? "text-gray-400" : "text-gray-600")}>
             {notification.message}
           </p>
         </div>

@@ -1,10 +1,11 @@
 import { db } from "@/src/db";
-import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskTeacher } from "../types/types";
+import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { ITaskRepository, taskRepository } from "./taskRepository";
 import { taskAttachments } from "@/src/db/schema";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
 import { groupRepository, IGroupRepository } from "../../clases/services/GroupRepository";
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
+import { getCorrectDate } from "../helpers/getCorrectDate";
 
 class TaskService {
     constructor(
@@ -17,21 +18,22 @@ class TaskService {
     async createTask(taskInput: TaskInsert){
         try {
             const task = await this.taskRepository.insertTask(taskInput);
+            const infoTask = await this.taskRepository.selectTaskByTaksId(task.id)
             //Creamos notificación
             const group = await this.groupRepository.selectGroupByClaseId(task.claseId);
             const listStudents = await this.studentsRepository.selectStudentsInGroup(group.id);
             if(listStudents.length > 0) {
                 const notificationsPayload = listStudents.filter((student)=> student.user_id !== null).map((student)=>({
                     userId: student.user_id as string,
-                    title: `Nueva tarea: ${task.title}`,
-                    message: `Se ha publicado una nueva tarea` ,
+                    title: `Nueva tarea: ${infoTask.subjectName}`,
+                    message: `${infoTask.title} - ${task.description}. Fecha de entrega: ${getCorrectDate(task.fechaEntrega)}` ,
                     type: 'task_created' as const ,
                     isRead: false,
                     redirectUrl: '/dashboard/tareas',
                 }))
                 // Insertamos todas las notificaciones en un solo query a la base de datos
                 if(notificationsPayload.length > 0) {
-                    const notifications = await this.notificationRepository.insertMany(notificationsPayload);
+                    await this.notificationRepository.insertMany(notificationsPayload);
                 }
             }
             return { success: true, message: 'La tarea fue creada' }        
@@ -144,13 +146,13 @@ class TaskService {
         try {1
             const exists = await this.taskExists(taskGraded.taskSubmissionId);
             if(!exists.success) {
-                return { success: false, message: 'No se encontró una tarea con ese ID' }
+                return { success: false, message: 'No se encontró una tarea con ese ID', task: {} as TaskSubmissionSelect }
             }
-            await this.taskRepository.setTaskGraded(taskGraded);
-            return { success: true, message: 'Tarea editada con éxito' }
+            const task = await this.taskRepository.setTaskGraded(taskGraded);
+            return { success: true, message: 'Tarea editada con éxito', task }
         } catch (error) {
             console.error(error);
-            return { success: false, message: 'Se produjo un error al editar la tarea, vuelva a intentarlo' }
+            return { success: false, message: 'Se produjo un error al editar la tarea, vuelva a intentarlo', task: {} as TaskSubmissionSelect }
         }
     }
 }

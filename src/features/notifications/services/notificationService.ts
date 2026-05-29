@@ -1,12 +1,13 @@
 import { IUsersRepository, usersRepository } from "../../clases/services/UsersRepository";
-import { TaskDetails } from "../../tasks/types/types";
+import { ITaskRepository, taskRepository } from "../../tasks/services/taskRepository";
+import { SubmitTasksStudents, TaskDetails, TaskSubmissionSelect } from "../../tasks/types/types";
 import { NotificationSelect } from "../types/types";
 import { INotificationRepository, notificationRepository } from "./notificationRepository";
 
 class NotificationService{
     constructor(
         private notificationRepository : INotificationRepository,
-        private usersRepository: IUsersRepository
+        private taskRepository: ITaskRepository
     ){}
 
     async getCountNotificationsUser(userId: string) {
@@ -25,10 +26,10 @@ class NotificationService{
         }
     }
 
-    async readNotification(userId: string) {
+    async readAllNotification(userId: string) {
         try {
-            await this.notificationRepository.setReadNotification(userId);
-            return { success: true, message: '' }
+            await this.notificationRepository.setReadAllNotification(userId);
+            return { success: true, message: 'Se han limpiado tus notificaciones' }
         } catch (error) {
             return { success: false, message: 'Error al encontrar la notificación' }
         }
@@ -49,6 +50,31 @@ class NotificationService{
             return { success: false, message: 'Error al crear la notificación' }
         }
     }
+
+    async readSingleNotification(notificationId: string) {
+        try {
+            await this.notificationRepository.setReadSingleNotification(notificationId);
+            return { success: true, message: '' }
+        } catch (error) {
+            return { success: false, message: 'Error al crear la notificación' }
+        }
+    }
+
+    async notificationGradedTask(taskSubmission: TaskSubmissionSelect, userId: string) {
+        try {
+            await this.notificationRepository.insertNotificationGradedTask({
+                userId: userId,
+                title: `Tarea Calificada: ${taskSubmission.calificacion}`,
+                message: `Tu tarea ya fue calificada. Comentarios: ${taskSubmission.feedback?? 'sin comnetarios'}` ,
+                type: 'task_created' as const ,
+                isRead: false,
+                redirectUrl: `/dashboard/tareas/`,
+            });
+            return { success: true, message: '' }
+        } catch (error) {
+            return { success: false, message: 'Error al crear la notificación' }
+        } 
+    }
 }
 
-export const notificationService = new NotificationService(notificationRepository, usersRepository);
+export const notificationService = new NotificationService(notificationRepository, taskRepository);

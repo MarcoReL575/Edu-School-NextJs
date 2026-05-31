@@ -1,13 +1,13 @@
-import { IUsersRepository, usersRepository } from "../../clases/services/UsersRepository";
-import { ITaskRepository, taskRepository } from "../../tasks/services/taskRepository";
-import { SubmitTasksStudents, TaskDetails, TaskSubmissionSelect } from "../../tasks/types/types";
-import { NotificationSelect } from "../types/types";
+import { taskRepository } from "../../tasks/services/taskRepository";
+import { TaskDetails, TaskSubmissionSelect } from "../../tasks/types/types";
+import { NotificationInsert, NotificationSelect } from "../types/types";
+import { INotificationPublisher, notificationPusher } from "./NotificationPusher";
 import { INotificationRepository, notificationRepository } from "./notificationRepository";
 
 class NotificationService{
     constructor(
         private notificationRepository : INotificationRepository,
-        private taskRepository: ITaskRepository
+        private notificationPusher: INotificationPublisher
     ){}
 
     async getCountNotificationsUser(userId: string) {
@@ -37,7 +37,7 @@ class NotificationService{
 
     async notificationSubmittedTask(taskInfo: TaskDetails) {
         try {
-            await this.notificationRepository.insertNotificationSubmittedTask({
+            const notification = await this.notificationRepository.insertNotificationSubmittedTask({
                 userId: taskInfo.teacherUserId?? '',
                 title: `Tarea Entregada: ${taskInfo.taskTitle}`,
                 message: `Se ha recibido la tarea: ${taskInfo.subjectName} - ${taskInfo.taskDescription}` ,
@@ -45,6 +45,7 @@ class NotificationService{
                 isRead: false,
                 redirectUrl: `/dashboard/tareas/${taskInfo.taskId}`,
             });
+            await this.notificationPusher.notify(notification);
         } catch (error) {
             console.log(error);
             return { success: false, message: 'Error al crear la notificación' }
@@ -70,11 +71,17 @@ class NotificationService{
                 isRead: false,
                 redirectUrl: `/dashboard/tareas/`,
             });
+
+            // await this.notificationPusher.notify(notification);
             return { success: true, message: '' }
         } catch (error) {
             return { success: false, message: 'Error al crear la notificación' }
         } 
     }
+
+    async createAndNotify(data: NotificationInsert) {
+
+    }
 }
 
-export const notificationService = new NotificationService(notificationRepository, taskRepository);
+export const notificationService = new NotificationService(notificationRepository, notificationPusher);

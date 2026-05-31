@@ -1,3 +1,4 @@
+import { notificationService } from "@/src/features/notifications/services/notificationService";
 import { requireAuth } from "@/src/lib/auth-server";
 import { AppSidebar } from "@/src/shared/components/dashboard/app-sidebar";
 import { SiteHeader } from "@/src/shared/components/dashboard/SiteHeader";
@@ -8,6 +9,8 @@ export default async function DashboardLayout({ children, }: { children: React.R
 
   const { session } = await requireAuth();
   if(!session?.user) redirect('/auth/signin');
+
+  const notifications = await notificationService.getCountNotificationsUser(session.user.id);
 
   return (
     <>
@@ -21,7 +24,7 @@ export default async function DashboardLayout({ children, }: { children: React.R
       >
         <AppSidebar userRole ={session.user.role} variant="inset" />
         <SidebarInset>
-          <SiteHeader session={session} />
+          <SiteHeader session={session} notifications={notifications} />
           <div className="flex flex-1 flex-col">
             <div className="@container/main flex flex-1 flex-col gap-2">
               <div className="flex flex-col gap-4 p-4 md:gap-6 md:py-6">

@@ -6,7 +6,6 @@ import { Button } from "@/src/shared/components/ui/button"
 import { clearAllNotificationAction } from "../actions/notificationsActions"
 import { useSession } from "@/src/lib/auth-client";
 
-
 export default function ButtonClearAllNotification() {
     const { data } = useSession();
     const queryClient = useQueryClient();
@@ -18,7 +17,8 @@ export default function ButtonClearAllNotification() {
         }
         if(success){
             toast.success(message);
-            queryClient.invalidateQueries({ queryKey: ['notifications', data?.user.id]})
+            queryClient.invalidateQueries({ queryKey: ['notifications', data?.user.id]});
+            queryClient.invalidateQueries({ queryKey: ['notifications-count', data?.user.id] });
         }
     }
 

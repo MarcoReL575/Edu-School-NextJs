@@ -45,3 +45,11 @@ export async function getNotificationsAction() {
     return await notificationService.getUserNotifications(session.user.id);
 }
 
+export async function getCountNotificationsAction() {
+    const { session } = await requireAuth();
+    if(!session.user.id) return { success: false, message: 'El usuario no cuenta con los permisos necesarios', notifications: 0 };
+
+    const notifications = await notificationService.getCountNotificationsUser(session.user.id);
+    return { success: true, message: '', notifications };
+
+}

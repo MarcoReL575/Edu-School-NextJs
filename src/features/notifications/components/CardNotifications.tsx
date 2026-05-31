@@ -6,6 +6,8 @@ import { formatDateNotification } from "@/src/shared/utils/dateNotification"
 import { NotificationSelect } from "../types/types"
 import { clearSingleNotificationAction } from "../actions/notificationsActions"
 import clsx from "clsx"
+import { useQueryClient } from "@tanstack/react-query"
+import { useSession } from "@/src/lib/auth-client"
 
 type Props = {
   notification: NotificationSelect
@@ -13,10 +15,16 @@ type Props = {
 
 export default function CardNotifications({ notification }: Props) {
 
+  const queryClient = useQueryClient();
+  const { data } = useSession();
+
   const handleClearNotification = async()=> {
     const { success, message } = await clearSingleNotificationAction(notification.id);
     if(!success) {
       toast.error(message);
+    }
+    if(success){
+      queryClient.invalidateQueries({ queryKey: ['notifications-count', data?.user.id] });
     }
   }
 

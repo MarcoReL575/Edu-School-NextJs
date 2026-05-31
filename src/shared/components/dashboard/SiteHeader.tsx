@@ -10,6 +10,8 @@ import { FullSession } from "@/src/lib/auth-server";
 import { DynamicBreadcrumbs } from "./DynamicBreadcrumbs";
 import { useEffect, useState } from "react";
 import { NotificationSelect } from "@/src/features/notifications/types/types";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { getCountNotificationsAction } from "@/src/features/notifications/actions/notificationsActions";
 
 type Props = {
   session: FullSession;
@@ -18,7 +20,12 @@ type Props = {
 
 export function SiteHeader({ session, notifications }: Props) {
 
-  const [totalNotifications, setTotalNotifications] = useState(notifications);
+  const queryClient = useQueryClient();
+
+  const { data: totalCountNotifications, isLoading, isError} = useQuery({
+    queryKey: ['notifications-count', session.user.id],
+    queryFn: ()=> getCountNotificationsAction(),
+  })
 
   useEffect(()=> {
     const pusher = new Pusher(process.env.NEXT_PUBLIC_PUSHER_KEY!, {
@@ -28,7 +35,7 @@ export function SiteHeader({ session, notifications }: Props) {
     const id = `notifications-channel-${session.user.id}`;
     const channel = pusher.subscribe(id)
     channel.bind('new-notification', ()=> {
-      setTotalNotifications((prev)=> prev + 1);
+      queryClient.invalidateQueries({ queryKey: ['notifications-count', session.user.id] })
     })
 
     return ()=> {
@@ -37,6 +44,9 @@ export function SiteHeader({ session, notifications }: Props) {
     }
 
   }, [session]);
+
+  if(isLoading) return <div>Cargando notificaciones...</div>
+  if(isError || totalCountNotifications === undefined) return <div>Error al cargar las notificaciones</div>
   
 
   return (
@@ -54,9 +64,9 @@ export function SiteHeader({ session, notifications }: Props) {
             className=" relative rounded-full flex items-center justify-center p-1 border border-black cursor-pointer hover:bg-gray-100"
           >
             <IconBell />
-            { totalNotifications > 0 && 
+            { totalCountNotifications.notifications > 0 && 
               <div className="absolute text-sm font-semibold -right-2 -top-2 rounded-full px-1.5 flex items-center justify-center bg-red-500 text-white">
-                {totalNotifications}
+                {totalCountNotifications.notifications}
               </div>
             }
           </Link>

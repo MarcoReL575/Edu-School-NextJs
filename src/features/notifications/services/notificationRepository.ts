@@ -10,7 +10,7 @@ export interface INotificationRepository {
     setReadAllNotification(userId: string): Promise<void>;
     insertNotificationSubmittedTask(notification: NotificationInsert): Promise<NotificationSelect>;
     setReadSingleNotification(notificationId: string): Promise<void>;
-    insertNotificationGradedTask(notification: NotificationInsert): Promise<void>;
+    insertNotificationGradedTask(notification: NotificationInsert): Promise<NotificationSelect>;
 }
 
 class NotificationRepository implements INotificationRepository {
@@ -66,10 +66,12 @@ class NotificationRepository implements INotificationRepository {
             .where(eq(notifications.id, notificationId))
     }
 
-    async insertNotificationGradedTask(notification: NotificationInsert): Promise<void> {
-        await db
+    async insertNotificationGradedTask(notification: NotificationInsert): Promise<NotificationSelect> {
+        const [notify] = await db
             .insert(notifications)
             .values(notification)
+            .returning()
+        return notify;
     }
 }
 

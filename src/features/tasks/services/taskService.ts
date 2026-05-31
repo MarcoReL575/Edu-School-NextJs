@@ -117,10 +117,10 @@ class TaskService {
 
     async gradeTask(submissionId: string, grade: number, feedback: string) {
         try {
-            await this.taskRepository.setTaskSubmission(submissionId, grade, feedback);
-            return { success: true, message: 'Tarea calificada con éxito' }
+            const task = await this.taskRepository.setTaskSubmission(submissionId, grade, feedback);
+            return { success: true, message: 'Tarea calificada con éxito', task  }
         } catch (error) {
-            return { success: false, message: 'Se produjo un error al calificar la tarea, vuelva a intentarlo' }
+            return { success: false, message: 'Se produjo un error al calificar la tarea, vuelva a intentarlo', task: {} as TaskSubmissionSelect }
         }
     }
 

@@ -63,7 +63,7 @@ class NotificationService{
 
     async notificationGradedTask(taskSubmission: TaskSubmissionSelect, userId: string) {
         try {
-            await this.notificationRepository.insertNotificationGradedTask({
+            const notification = await this.notificationRepository.insertNotificationGradedTask({
                 userId: userId,
                 title: `Tarea Calificada: ${taskSubmission.calificacion}`,
                 message: `Tu tarea ya fue calificada. Comentarios: ${taskSubmission.feedback?? 'sin comnetarios'}` ,
@@ -72,7 +72,7 @@ class NotificationService{
                 redirectUrl: `/dashboard/tareas/`,
             });
 
-            // await this.notificationPusher.notify(notification);
+            await this.notificationPusher.notify(notification);
             return { success: true, message: '' }
         } catch (error) {
             return { success: false, message: 'Error al crear la notificación' }

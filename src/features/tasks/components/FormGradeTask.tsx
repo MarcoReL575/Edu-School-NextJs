@@ -7,10 +7,9 @@ import { gradeTaskAction, updateTaskGradedAction } from '../actions/tasksAction'
 import { useTasksStore } from '../store/useTasksStore'
 import { Form, FormError, FormInput, FormLabel, FormSubmit } from '@/src/shared/components/form'
 import { GradeTaskSchema } from '../schemas/schemas';
-import { GradeTasks } from '../types/types';
 import { useModalStore } from '@/src/shared/store/useModalStore';
 import { notificationGradedTask } from '../../notifications/actions/notificationsActions';
-import { task } from 'better-auth/react';
+import { GradeTasks } from '../types/types';
 
 export default function FormGradeTask() {
   const taskGraded = useTasksStore((state)=> state.taskGraded);
@@ -52,11 +51,12 @@ export default function FormGradeTask() {
     }
     if(!taskGraded.grade) {  
       const feedback = input.feedback || '';
-      const { success, message } = await gradeTaskAction(input.taskSubmissionId, input.grade, feedback);
+      const { success, message, task } = await gradeTaskAction(input.taskSubmissionId, input.grade, feedback);
       if(!success) {
         toast.error(message);
       }
       if(success) {
+        await notificationGradedTask(task);
         toast.success(message);
         reset(); 
         closeModal();

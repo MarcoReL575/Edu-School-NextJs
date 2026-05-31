@@ -46,7 +46,7 @@ export async function taskStudentAction(groupId: string, taskId:number) {
 
 export async function gradeTaskAction(submissionId: string, grade: number, feedback: string) {
     const { session } = await requireAuth();
-    if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas' };
+    if(session.user.role !== 'maestro') return { success: false, message: 'El usuariio no cuenta con permisos para calificar tareas', task: {} as TaskSubmissionSelect };
 
     return await taskService.gradeTask(submissionId, grade, feedback);
 }

@@ -13,7 +13,7 @@ export interface ITaskRepository{
     insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect>;
     selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]>;
     selectGroupIdByTaskId(taskId: number): Promise<string>;
-    setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<void>;
+    setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<TaskSubmissionSelect>;
     selectTaskGraded(submissionId: string): Promise<GradeTasks>;
     setTaskGraded(task: GradeTasks): Promise<TaskSubmissionSelect>;
 }
@@ -191,8 +191,8 @@ class TaskRepository implements ITaskRepository {
         return result.groupId;
     }
 
-    async setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<void> {
-        await db
+    async setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<TaskSubmissionSelect> {
+        const [setTask] = await db
             .update(taskSubmission)
             .set({
                 calificacion: grade.toString(),
@@ -200,6 +200,8 @@ class TaskRepository implements ITaskRepository {
                 status: 'calificada'
             })
             .where(eq(taskSubmission.id, submissionId))
+            .returning()
+        return setTask;
     }
 
     async selectTaskGraded(submissionId: string): Promise<GradeTasks> {

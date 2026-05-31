@@ -1,10 +1,11 @@
 import { Metadata } from "next";
 import { redirect } from "next/navigation";
+import { HydrationBoundary, QueryClient, dehydrate } from "@tanstack/react-query";
 import ButtonClearAllNotification from "@/src/features/notifications/components/ButtonClearAllNotification";
-import CardNotifications from "@/src/features/notifications/components/CardNotifications";
-import { notificationService } from "@/src/features/notifications/services/notificationService"
 import { requireAuth } from "@/src/lib/auth-server"
 import Heading from "@/src/shared/components/typography/Heading";
+import GridNotifications from "@/src/features/notifications/components/GridNotifications";
+import { getNotificationsAction } from "@/src/features/notifications/actions/notificationsActions";
 
 const title = 'Mis Notificaciones'
 
@@ -14,25 +15,22 @@ export const metadata: Metadata = {
 
 export default async function NotificationsPage() {
 
+  const queryClient = new QueryClient();
   const { session } = await requireAuth();
-  if(!session.user.id) redirect('/auth/signin');
+  if (!session.user.id) redirect('/auth/signin');
 
-  const notifications = await notificationService.getUserNotifications(session.user.id);
+  await queryClient.prefetchQuery({
+    queryKey: ['notifications', session.user.id],
+    queryFn: ()=> getNotificationsAction(),
+  })
 
   return (
     <>
       <Heading level={2} className="mb-10">{title}</Heading>
       <ButtonClearAllNotification />
-      <section className="grid grid-cols-1 px-10 gap-y-5">
-        { notifications.length > 0  
-          ?  notifications.map((notification)=> (
-              <CardNotifications key={notification.id} notification={notification} />
-            ))
-          : <div className="text-center text-gray-400 font-semibold">
-              Aún no tienes notificaciones
-            </div>
-      }
-      </section>
+      <HydrationBoundary state={dehydrate(queryClient)}>
+        <GridNotifications session={session} />
+      </HydrationBoundary>
     </>
   )
 }

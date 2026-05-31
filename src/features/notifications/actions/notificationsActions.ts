@@ -4,6 +4,7 @@ import { requireAuth } from "@/src/lib/auth-server";
 import { notificationService } from "../services/notificationService";
 import { SubmitTasksStudents, TaskDetails, TaskSubmissionSelect } from "../../tasks/types/types";
 import { studentsService } from "../../clases/services/StudentsService";
+import { NotificationSelect } from "../types/types";
 
 export async function clearAllNotificationAction() {
     const { session } = await requireAuth();
@@ -36,4 +37,11 @@ export async function notificationGradedTask(taskSubmission: TaskSubmissionSelec
 }
 
 
+
+export async function getNotificationsAction() {
+    const { session } = await requireAuth();
+    if(!session.user.id) return {} as NotificationSelect[]
+
+    return await notificationService.getUserNotifications(session.user.id);
+}
 

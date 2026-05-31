@@ -1,11 +1,15 @@
 'use client'
 
+import toast from "react-hot-toast";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/src/shared/components/ui/button"
 import { clearAllNotificationAction } from "../actions/notificationsActions"
-import toast from "react-hot-toast";
-import { redirect } from "next/navigation";
+import { useSession } from "@/src/lib/auth-client";
+
 
 export default function ButtonClearAllNotification() {
+    const { data } = useSession();
+    const queryClient = useQueryClient();
 
     const handleClearAllNotifications = async()=> {
         const { success, message } = await clearAllNotificationAction();
@@ -14,7 +18,7 @@ export default function ButtonClearAllNotification() {
         }
         if(success){
             toast.success(message);
-            redirect('/dashboard/notifications');
+            queryClient.invalidateQueries({ queryKey: ['notifications', data?.user.id]})
         }
     }
 

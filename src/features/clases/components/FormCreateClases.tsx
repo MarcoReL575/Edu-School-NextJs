@@ -12,9 +12,11 @@ import SelectSubjects from "./SelectSubjects";
 import SelectGroups from "./SelectGroups";
 import { redirect } from "next/navigation";
 import { createClassAction } from "../actions/clasesAction";
+import { useModalStore } from "@/src/shared/store/useModalStore";
 
 
 export default function FormCreateClases() {
+  const closeModal = useModalStore((state)=> state.closeModal)
 
   const methods = useForm<ClasesInputType>({
     resolver: zodResolver(CreateClasesSchema),
@@ -33,7 +35,7 @@ export default function FormCreateClases() {
     if(success){
       toast.success(message);
       methods.reset();
-      // setCloseModal();
+      closeModal();
       redirect('/dashboard/clases');
     }
   };

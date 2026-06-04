@@ -11,6 +11,7 @@ export interface IGroupRepository {
     editGroupStudnet(studentId: string, groupId: string): Promise<void>;
     selectActualGroupByStudentId(groupId: string): Promise<GroupSelectType>;
     selectGroupByClaseId(claseId: string): Promise<GroupSelectType>;
+    selectGroup(groupId: string): Promise <GroupSelectType>;
 }
 
 class GroupRepository implements IGroupRepository {
@@ -73,6 +74,14 @@ class GroupRepository implements IGroupRepository {
             .from(group)
             .innerJoin(clases, eq(clases.groupId, group.id))
             .where(eq(clases.id, claseId))
+        return groupInfo;
+    }
+
+    async selectGroup(groupId: string): Promise<GroupSelectType> {
+        const [groupInfo] = await db
+            .select()
+            .from(group)
+            .where(eq(group.id, groupId))
         return groupInfo;
     }
 }

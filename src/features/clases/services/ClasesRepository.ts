@@ -6,7 +6,7 @@ import { TeachersClases, TeachersClasesAllInfo } from "../../teachers/types/type
 
 
 export interface IClasesRepository {
-    createClase(input: ClasesInsertType): Promise<void>;
+    createClase(input: ClasesInsertType, slug: string): Promise<void>;
     findClaseById(subjectId: string, groupId: string): Promise<boolean>;
     selectAllClases(): Promise<ClasesInfoComplete[]>;
     selectClaseById(claseId: string): Promise<ClasesInfoComplete>;
@@ -23,12 +23,13 @@ export interface IClasesRepository {
 
 class ClasesRepository implements IClasesRepository {
     
-    async createClase(input: ClasesInsertType): Promise<void> {
+    async createClase(input: ClasesInsertType, slug: string): Promise<void> {
         const { groupId, subjectId, teacherId } = input;
         await db
             .insert(clases)
             .values({
                 groupId,
+                slug,
                 subjectId,
                 teacherId
             })

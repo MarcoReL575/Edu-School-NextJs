@@ -8,13 +8,10 @@ type Props = {
 }
 
 export default async function MisClasesTechaerPage({ session }: Props) {
-  console.log(session.user)
-  
   const teacherInfo = await teacherService.getTeacherByUserId(session.user.id);
   if(!teacherInfo.success || teacherInfo.teacher.userId === null) return <div>Error al cargar las materias del maestro</div>;
 
   const listOfClases = await teacherService.getTeachersClases(teacherInfo.teacher.id);
-  console.log(listOfClases)
 
   return (
     <>

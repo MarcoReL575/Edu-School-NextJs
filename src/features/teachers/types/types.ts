@@ -5,6 +5,7 @@ export type TeachersInsertType = typeof teachers.$inferInsert;
 
 export type TeachersClases = {
     id: string;
+    slug: string | null;
     subjectName: string;
     group: string;
     grade: string;
@@ -14,6 +15,7 @@ export type TeachersClases = {
 
 export type TeachersClasesAllInfo = {
     id: string;
+    slug: string | null;
     subjectName: string;
     grade: string;
     group: string;

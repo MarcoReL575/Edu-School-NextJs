@@ -12,7 +12,7 @@ export interface IClasesRepository {
     selectClaseById(claseId: string): Promise<ClasesInfoComplete>;
     selectClasesByGroup(groupId: string): Promise<ClassesByGroup[]>;
     selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]>;
-    selectAllInfoTeachersClases(claseId: string): Promise<TeachersClasesAllInfo>
+    selectAllInfoTeachersClases(slug: string): Promise<TeachersClasesAllInfo>
     selectHorarioById(horarioId: string): Promise<HorariosSelectType>;
     selectHorarios(claseId: string): Promise<HorariosSelectType[]>;
     deleteHorario(horarioId: string): Promise<void>;
@@ -101,10 +101,11 @@ class ClasesRepository implements IClasesRepository {
         const clasesList = await db
             .select({
                 id: clases.id,
+                slug: clases.slug,
                 subjectName: subjects.name,
                 grade: group.grade,
                 group: group.group,
-                level: group.level
+                level: group.level,
             })
             .from(clases)
             .where(eq(clases.teacherId, teacherId))
@@ -113,10 +114,11 @@ class ClasesRepository implements IClasesRepository {
         return clasesList;
     }
 
-    async selectAllInfoTeachersClases(claseId: string): Promise<TeachersClasesAllInfo> {
+    async selectAllInfoTeachersClases(slug: string): Promise<TeachersClasesAllInfo> {
         const [teachersClases] = await db
             .select({
                 id: clases.id,
+                slug: clases.slug,
                 subjectName: subjects.name,
                 grade: group.grade,
                 group: group.group,
@@ -128,7 +130,7 @@ class ClasesRepository implements IClasesRepository {
             .innerJoin(subjects, eq(subjects.id, clases.subjectId))
             .innerJoin(group, eq(group.id, clases.groupId))
             .innerJoin(teachers, eq(teachers.id, clases.teacherId))
-            .where(eq(clases.id, claseId))
+            .where(eq(clases.slug, slug))
         return teachersClases
     }
 

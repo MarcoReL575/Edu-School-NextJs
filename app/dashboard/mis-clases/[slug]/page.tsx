@@ -4,14 +4,13 @@ import Heading from "@/src/shared/components/typography/Heading";
 import { IconClockHour3 } from "@tabler/icons-react";
 
 type Props = {
-    params: Promise<{ id: string }>
+    params: Promise<{ slug: string }>
 }
 
 export default async function ClasePage({ params }: Props) {
-    const { id } = await params;
-    const { subjectName, grade, group, level, id: claseId } = await teacherService.getAllInfoClase(id);
-
-    const horariosList = await clasesServices.getHorarios(id);
+    const { slug } = await params;
+    const { subjectName, grade, group, level, id: claseId } = await teacherService.getAllInfoClase(slug);
+    const horariosList = await clasesServices.getHorarios(claseId);
     
   return (
     <>

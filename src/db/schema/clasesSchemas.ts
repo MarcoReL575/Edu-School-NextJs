@@ -6,6 +6,7 @@ import { group } from "./groupSchema";
 export const clases = pgTable('clases', {
     id: uuid("id").primaryKey().defaultRandom(),
     
+    slug: text("slug").unique(),
     groupId: uuid('group_id').notNull().references(()=> group.id),
     subjectId: uuid('subject_id').notNull().references(()=> subjects.id),
     teacherId: uuid('teacher_id').notNull().references(()=> teachers.id),

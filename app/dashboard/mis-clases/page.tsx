@@ -12,7 +12,6 @@ export const metadata: Metadata = {
 export default async function MisClases() {
   const { session } = await requireAuth();
   if(!session) redirect('/auth/signin');
-  console.log(session.user.role);
 
   return (
     <div className="flex flex-col space-y-4 w-full max-w-7xl mx-auto">

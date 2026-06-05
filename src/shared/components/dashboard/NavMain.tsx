@@ -13,7 +13,7 @@ const items = [
   { title: "Tareas", url: "tareas", icon: IconNotes },
   { title: "Trabajos", url: "#", icon: IconNotes },
   { title: "Examenes", url: "#", icon: IconClipboardText },
-  { title: "Asistencias", url: "#", icon: IconUserCheck },
+  { title: "Asistencias", url: "attendance", icon: IconUserCheck },
   { title: "Resultados", url: "#", icon: IconChecklist },
   { title: "Eventos", url: "#", icon: IconCalendar },
   { title: "Mensajes", url: "#", icon: IconMessage },

@@ -1,0 +1,57 @@
+import { db } from "@/src/db";
+import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
+import { StatusAttendance } from "../types/types";
+import { IAttendanceRepository, attendanceRepository } from "./attendanceRepository";
+import { IUsersRepository, usersRepository } from "../../clases/services/UsersRepository";
+import { NotificationType } from "../../notifications/types/types";
+
+
+
+
+class AttendanceService {
+    constructor(
+        private attendanceRepository: IAttendanceRepository,
+        private notificationRepository: INotificationRepository,
+        private usersRepository: IUsersRepository,
+    ){}
+
+    async takeAttendance(attendance: Record<string, boolean>, claseId: string) {
+        return await db.transaction(async (tx) => {
+            try {
+                const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
+                const studentIds = Object.keys(attendance);
+                const studentsAttendance = Object.entries(attendance).map(([studentId, isPresent]) => ({
+                    studentId: studentId,
+                    claseId: claseId,
+                    date: today,
+                    status: isPresent ? "asistencia" : "falta" as StatusAttendance ,
+                    remarks: "" 
+                }));
+                await this.attendanceRepository.insertAttendance(tx, studentsAttendance);
+
+                //Obtener alumnos y notificar
+                const studentsWithUsers = await this.usersRepository.selectUsersByStudentsId(tx, studentIds);
+                const notifications = studentsWithUsers
+                    .filter((student) => student.userId)
+                    .map((student) => ({
+                        userId: student.userId!,
+                        title: "Asistencia",
+                        message: "Se ha registrado tu asistencia",
+                        type: "attendance" as NotificationType,
+                        isRead: false,
+                        redirectUrl: "/dashboard/attendance"
+                    }));
+
+                if (notifications.length > 0) {
+                    await this.notificationRepository.insertManyTransaction(tx, notifications);
+                }
+
+                return { success: true, message: 'Asistencia guardada' }
+            } catch (error) {
+                return { success: false, message: 'Error al guardar las asistencias' }
+            }
+        })
+    }
+}
+
+export const attendanceService = new AttendanceService(attendanceRepository, notificationRepository, usersRepository);

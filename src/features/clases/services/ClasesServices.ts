@@ -1,5 +1,5 @@
 import { clasesRepository, IClasesRepository } from "./ClasesRepository";
-import { ClasesInsertType, HorariosInsertType, HorariosSelectType } from "../types/types";
+import { ClasesInfoByAttendance, ClasesInsertType, ClasesSelectType, HorariosInsertType, HorariosSelectType } from "../types/types";
 import { ISubjectsRepository, subjectsRepository } from "./SubjectsRepository";
 import { IGroupRepository, groupRepository } from "./GroupRepository";
 
@@ -76,7 +76,23 @@ class ClasesServices {
         return await this.clasesRepository.selectHorarios(claseId);
     }
 
+    async getInfoClasesAttendance(slug: string) {
+        try {
+            const infoClases = await this.clasesRepository.selectClaseAttendance(slug);
+            return { success: true, message: '', infoClases }
+        } catch (error) {
+            return { success: false, message: 'Error al obtener la información', infoClases: {} as ClasesInfoByAttendance }
+        }
+    }
 
+    async getInfoClaseBySlug(slug: string) {
+        try {
+            const clase = await this.clasesRepository.selectClaseBySlug(slug);
+            return { success: true, message: '', clase }
+        } catch (error) {
+            return { success: true, message: '', clase: {} as ClasesSelectType }
+        }
+    }
 }
 
 export const clasesServices = new ClasesServices(clasesRepository, subjectsRepository, groupRepository);

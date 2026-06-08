@@ -99,3 +99,17 @@ export type ClassesByGroup = {
     teachersName: string | null;
     teachersLastname: string | null
 }
+
+export type AttendanceStatus = "asistencia" | "falta" | "retardo" | "justificado";
+export type StudentAttendance = StudentsSelectType & ({
+    attendance: AttendanceStatus
+})
+
+
+export type ClasesInfoByAttendance = {
+    subjectName: string;
+    grade: string;
+    group: string;
+    level: string;
+    students: StudentAttendance[];
+} 

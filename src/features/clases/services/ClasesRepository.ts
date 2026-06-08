@@ -1,6 +1,6 @@
 import { db } from "@/src/db"
 import { clases, group, horarios, subjects, teachers } from "@/src/db/schema"
-import { ClasesInfoComplete, ClasesInsertType, ClasesSelectType, ClassesByGroup, GroupCompleteInfo, HorariosClases, HorariosInsertType, HorariosSelectType } from "../types/types"
+import { ClasesInfoByAttendance, ClasesInfoComplete, ClasesInsertType, ClasesSelectType, ClassesByGroup, GroupCompleteInfo, HorariosInsertType, HorariosSelectType } from "../types/types"
 import { asc, eq } from "drizzle-orm";
 import { TeachersClases, TeachersClasesAllInfo } from "../../teachers/types/types";
 
@@ -10,6 +10,7 @@ export interface IClasesRepository {
     findClaseById(subjectId: string, groupId: string): Promise<boolean>;
     selectAllClases(): Promise<ClasesInfoComplete[]>;
     selectClaseById(claseId: string): Promise<ClasesInfoComplete>;
+    selectClaseAttendance(slug: string): Promise<ClasesInfoByAttendance | null>;
     selectClasesByGroup(groupId: string): Promise<ClassesByGroup[]>;
     selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]>;
     selectAllInfoTeachersClases(slug: string): Promise<TeachersClasesAllInfo>
@@ -19,6 +20,7 @@ export interface IClasesRepository {
     createHorario(input: HorariosInsertType): Promise<void>;
     setHorario(input: HorariosSelectType): Promise<void>;
     selectAllInfoByGroup(groupId: string): Promise<GroupCompleteInfo[]>;
+    selectClaseBySlug(slug: string): Promise<ClasesSelectType>;
 }
 
 class ClasesRepository implements IClasesRepository {
@@ -81,6 +83,41 @@ class ClasesRepository implements IClasesRepository {
             .innerJoin(group, eq(clases.groupId, group.id) )
             .where( eq(clases.id, claseId) )
         return result
+    }
+
+    async selectClaseAttendance(slug: string): Promise<ClasesInfoByAttendance | null> {
+        const result = await db.query.clases.findFirst({
+            where: eq(clases.slug, slug),
+            with: {
+                group: {
+                    with: {
+                        students: {
+                            with: {
+                                attendance: {
+                                    columns: {
+                                        status: true
+                                    }
+                                }
+                            }
+                        }
+                    },
+                },
+                subject: true,
+            }
+        });
+       
+       if(!result) return null
+
+       return {
+            subjectName: result.subject.name, 
+            grade: result.group.grade,
+            group: result.group.group,
+            level: result.group.level,
+            students: result.group.students.map((student)=> ({
+                ...student,
+                attendance: student.attendance?.status ?? 'falta'
+            }))
+        };
     }
 
     async selectClasesByGroup(groupId: string): Promise<ClassesByGroup[]> {
@@ -177,7 +214,6 @@ class ClasesRepository implements IClasesRepository {
     }   
 
     async setHorario(input: HorariosSelectType): Promise<void> {
-        console.log(input)
         const { dayOfWeek, startTime, endTime, claseId } = input;
         await db
             .update(horarios)
@@ -210,8 +246,15 @@ class ClasesRepository implements IClasesRepository {
             .innerJoin(teachers, eq(teachers.id, clases.teacherId))
             .where(eq(clases.groupId, groupId))
             .orderBy(asc(horarios.dayOfWeek), asc (horarios.startTime))
-        
-            return groupInfo
+        return groupInfo
+    }
+
+    async selectClaseBySlug(slug: string): Promise<ClasesSelectType> {
+        const [result] = await db 
+            .select()
+            .from(clases)
+            .where(eq(clases.slug, slug))
+        return result
     }
 
 }

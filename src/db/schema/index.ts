@@ -5,6 +5,7 @@ export * from "./groupSchema"
 export * from './horariosSchema'
 export * from './notifications-schema'
 export * from "./parentsSchema"
+export * from "./schema"
 export * from "./studentsSchema"
 export * from "./subjectsSchema"
 export * from "./tasks-schema"

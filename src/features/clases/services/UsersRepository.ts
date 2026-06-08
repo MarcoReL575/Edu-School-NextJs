@@ -1,13 +1,14 @@
+import { eq, inArray } from "drizzle-orm";
 import { db } from "@/src/db";
 import { students, teachers, user } from "@/src/db/schema";
 import { StudentsInfo, UserSelectType } from "../types/types";
-import { eq } from "drizzle-orm";
 import { TeachersSelectType } from "../../teachers/types/types";
 
 export interface IUsersRepository{
     selectAllTeachers(): Promise<TeachersSelectType[]>;
     selectInfoStudents(userId: string): Promise<StudentsInfo>;
-    selectUser(userId: string): Promise<UserSelectType>
+    selectUser(userId: string): Promise<UserSelectType>;
+    selectUsersByStudentsId(tx: any, studentIds: string[]): Promise<{ userId: string | null }[]>;
 }
 
 class UsersRepository implements IUsersRepository {
@@ -45,6 +46,13 @@ class UsersRepository implements IUsersRepository {
             .from(user)
             .where(eq(user.id, userId))
         return userExist;
+    }
+
+    async selectUsersByStudentsId(tx: any, studentIds: string[]): Promise<{ userId: string | null; }[]> {
+        return await tx
+            .select({ userId: students.user_id })
+            .from(students)
+            .where(inArray(students.id, studentIds));
     }
 }
 

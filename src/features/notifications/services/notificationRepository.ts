@@ -5,6 +5,7 @@ import { and, asc, desc, eq } from "drizzle-orm"
 
 export interface INotificationRepository {
     insertMany(notification: NotificationInsert[]): Promise<NotificationSelect[]>;
+    insertManyTransaction(tx: any, notification: NotificationInsert[]): Promise<NotificationSelect[]>
     selectByUser(userId: string): Promise<NotificationSelect[]>;
     selectCountByUser(userId: string): Promise<number>;
     setReadAllNotification(userId: string): Promise<void>;
@@ -16,6 +17,14 @@ export interface INotificationRepository {
 class NotificationRepository implements INotificationRepository {
     async insertMany(notification: NotificationInsert[]): Promise<NotificationSelect[]> {
         const result = await db 
+            .insert(notifications)
+            .values(notification)
+            .returning()
+        return result;
+    }
+
+    async insertManyTransaction(tx: any, notification: NotificationInsert[]): Promise<NotificationSelect[]> {
+        const result = await tx 
             .insert(notifications)
             .values(notification)
             .returning()

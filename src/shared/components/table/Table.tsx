@@ -68,7 +68,7 @@ export default function TableComponent<TData>({ data, columns, nameTable}: Table
                     </TableBody>
                 </Table>
             </CardContent>
-            { nameTable !== 'misClases' && (
+            { nameTable !== 'horario' && (
                 <CardFooter>
                     <TablePagination table={table} />
                 </CardFooter>

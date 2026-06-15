@@ -73,7 +73,7 @@ export default function TableHorarioClases({ horariosStudent }: Props) {
         <CardTitle>Horario de Clases</CardTitle>
         <CardDescription>Horario de clases semanales. Organizate en tus clases</CardDescription>
       </CardHeader>
-      <TableComponent data={tableData} columns={columns} />
+      <TableComponent data={tableData} columns={columns} nameTable="horario" />
     </Card>
   )
 }

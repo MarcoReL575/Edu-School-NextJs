@@ -1,6 +1,6 @@
 import { db } from "@/src/db";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
-import { StatusAttendance } from "../types/types";
+import { AttendanceStudentTable, StatusAttendance } from "../types/types";
 import { IAttendanceRepository, attendanceRepository } from "./attendanceRepository";
 import { IUsersRepository, usersRepository } from "../../clases/services/UsersRepository";
 import { NotificationType } from "../../notifications/types/types";
@@ -51,6 +51,15 @@ class AttendanceService {
                 return { success: false, message: 'Error al guardar las asistencias' }
             }
         })
+    }
+
+    async getAttendancesByStudentId(stundetId: string) {
+        try {
+            const attendances = await this.attendanceRepository.selectAttendanceStudent(stundetId);
+            return { success: true, message:'', attendances }
+        } catch (error) {
+            return { success: false, message:'error al obtener las asistencias', attendances: {} as AttendanceStudentTable[] }
+        }
     }
 }
 

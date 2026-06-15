@@ -24,11 +24,8 @@ export default async function MisClasesStudentPage({ session }:Props) {
         queryFn: async () => await getStudentsSubjectsAction(infoStudent.groupId!)
     })
 
-    const horariosStudent = await clasesServices.getAllClasessByGroup(infoStudent.groupId)
-
     return (
         <>
-            <TableHorarioClases horariosStudent={horariosStudent} />
             <HydrationBoundary state={dehydrate(queryClient)}>
                 <ClasesSectionGrid groupId={infoStudent.groupId} />
             </HydrationBoundary>

@@ -4,6 +4,7 @@ import { AttendanceStudentTable, StatusAttendance } from "../types/types";
 import { IAttendanceRepository, attendanceRepository } from "./attendanceRepository";
 import { IUsersRepository, usersRepository } from "../../clases/services/UsersRepository";
 import { NotificationType } from "../../notifications/types/types";
+import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 
 
 
@@ -13,6 +14,7 @@ class AttendanceService {
         private attendanceRepository: IAttendanceRepository,
         private notificationRepository: INotificationRepository,
         private usersRepository: IUsersRepository,
+        private notificationPusher: INotificationPublisher
     ){}
 
     async takeAttendance(attendance: Record<string, boolean>, claseId: string) {
@@ -43,7 +45,12 @@ class AttendanceService {
                     }));
 
                 if (notifications.length > 0) {
-                    await this.notificationRepository.insertManyTransaction(tx, notifications);
+                    const savedNotifictions = await this.notificationRepository.insertManyTransaction(tx, notifications);
+                    
+                    //Disparamos en tiempo real para cada notificación guardada
+                    for(const notification of savedNotifictions) {
+                        await this.notificationPusher.notify(notification);
+                    }
                 }
 
                 return { success: true, message: 'Asistencia guardada' }
@@ -63,4 +70,4 @@ class AttendanceService {
     }
 }
 
-export const attendanceService = new AttendanceService(attendanceRepository, notificationRepository, usersRepository);
+export const attendanceService = new AttendanceService(attendanceRepository, notificationRepository, usersRepository, notificationPusher);

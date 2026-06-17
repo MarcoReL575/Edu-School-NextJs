@@ -2,6 +2,7 @@ import { clases, horarios, students, subjects, teachers, user } from "@/src/db/s
 import { group } from "@/src/db/schema/groupSchema";
 import z from "zod";
 import { CreateClasesSchema } from "../schema/clasesSchemas";
+import { AttendanceSelect } from "../../attendance/types/types";
 
 
 export type HorariosSelectType = typeof horarios.$inferSelect;
@@ -97,7 +98,8 @@ export type ClassesByGroup = {
     id: string;
     subjectName: string | null;
     teachersName: string | null;
-    teachersLastname: string | null
+    teachersLastname: string | null;
+    attendances: AttendanceSelect[]
 }
 
 export type AttendanceStatus = "asistencia" | "falta" | "retardo" | "justificado";

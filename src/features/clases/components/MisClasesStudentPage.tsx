@@ -1,8 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
+import { cache } from 'react';
 import { studentsService } from '../services/StudentsService';
 import { getStudentsSubjectsAction } from '../actions/clasesAction';
-import { clasesServices } from '../services/ClasesServices';
-import TableHorarioClases from './TableHorarioClases';
 import ClasesSectionGrid from './ClasesSectionGrid';
 import { FullSession } from '@/src/lib/auth-server';
 
@@ -13,7 +12,8 @@ type Props = {
 
 export default async function MisClasesStudentPage({ session }:Props) {
 
-    const queryClient = new QueryClient();
+    const getQueryClient = cache(() => new QueryClient());
+    const queryClient = getQueryClient();
 
     const infoStudent = await studentsService.getInfoStudentById(session.user.id);
 
@@ -21,13 +21,13 @@ export default async function MisClasesStudentPage({ session }:Props) {
 
     await queryClient.prefetchQuery({
         queryKey: ['miSubjects', infoStudent.groupId],
-        queryFn: async () => await getStudentsSubjectsAction(infoStudent.groupId!)
+        queryFn: async () => await getStudentsSubjectsAction(infoStudent.groupId!, infoStudent.id)
     })
 
     return (
         <>
             <HydrationBoundary state={dehydrate(queryClient)}>
-                <ClasesSectionGrid groupId={infoStudent.groupId} />
+                <ClasesSectionGrid groupId={infoStudent.groupId} studentId={infoStudent.id} />
             </HydrationBoundary>
         </>
     )

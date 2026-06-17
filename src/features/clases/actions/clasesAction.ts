@@ -44,8 +44,8 @@ export async function editHorarioClaseAction(input: HorariosSelectType) {
     return { success: true, message: 'El horario fue editado' };
 }
 
-export async function getStudentsSubjectsAction(groupId: string) {
-    return await clasesServices.getClasesByStudents(groupId)
+export async function getStudentsSubjectsAction(groupId: string, studentId: string) {
+    return await clasesServices.getClasesByStudents(groupId, studentId)
 }
 
 export async function deleteHorarioClaseAciton(claseId: string) {

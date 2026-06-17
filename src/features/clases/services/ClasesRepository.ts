@@ -1,7 +1,7 @@
 import { db } from "@/src/db"
-import { clases, group, horarios, subjects, teachers } from "@/src/db/schema"
+import { attendance, clases, group, horarios, subjects, teachers } from "@/src/db/schema"
 import { ClasesInfoByAttendance, ClasesInfoComplete, ClasesInsertType, ClasesSelectType, ClassesByGroup, GroupCompleteInfo, HorariosInsertType, HorariosSelectType } from "../types/types"
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import { TeachersClases, TeachersClasesAllInfo } from "../../teachers/types/types";
 
 
@@ -11,7 +11,7 @@ export interface IClasesRepository {
     selectAllClases(): Promise<ClasesInfoComplete[]>;
     selectClaseById(claseId: string): Promise<ClasesInfoComplete>;
     selectClaseAttendance(slug: string): Promise<ClasesInfoByAttendance | null>;
-    selectClasesByGroup(groupId: string): Promise<ClassesByGroup[]>;
+    selectClasesByGroup(groupId: string, studentId: string): Promise<ClassesByGroup[]>;
     selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]>;
     selectAllInfoTeachersClases(slug: string): Promise<TeachersClasesAllInfo>
     selectHorarioById(horarioId: string): Promise<HorariosSelectType>;
@@ -120,19 +120,28 @@ class ClasesRepository implements IClasesRepository {
         };
     }
 
-    async selectClasesByGroup(groupId: string): Promise<ClassesByGroup[]> {
-        const result = await db
-            .select({
-                id: clases.id,
-                subjectName: subjects.name,
-                teachersName: teachers.name,
-                teachersLastname: teachers.lastName,
-            })
-            .from(clases)
-            .leftJoin(teachers, eq(clases.teacherId, teachers.id))
-            .leftJoin(subjects, eq(clases.subjectId, subjects.id))
-            .where(eq(clases.groupId, groupId ))
-        return result
+    async selectClasesByGroup(groupId: string, studentId: string): Promise<ClassesByGroup[]> {
+        const result = await db.query.clases.findMany({
+            where: eq(clases.groupId, groupId ),
+            columns: {
+                id: true
+            },
+            with: {
+                subject: { columns: { name: true } },
+                teacher: { columns: { name: true, lastName: true } },
+                attendances: {
+                    where: eq(attendance.studentId, studentId)
+                }
+            }
+        })
+
+        return result.map((clase)=>({
+            id:clase.id,
+            subjectName: clase.subject.name,
+            teachersName: clase.teacher.name,
+            teachersLastname: clase.teacher.lastName,
+            attendances: clase.attendances
+        }))
     }
 
     async selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]> {

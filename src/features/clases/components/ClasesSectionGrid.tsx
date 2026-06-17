@@ -5,19 +5,17 @@ import { getStudentsSubjectsAction } from "../actions/clasesAction"
 import CardClases from "./CardClases"
 
 type Props = {
-    groupId: string
+    groupId: string;
+    studentId: string;
 }
 
-export default function ClasesSectionGrid({ groupId }: Props) {
+export default function ClasesSectionGrid({ groupId, studentId }: Props) {
 
-    const { data: clases, isError, isLoading} = useSuspenseQuery({ 
+    const { data: clases} = useSuspenseQuery({ 
         queryKey: ['miSubjects', groupId], 
-        queryFn: async()=> await getStudentsSubjectsAction(groupId) 
+        queryFn: async()=> await getStudentsSubjectsAction(groupId, studentId),
+        staleTime: 5 * 60 * 1000
     });
-
-    if(isLoading) return <div>Cargando mis Clases</div>
-    if(isError) return <div>Error al obtener las clases. Intente de nuevo</div>
-    console.log(clases)
 
   return ( 
     <section className="grid grid-cols-2 xl:grid-cols-3  gap-8">

@@ -1,9 +1,10 @@
 import { relations } from "drizzle-orm";
-import { clases } from "./clasesSchemas";
-import { subjects } from "./subjectsSchema";
-import { group } from "./groupSchema";
-import { students } from "./studentsSchema";
-import { attendance } from "./attendance-schema";
+import { subjects } from "../schema/subjectsSchema";
+import { clases } from "../schema/clasesSchemas";
+import { group } from "../schema/groupSchema";
+import { students } from "../schema/studentsSchema";
+import { teachers } from "../schema/teachersSchema";
+import { attendance } from "../schema/attendance-schema";
 
 export const subjectsRelations = relations(subjects, ({ many }) => ({
     clases: many(clases),
@@ -14,19 +15,27 @@ export const groupRelations = relations(group, ({ many, one }) => ({
     students: many(students),
 }));
 
-export const clasesRelations = relations(clases, ({ one }) => ({
+export const clasesRelations = relations(clases, ({ one, many }) => ({
     subject: one(subjects, {
         fields: [clases.subjectId],
         references: [subjects.id],
+    }),
+    teacher: one(teachers, {
+        fields: [clases.teacherId],
+        references: [teachers.id],
     }),
     group: one(group, {
         fields: [clases.groupId],
         references: [group.id],
     }),
-    attendance: one(attendance, {
-        fields: [clases.id],
-        references: [attendance.claseId],
-    })
+    attendances: many(attendance)
+}));
+
+export const attendanceRelations = relations(attendance, ({ one }) => ({
+    clase: one(clases, {
+        fields: [attendance.claseId],
+        references: [clases.id],
+    }),
 }));
 
 export const studentsRelations = relations(students, ({ one }) => ({

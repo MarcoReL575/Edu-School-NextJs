@@ -1,6 +1,13 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/node-postgres';
-import * as schema from "./schema/index";
+import * as tables from "./schema/index";
+import * as relations from "./relations/relations";
+
+const schema = {
+  ...tables,
+  ...relations
+};
+
 
 // You can specify any property from the node-postgres connection options
 export const db = drizzle({ 
@@ -8,7 +15,5 @@ export const db = drizzle({
     connectionString: process.env.DATABASE_URL!,
     ssl: true
   },
-  schema: {
-    ...schema
-  }
+  schema
 });

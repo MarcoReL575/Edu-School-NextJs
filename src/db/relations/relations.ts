@@ -5,6 +5,7 @@ import { group } from "../schema/groupSchema";
 import { students } from "../schema/studentsSchema";
 import { teachers } from "../schema/teachersSchema";
 import { attendance } from "../schema/attendance-schema";
+import { examQuestionOptions, examQuestions, exams } from "../schema/examen-schema";
 
 export const subjectsRelations = relations(subjects, ({ many }) => ({
     clases: many(clases),
@@ -47,4 +48,20 @@ export const studentsRelations = relations(students, ({ one }) => ({
         fields: [students.id],
         references: [attendance.studentId],
     })
+}));
+
+export const examQuestionsRelations = relations(examQuestions, ({ one, many }) => ({
+    exam: one(exams, {
+        fields: [examQuestions.examId],
+        references: [exams.id],
+    }),
+    options: many(examQuestionOptions),
+}));
+
+// Relaciones para Opciones
+export const examQuestionOptionsRelations = relations(examQuestionOptions, ({ one }) => ({
+    question: one(examQuestions, {
+        fields: [examQuestionOptions.questionId],
+        references: [examQuestions.id],
+    }),
 }));

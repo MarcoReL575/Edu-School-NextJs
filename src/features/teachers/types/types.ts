@@ -10,6 +10,7 @@ export type TeachersClases = {
     group: string;
     grade: string;
     level: string;
+    groupId: string;
 }
 
 

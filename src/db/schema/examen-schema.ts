@@ -1,16 +1,15 @@
 import { boolean, integer, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { teachers } from "./teachersSchema";
 import { group } from "./groupSchema";
-import { subjects } from "./subjectsSchema";
 
 export const exams = pgTable('exams', {
     id: uuid('id').defaultRandom().primaryKey(),
     title: varchar('title', { length: 255 }).notNull(),
+    subjectName: text('subject_name').notNull(),
     status: varchar('status', { length: 20 }).default('activo').notNull(),
     
     // Relación con el docente creador (Asumiendo tabla 'users' existente)
     teacherId: uuid('teacher_id').notNull().references(()=> teachers.id),
-    subjectId: uuid('subject_id').notNull().references(()=> subjects.id),
     groupId: uuid('group_id').notNull().references(()=> group.id),
 
     createdAt: timestamp('created_at').defaultNow().notNull(),

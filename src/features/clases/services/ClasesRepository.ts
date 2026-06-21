@@ -150,14 +150,17 @@ class ClasesRepository implements IClasesRepository {
                 id: clases.id,
                 slug: clases.slug,
                 subjectName: subjects.name,
+                groupId: group.id,
                 grade: group.grade,
                 group: group.group,
                 level: group.level,
+                teacherId: teachers.id
             })
             .from(clases)
             .where(eq(clases.teacherId, teacherId))
             .innerJoin(subjects, eq(subjects.id, clases.subjectId))
             .innerJoin(group, eq (group.id, clases.groupId))
+            .innerJoin(teachers, eq (clases.teacherId, teachers.id))
         return clasesList;
     }
 

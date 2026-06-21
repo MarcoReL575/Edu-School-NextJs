@@ -1,12 +1,15 @@
 'use client'
 
-import { Form, FormError, FormInput, FormLabel, FormSubmit } from '@/src/shared/components/form'
-import { TeachersClases } from '../../teachers/types/types';
+import { redirect } from 'next/navigation';
 import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { insertExamSchema } from '../schemas/schema';
-import { InsertExam, InsertExamWithQuestions, QuestionsExam } from '../types/types';
+import createExamAction from '../actions/examAction';
+import { Form, FormError, FormInput, FormLabel, FormSubmit } from '@/src/shared/components/form'
 import { QuestionItem } from './QuestionItem';
+import { insertExamSchema } from '../schemas/schema';
+import { TeachersClases } from '../../teachers/types/types';
+import { InsertExamWithQuestions } from '../types/types';
 
 type Props = {
     clases: TeachersClases[];
@@ -24,7 +27,7 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
             status: 'activo',
             teacherId: teacherId,
             questions: [{
-                question_text: '',
+                questionText: '',
                 type: 'multiple',
                 points: 5,
                 options: [
@@ -40,8 +43,15 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
         name: "questions"
     });
 
-    const handleCreateExam = async(data: InsertExam)=> {
-        
+    const handleCreateExam = async(data: InsertExamWithQuestions)=> {
+        const { success, message } = await createExamAction(data);
+        if(!success) {
+            toast.error(message);
+        }
+        if(success){
+            toast.success(message);
+            redirect('/dashboard/examenes');
+        }
     }
 
   return (
@@ -86,7 +96,7 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
                     type="button" 
                     className="bg-blue-500 text-white p-2 rounded"
                     onClick={() => appendQuestion({ 
-                        question_text: '', 
+                        questionText: '', 
                         type: 'multiple', 
                         points: 5, 
                         options: [{ text: '', isCorrect: false }, { text: '', isCorrect: false }] 

@@ -1,8 +1,8 @@
 import { useFieldArray, Control, useFormContext } from 'react-hook-form';
-import { InsertExamWithQuestions } from '../types/types';
 import { IconTrash } from '@tabler/icons-react';
 import { FormError, FormInput, FormLabel } from '@/src/shared/components/form';
 import { Button } from '@/src/shared/components/ui/button';
+import { InsertExamWithQuestions } from '../types/types';
 
 type Props = {
     control: Control<InsertExamWithQuestions>;
@@ -44,11 +44,11 @@ export function QuestionItem({ control, onRemove, qIndex }: Props) {
                 </div>
             </div>
 
-            <FormInput {...register(`questions.${qIndex}.question_text`)} 
+            <FormInput {...register(`questions.${qIndex}.questionText`)} 
                 placeholder="Escribe la pregunta aquí..." 
                 className="w-full p-2 mb-2 border border-gray-600 rounded-lg" 
             />
-            {questionErrors?.question_text && <FormError>{questionErrors.question_text.message}</FormError>}
+            {questionErrors?.questionText && <FormError>{questionErrors.questionText.message}</FormError>}
             <div className="space-y-2 ml-4">
                 {optionFields.map((opt, oIndex) => (
                     <div key={opt.id} className="flex items-center gap-2 border border-gray-400 rounded-lg p-2">

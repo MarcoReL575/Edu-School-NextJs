@@ -1,4 +1,3 @@
-import { clasesServices } from "@/src/features/clases/services/ClasesServices";
 import CreateExam from "@/src/features/examenes/components/CreateExam";
 import { teacherService } from "@/src/features/teachers/clases/teacherService";
 import { requireAuth } from "@/src/lib/auth-server";

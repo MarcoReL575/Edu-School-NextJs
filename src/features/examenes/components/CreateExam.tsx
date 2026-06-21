@@ -1,9 +1,9 @@
+import { redirect } from 'next/navigation';
 import { IconSettings } from '@tabler/icons-react'
-import { TeachersClases } from '../../teachers/types/types'
 import FormCreateExam from './FormCreateExam';
 import { teacherService } from '../../teachers/clases/teacherService';
 import { requireAuth } from '@/src/lib/auth-server';
-import { redirect } from 'next/navigation';
+import { TeachersClases } from '../../teachers/types/types'
 
 type Props = {
     clases: TeachersClases[];

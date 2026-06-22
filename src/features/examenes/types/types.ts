@@ -14,3 +14,18 @@ export type InsertQuestions = typeof examQuestions.$inferInsert;
 
 export type SelectOptions = typeof examQuestionOptions.$inferSelect;
 export type InsertOptions = typeof examQuestionOptions.$inferInsert;
+
+export type ExamSelectInfo = {
+    id: string;
+    title: string;
+    subjectName: string;
+    grade: string | null;
+    group: string | null;
+    level: string | null;
+    status: string;
+    createdAt: Date;
+    questionsCount: number;
+    totalStudents: number;
+    submittedCount: number;
+    averageScore: number;
+}

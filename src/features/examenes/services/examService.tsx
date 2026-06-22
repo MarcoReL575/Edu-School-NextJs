@@ -15,6 +15,10 @@ class ExamService {
             return { success: false, message:'Hubo un error, intenta de nuevo' }
         }
     }
+
+    async getExams(teacherId: string) {
+        return await examRepository.selectExams(teacherId);
+    }
 }
 
 export const examService = new ExamService(examRepository);

@@ -10,8 +10,8 @@ export default async function ExamenesPage() {
     const role = session.user.role;
 
     return (
-        <div className="flex justify-between space-y-8 max-w-6xl">
-            {role === 'maestro' && <TeacherExamenPage  />}
+        <div className="flex justify-between space-y-8 max-w-7xl mx-auto w-full">
+            {role === 'maestro' && <TeacherExamenPage userId={session.user.id} />}
         </div>
     )
 }

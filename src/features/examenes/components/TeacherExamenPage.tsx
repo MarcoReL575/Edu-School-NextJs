@@ -1,11 +1,22 @@
 import Heading from '@/src/shared/components/typography/Heading'
 import { IconPlus } from '@tabler/icons-react'
 import Link from 'next/link'
+import { examService } from '../services/examService'
+import { teacherService } from '../../teachers/clases/teacherService'
 
-export default function TeacherExamenPage() {
+type Props = {
+    userId: string
+}
+
+export default async function TeacherExamenPage({ userId }: Props) {
+
+    const { teacher } = await teacherService.getTeacherByUserId(userId);
+    const exams = await examService.getExams(teacher.id);
+    console.log(exams)
+
   return (
     <>
-        <section className="flex w-full flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4 border-b border-gray-100 pb-4 ">
+        <section className="flex w-full mx-auto flex-col sm:flex-row sm:items-center sm:justify-between gap-y-4 border-b border-gray-100 pb-4 ">
             <div>
                 <Heading level={2}>Gestor de Exámenes</Heading>
                 <Heading level={3} className="text-sm text-gray-500 mt-1">Crea evaluaciones, programa fechas y analiza el rendimiento de tus grupos.</Heading>
@@ -21,7 +32,11 @@ export default function TeacherExamenPage() {
                     </button>
                 </Link>
             </div>
-        </section> 
+        </section>
+
+        <section>
+
+        </section>
     </>
   )
 }

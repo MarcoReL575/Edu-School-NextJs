@@ -1,16 +1,17 @@
-import { boolean, integer, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { boolean, decimal, integer, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 import { teachers } from "./teachersSchema";
 import { group } from "./groupSchema";
+import { students } from "./studentsSchema";
 
 export const exams = pgTable('exams', {
     id: uuid('id').defaultRandom().primaryKey(),
     title: varchar('title', { length: 255 }).notNull(),
     subjectName: text('subject_name').notNull(),
     status: varchar('status', { length: 20 }).default('activo').notNull(),
-    
+
     // Relación con el docente creador (Asumiendo tabla 'users' existente)
-    teacherId: uuid('teacher_id').notNull().references(()=> teachers.id),
-    groupId: uuid('group_id').notNull().references(()=> group.id),
+    teacherId: uuid('teacher_id').notNull().references(() => teachers.id),
+    groupId: uuid('group_id').notNull().references(() => group.id),
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),
@@ -38,4 +39,22 @@ export const examQuestionOptions = pgTable('exam_question_options', {
 
     text: text('text').notNull(), // El texto de la opción (ej: "Falso", "Opción A")
     isCorrect: boolean('is_correct').default(false).notNull(), // Bandera para saber si es la respuesta correcta
+});
+
+// ==========================================
+// NUEVA TABLA: ENTREGAS DE EXÁMENES
+// ==========================================
+export const examSubmissions = pgTable('exam_submissions', {
+    id: uuid('id').defaultRandom().primaryKey(),
+    examId: uuid('exam_id').notNull().references(() => exams.id, { onDelete: 'cascade' }),
+    studentId: uuid('student_id').notNull().references(() => students.id, { onDelete: 'cascade' }),
+
+    // Guardamos la calificación como numérico (ej. 84.50)
+    score: decimal('score', { precision: 5, scale: 2 }),
+
+    // Estatus: 'en_progreso', 'entregado'
+    status: varchar('status', { length: 30 }).default('en_progreso').notNull(),
+
+    startedAt: timestamp('started_at').defaultNow().notNull(),
+    submittedAt: timestamp('submitted_at'),
 });

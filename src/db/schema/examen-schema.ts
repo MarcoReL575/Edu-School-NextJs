@@ -8,6 +8,7 @@ export const exams = pgTable('exams', {
     title: varchar('title', { length: 255 }).notNull(),
     subjectName: text('subject_name').notNull(),
     status: varchar('status', { length: 20 }).default('activo').notNull(),
+    slug: text('slug').notNull(),
 
     // Relación con el docente creador (Asumiendo tabla 'users' existente)
     teacherId: uuid('teacher_id').notNull().references(() => teachers.id),

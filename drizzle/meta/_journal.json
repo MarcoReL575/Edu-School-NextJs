@@ -92,6 +92,13 @@
       "when": 1782093443850,
       "tag": "0012_clever_anthem",
       "breakpoints": true
+    },
+    {
+      "idx": 13,
+      "version": "7",
+      "when": 1782240864674,
+      "tag": "0013_volatile_stranger",
+      "breakpoints": true
     }
   ]
 }

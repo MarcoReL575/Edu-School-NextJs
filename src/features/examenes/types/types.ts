@@ -29,3 +29,19 @@ export type ExamSelectInfo = {
     submittedCount: number;
     averageScore: number;
 }
+
+export type ExamStudentInfo = {
+    id: string;
+    slug: string;
+    title: string;
+    subjectName: string;
+    grade: string | null;
+    groupName: string | null;
+    level: string | null;
+    status: string;
+    createdAt: Date;
+    questionsCount: number;
+    studentSubmissionStatus: string | null;
+    studentScore: string | null;
+    submittedAt: Date | null;
+} 

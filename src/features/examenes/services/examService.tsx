@@ -19,6 +19,10 @@ class ExamService {
     async getExams(teacherId: string) {
         return await examRepository.selectExams(teacherId);
     }
+
+    async getStudentsExamsList(studentId: string, groupId: string) {
+        return await examRepository.selectExamListStudents(studentId, groupId)
+    }
 }
 
 export const examService = new ExamService(examRepository);

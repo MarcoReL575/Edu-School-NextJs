@@ -5,7 +5,7 @@ import { Button } from '@/src/shared/components/ui/button';
 import { InsertExamWithQuestions } from '../types/types';
 
 type Props = {
-    control: Control<InsertExamWithQuestions>;
+    control: Control<any>;
     qIndex: number;
     onRemove: () => void;
 }

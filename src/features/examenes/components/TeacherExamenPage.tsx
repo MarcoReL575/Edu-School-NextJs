@@ -3,6 +3,7 @@ import { IconPlus } from '@tabler/icons-react'
 import Link from 'next/link'
 import { examService } from '../services/examService'
 import { teacherService } from '../../teachers/clases/teacherService'
+import CardExamTeacher from './CardExamTeacher'
 
 type Props = {
     userId: string
@@ -34,8 +35,13 @@ export default async function TeacherExamenPage({ userId }: Props) {
             </div>
         </section>
 
-        <section>
-
+        <section className='grid grid-cols-2 gap-4'>
+        {exams.length > 0
+            ?   exams.map((exam)=> (
+                    <CardExamTeacher key={exam.id} exam={exam} />
+                )) 
+            :   <div>Aún no hay examenes creados</div>
+        }
         </section>
     </>
   )

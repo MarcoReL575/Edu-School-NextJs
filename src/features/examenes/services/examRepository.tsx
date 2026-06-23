@@ -1,12 +1,13 @@
 import { db } from "@/src/db";
-import { ExamSelectInfo, InsertExamWithQuestions, SelectExam } from "../types/types";
+import { ExamSelectInfo, ExamStudentInfo, InsertExamWithQuestions, SelectExam } from "../types/types";
 import { examQuestionOptions, examQuestions, exams, examSubmissions } from "@/src/db/schema/examen-schema";
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { group, students } from "@/src/db/schema";
 
 export interface IExamRepository {
     createExamTransaction(dataExam: InsertExamWithQuestions): Promise<SelectExam>;
     selectExams(teacherId: string): Promise<ExamSelectInfo[]>;
+    selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]>
 }
 
 class ExamRepository implements IExamRepository {
@@ -78,6 +79,54 @@ class ExamRepository implements IExamRepository {
             )
             .orderBy(exams.createdAt);
         return result
+    }
+
+    async selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]> {
+        const result = await db 
+            .select({
+                id: exams.id,
+                slug: exams.slug,
+                title: exams.title,
+                subjectName: exams.subjectName,
+                status: exams.status, // 'activo' o 'concluido' general de la escuela
+                createdAt: exams.createdAt,
+                questionsCount: sql<number>`count(distinct ${examQuestions.id})`.mapWith(Number),
+      
+                // Datos del grupo para el Badge superior de la tarjeta
+                grade: group.grade,
+                groupName: group.group,
+                level: group.level,
+
+                // Estado de entrega particular de ESTE alumno
+                studentSubmissionStatus: examSubmissions.status, // 'en_progreso', 'entregado' o null si no ha iniciado
+                studentScore: examSubmissions.score, // Su calificación individual
+                submittedAt: examSubmissions.submittedAt
+            })
+            .from(exams)
+            .leftJoin(examQuestions, eq(exams.id, examQuestions.examId))
+            .leftJoin(group, eq(exams.groupId, group.id))
+            .leftJoin(
+                examSubmissions, 
+                and(
+                    eq(exams.id, examSubmissions.examId),
+                    eq(examSubmissions.studentId, studentId)
+                )
+            )
+            .where(
+                and(
+                    eq(exams.groupId, groupId),
+                    sql`${exams.status} != 'borrador'`
+                )
+            )
+            .groupBy(
+                exams.id, 
+                group.grade, 
+                group.group, 
+                group.level, 
+                examSubmissions.id
+            )
+            .orderBy(exams.createdAt);
+        return result;
     }
 }
 

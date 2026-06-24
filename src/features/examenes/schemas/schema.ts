@@ -37,3 +37,28 @@ export const baseExamSchema = createInsertSchema(exams, {
 export const insertExamSchema = baseExamSchema.extend({
     questions: z.array(questionSchema).min(1, "El examen debe tener al menos una pregunta"),
 });
+
+// 1. Opciones seguras para el alumno (Omitimos 'isCorrect' por seguridad)
+export const studentOptionSchema = z.object({
+    id: z.string().uuid(), // El ID es necesario para que el alumno pueda seleccionar la opción
+    text: z.string(),
+});
+
+// 2. Preguntas seguras para el alumno
+export const studentQuestionSchema = z.object({
+    id: z.string().uuid(),
+    questionText: z.string(),
+    type: z.enum(["multiple", "open"]),
+    points: z.number().int(),
+    options: z.array(studentOptionSchema), // Usa las opciones protegidas
+});
+
+// 3. Esquema completo del Examen listo para el Alumno
+export const studentExamRenderSchema = z.object({
+    id: z.string().uuid(),
+    title: z.string(),
+    subjectName: z.string(),
+    groupId: z.string(),
+    status: z.string(),
+    questions: z.array(studentQuestionSchema), // Estructura de preguntas anidadas seguras
+});

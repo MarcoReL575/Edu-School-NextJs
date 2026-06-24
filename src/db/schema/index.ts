@@ -1,6 +1,7 @@
 export * from "./attendance-schema"
 export * from "./auth-schema"
 export * from "./clasesSchemas"
+export * from "./examen-schema"
 export * from "./groupSchema"
 export * from './horariosSchema'
 export * from './notifications-schema'

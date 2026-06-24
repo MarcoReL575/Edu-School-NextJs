@@ -14,6 +14,7 @@ export const subjectsRelations = relations(subjects, ({ many }) => ({
 export const groupRelations = relations(group, ({ many, one }) => ({
     clases: many(clases),
     students: many(students),
+    exams: many(exams),
 }));
 
 export const clasesRelations = relations(clases, ({ one, many }) => ({
@@ -39,7 +40,7 @@ export const attendanceRelations = relations(attendance, ({ one }) => ({
     }),
 }));
 
-export const studentsRelations = relations(students, ({ one }) => ({
+export const studentsRelations = relations(students, ({ one, many }) => ({
     group: one(group, {
         fields: [students.groupId],
         references: [group.id],
@@ -47,10 +48,11 @@ export const studentsRelations = relations(students, ({ one }) => ({
     attendance: one(attendance, {
         fields: [students.id],
         references: [attendance.studentId],
-    })
+    }),
+    examSubmissions: many(examSubmissions) 
 }));
 
-export const examQuestionsRelations = relations(examQuestions, ({ one, many }) => ({
+export const examsQuestionsRelations = relations(examQuestions, ({ one, many }) => ({
     exam: one(exams, {
         fields: [examQuestions.examId],
         references: [exams.id],
@@ -59,7 +61,7 @@ export const examQuestionsRelations = relations(examQuestions, ({ one, many }) =
 }));
 
 // Relaciones para Opciones
-export const examQuestionOptionsRelations = relations(examQuestionOptions, ({ one }) => ({
+export const examsQuestionOptionsRelations = relations(examQuestionOptions, ({ one }) => ({
     question: one(examQuestions, {
         fields: [examQuestionOptions.questionId],
         references: [examQuestions.id],
@@ -67,7 +69,7 @@ export const examQuestionOptionsRelations = relations(examQuestionOptions, ({ on
 }));
 
 
-export const examSubmissionsRelations = relations(examSubmissions, ({ one }) => ({
+export const examsSubmissionsRelations = relations(examSubmissions, ({ one }) => ({
     exam: one(exams, {
         fields: [examSubmissions.examId],
         references: [exams.id],
@@ -76,4 +78,9 @@ export const examSubmissionsRelations = relations(examSubmissions, ({ one }) => 
         fields: [examSubmissions.studentId],
         references: [students.id],
     }),
+}));
+
+export const examsRelations = relations(exams, ({ many }) => ({
+    examSubmissions: many(examSubmissions),
+    questions: many(examQuestions),
 }));

@@ -1,13 +1,18 @@
 import { db } from "@/src/db";
-import { ExamSelectInfo, ExamStudentInfo, InsertExamWithQuestions, SelectExam } from "../types/types";
+import { ExamSelectInfo, ExamStudentInfo, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender } from "../types/types";
 import { examQuestionOptions, examQuestions, exams, examSubmissions } from "@/src/db/schema/examen-schema";
 import { and, eq, sql } from "drizzle-orm";
 import { group, students } from "@/src/db/schema";
+import { studentExamRenderSchema } from "../schemas/schema";
 
 export interface IExamRepository {
     createExamTransaction(dataExam: InsertExamWithQuestions): Promise<SelectExam>;
     selectExams(teacherId: string): Promise<ExamSelectInfo[]>;
-    selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]>
+    selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]>;
+    selectExam(examSlug: string): Promise<StudentExamRender | undefined>;
+    selectExamWithAnswers(examSlug: string): Promise <FullExamWithAnswers | undefined>;
+    submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string): Promise<void>;
+    submittedExam(examId: string, studentId: string): Promise<SelectExamubmissions | undefined>
 }
 
 class ExamRepository implements IExamRepository {
@@ -127,6 +132,57 @@ class ExamRepository implements IExamRepository {
             )
             .orderBy(exams.createdAt);
         return result;
+    }
+
+    async selectExam(examSlug: string): Promise<StudentExamRender | undefined> {
+        const exam = await db.query.exams.findFirst({
+            where: eq(exams.slug, examSlug),
+            with: {
+                questions: {
+                    with: {
+                        options: true
+                    }
+                }
+            }
+        })
+        if (!exam) return undefined;
+        return studentExamRenderSchema.parse(exam)
+    }
+
+    async selectExamWithAnswers(examSlug: string): Promise< FullExamWithAnswers| undefined> {
+        const exam = await db.query.exams.findFirst({
+            where: eq(exams.slug, examSlug),
+            with: {
+                questions: {
+                    with: {
+                        options: true
+                    }
+                }
+            }
+        })
+        if (!exam) return undefined;
+        return exam
+    }
+
+    async submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string): Promise<void> {
+        await db.insert(examSubmissions).values({
+            examId: examData.id,
+            studentId: studentId,
+            score: finalScore.toString(),
+            status: 'entregado',
+            submittedAt: new Date(),
+        });
+    }
+
+    async submittedExam(examId: string, studentId: string): Promise<SelectExamubmissions | undefined> {
+        const exists = await db.query.examSubmissions.findFirst({
+            where: and(
+                eq(examSubmissions.examId, examId),
+                eq(examSubmissions.studentId, studentId)
+            )
+        })
+        if (!exists) return undefined;
+        return exists
     }
 }
 

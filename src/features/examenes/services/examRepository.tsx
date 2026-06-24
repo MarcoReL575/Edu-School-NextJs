@@ -1,5 +1,5 @@
 import { db } from "@/src/db";
-import { ExamSelectInfo, ExamStudentInfo, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender } from "../types/types";
+import { ExamSelectInfo, ExamStudentInfo, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender, StudentsSubmissions } from "../types/types";
 import { examQuestionOptions, examQuestions, exams, examSubmissions } from "@/src/db/schema/examen-schema";
 import { and, eq, sql } from "drizzle-orm";
 import { group, students } from "@/src/db/schema";
@@ -7,12 +7,14 @@ import { studentExamRenderSchema } from "../schemas/schema";
 
 export interface IExamRepository {
     createExamTransaction(dataExam: InsertExamWithQuestions): Promise<SelectExam>;
+    deletExam(examId: string, teacherId: string): Promise<void>;
     selectExams(teacherId: string): Promise<ExamSelectInfo[]>;
     selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]>;
     selectExam(examSlug: string): Promise<StudentExamRender | undefined>;
     selectExamWithAnswers(examSlug: string): Promise <FullExamWithAnswers | undefined>;
     submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string): Promise<void>;
-    submittedExam(examId: string, studentId: string): Promise<SelectExamubmissions | undefined>
+    submittedExam(examId: string, studentId: string): Promise<SelectExamubmissions | undefined>;
+    selectStudentsWithSubmissions(groupId: string, examId: string): Promise<StudentsSubmissions>;
 }
 
 class ExamRepository implements IExamRepository {
@@ -49,6 +51,7 @@ class ExamRepository implements IExamRepository {
             .select({
                 id: exams.id,
                 title: exams.title,
+                slug: exams.slug,
                 subjectName: exams.subjectName,
                 grade: group.grade,
                 group: group.group,
@@ -183,6 +186,27 @@ class ExamRepository implements IExamRepository {
         })
         if (!exists) return undefined;
         return exists
+    }
+
+    async deletExam(examId: string, teacherId: string): Promise<void> {
+        await db
+            .delete(exams)
+            .where(and(
+                eq(exams.id, examId),
+                eq(exams.teacherId, teacherId)
+            ))
+    }
+
+    async selectStudentsWithSubmissions(groupId: string, examId: string): Promise <StudentsSubmissions> {
+        const studentsSubmissions = await db.query.students.findMany({
+            where: eq(students.groupId, groupId ),
+            with: {
+                examSubmissions: {
+                    where: eq(examSubmissions.examId, examId)
+                },
+            }
+        })
+        return studentsSubmissions
     }
 }
 

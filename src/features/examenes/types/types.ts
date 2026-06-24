@@ -21,6 +21,7 @@ export type InsertOptions = typeof examQuestionOptions.$inferInsert;
 
 export type ExamSelectInfo = {
     id: string;
+    slug: string;
     title: string;
     subjectName: string;
     grade: string | null;
@@ -84,5 +85,41 @@ export type FullExamWithAnswers = {
             text: string;
             isCorrect: boolean; 
         }[];
+    }[];
+};
+
+export type StudentsSubmissions = {
+    id: string;
+    name: string;
+    lastName: string;
+    matricula: string;
+    inscrito: boolean;
+    nivelEstudios: string;
+    groupId: string;
+    user_id: string | null;
+    examSubmissions: {
+        id: string;
+        status: string;
+        studentId: string;
+        examId: string;
+        score: string | null;
+        startedAt: Date;
+        submittedAt: Date | null;
+    }[];
+}[]
+
+export type StudentRowData = {
+    id: string;
+    groupId: string;
+    name: string;
+    lastName: string;
+    examSubmissions: {
+        id: string;
+        examId: string;
+        studentId: string;
+        score: string | null;
+        status: string;
+        startedAt: string | Date;
+        submittedAt: string | Date | null;
     }[];
 };

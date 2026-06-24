@@ -1,17 +1,36 @@
 
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
-import { InsertExamWithQuestions, SubmitExam } from "../types/types";
+import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
+import { ITeacherRepository, teacherRepository } from "../../teachers/clases/teacherRepository";
+import { InsertExamWithQuestions, StudentExamRender, StudentsSubmissions, SubmitExam } from "../types/types";
 import { examRepository, IExamRepository } from "./examRepository";
 
 class ExamService {
     constructor(
         private examRepository: IExamRepository,
-        private studentRepository: IStudentsRepository
+        private studentsRepository: IStudentsRepository,
+        private notificationRepository: INotificationRepository,
+        private teacherRepository: ITeacherRepository,
     ){}
 
     async createExam(data: InsertExamWithQuestions) {
         try {
             await examRepository.createExamTransaction(data);
+            const listStudents = await this.studentsRepository.selectStudentsInGroup(data.groupId);
+            if(listStudents.length > 0) {
+                const notificationsPayload = listStudents.filter((student)=> student.user_id !== null).map((student)=>({
+                    userId: student.user_id as string,
+                        title: `Examen creado: ${data.subjectName}`,
+                        message: `Nuevo Examen: ${data.title}` ,
+                        type: 'task_created' as const ,
+                        isRead: false,
+                        redirectUrl: '/dashboard/examenes',
+                    }))
+                    // Insertamos todas las notificaciones en un solo query a la base de datos
+                    if(notificationsPayload.length > 0) {
+                        await this.notificationRepository.insertMany(notificationsPayload);
+                    }
+                }
             return { success: true, message:'Examen creado' }
         } catch (error) {
             return { success: false, message:'Hubo un error, intenta de nuevo' }
@@ -32,7 +51,7 @@ class ExamService {
 
     async submitExamStudent(examinfo: SubmitExam, userId: string) {
         const { examId, examSlug, answers } = examinfo
-        const student = await this.studentRepository.selectStudentByUserId(userId);
+        const student = await this.studentsRepository.selectStudentByUserId(userId);
         try {
             const examData = await examRepository.selectExamWithAnswers(examSlug);
             if(!examData)  return { success: false, message: "El examen solicitado no existe." };
@@ -80,6 +99,28 @@ class ExamService {
             };
         }
     }
+
+    async deleteExam(examId: string, userId: string) {
+        try {
+            const teacher = await this.teacherRepository.selectById(userId)
+            await this.examRepository.deletExam(examId, teacher.id);
+            return { success: true, message: 'El examen fue eliminado' }
+        } catch (error) {
+            return { success: false, message: 'Error al eliminar el examen' }
+        }
+    }
+
+    async getExamControl(examSlug: string) {
+        try {
+            const exam = await this.examRepository.selectExam(examSlug);
+            if(!exam) return { success: false, message: 'Error al obtener información', exam: null, students: [] }
+            const students = await this.examRepository.selectStudentsWithSubmissions(exam.groupId, exam.id);
+            return { success: true, message: '',  exam, students: students?? []}
+        } catch (error) {
+            return { success: false, message: 'Error al obtener información, intenta de nuevo', exam: null, students: [] }
+        }
+
+    }
 }
 
-export const examService = new ExamService(examRepository, studentsRepository);
+export const examService = new ExamService(examRepository, studentsRepository, notificationRepository, teacherRepository);

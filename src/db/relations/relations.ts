@@ -80,7 +80,8 @@ export const examsSubmissionsRelations = relations(examSubmissions, ({ one }) =>
     }),
 }));
 
-export const examsRelations = relations(exams, ({ many }) => ({
+export const examsRelations = relations(exams, ({ many, one }) => ({
     examSubmissions: many(examSubmissions),
     questions: many(examQuestions),
+    students: one(students)
 }));

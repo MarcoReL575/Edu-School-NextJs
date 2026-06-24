@@ -5,13 +5,13 @@ import { FormProvider, useFieldArray, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { zodResolver } from '@hookform/resolvers/zod';
 import z from 'zod';
-import createExamAction from '../actions/examAction';
 import { Form, FormError, FormInput, FormLabel, FormSubmit } from '@/src/shared/components/form'
 import { QuestionItem } from './QuestionItem';
 import { insertExamSchema } from '../schemas/schema';
 import { TeachersClases } from '../../teachers/types/types';
 import { InsertExamWithQuestions } from '../types/types';
 import { convertToSlug } from '@/src/shared/helpers/convertToSlug';
+import { createExamAction } from '../actions/examAction';
 
 type Props = {
     clases: TeachersClases[];
@@ -118,7 +118,7 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
                         <option value="">--Selecciona el numero del parcial--</option>
                         {
                             numberParcial.map((parcial)=> (
-                                <option value={parcial.key}>{parcial.number}</option>
+                                <option key={parcial.key} value={parcial.key}>{parcial.number}</option>
                             ))
                         }
                     </select>

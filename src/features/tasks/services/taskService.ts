@@ -6,13 +6,15 @@ import { INotificationRepository, notificationRepository } from "../../notificat
 import { groupRepository, IGroupRepository } from "../../clases/services/GroupRepository";
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
 import { getCorrectDate } from "../helpers/getCorrectDate";
+import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 
 class TaskService {
     constructor(
         private taskRepository: ITaskRepository,
         private notificationRepository : INotificationRepository,
         private groupRepository: IGroupRepository,
-        private studentsRepository: IStudentsRepository
+        private studentsRepository: IStudentsRepository,
+        private notificationPusher: INotificationPublisher
     ){}
 
     async createTask(taskInput: TaskInsert){
@@ -33,7 +35,9 @@ class TaskService {
                 }))
                 // Insertamos todas las notificaciones en un solo query a la base de datos
                 if(notificationsPayload.length > 0) {
-                    await this.notificationRepository.insertMany(notificationsPayload);
+                    const insertedNotifications = await this.notificationRepository.insertMany(notificationsPayload);
+                    await this.notificationPusher.notifyMany(insertedNotifications);
+
                 }
             }
             return { success: true, message: 'La tarea fue creada' }        
@@ -157,4 +161,4 @@ class TaskService {
     }
 }
 
-export const taskService = new TaskService(taskRepository, notificationRepository, groupRepository, studentsRepository);
+export const taskService = new TaskService(taskRepository, notificationRepository, groupRepository, studentsRepository, notificationPusher);

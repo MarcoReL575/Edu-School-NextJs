@@ -1,5 +1,6 @@
 
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
+import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
 import { ITeacherRepository, teacherRepository } from "../../teachers/clases/teacherRepository";
 import { InsertExamWithQuestions, StudentExamRender, StudentsSubmissions, SubmitExam } from "../types/types";
@@ -11,6 +12,7 @@ class ExamService {
         private studentsRepository: IStudentsRepository,
         private notificationRepository: INotificationRepository,
         private teacherRepository: ITeacherRepository,
+        private notificationPusher: INotificationPublisher
     ){}
 
     async createExam(data: InsertExamWithQuestions) {
@@ -28,7 +30,8 @@ class ExamService {
                     }))
                     // Insertamos todas las notificaciones en un solo query a la base de datos
                     if(notificationsPayload.length > 0) {
-                        await this.notificationRepository.insertMany(notificationsPayload);
+                        const insertedNotifications = await this.notificationRepository.insertMany(notificationsPayload);
+                        await this.notificationPusher.notifyMany(insertedNotifications);
                     }
                 }
             return { success: true, message:'Examen creado' }
@@ -123,4 +126,4 @@ class ExamService {
     }
 }
 
-export const examService = new ExamService(examRepository, studentsRepository, notificationRepository, teacherRepository);
+export const examService = new ExamService(examRepository, studentsRepository, notificationRepository, teacherRepository, notificationPusher);

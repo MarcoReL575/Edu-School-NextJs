@@ -15,7 +15,7 @@ const items = [
   { title: "Asistencias", url: "attendance", icon: IconUserCheck },
   { title: "Eventos", url: "#", icon: IconCalendar },
   { title: "Mensajes", url: "#", icon: IconMessage },
-  { title: "Anuncios", url: "#", icon: IconSpeakerphone },
+  { title: "Anuncios", url: "anuncios", icon: IconSpeakerphone },
   { title: "Notificaciones", url: "notifications", icon: IconBell }
 ]
 

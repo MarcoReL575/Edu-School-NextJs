@@ -1,3 +1,4 @@
+export * from "./anuncios-schema"
 export * from "./attendance-schema"
 export * from "./auth-schema"
 export * from "./clasesSchemas"

@@ -1,0 +1,2 @@
+CREATE TYPE "public"."announcement_target" AS ENUM('all', 'students', 'teachers');--> statement-breakpoint
+ALTER TABLE "announcements" ADD COLUMN "target_type" "announcement_target" DEFAULT 'all' NOT NULL;

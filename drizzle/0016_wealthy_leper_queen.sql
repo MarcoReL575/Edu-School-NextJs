@@ -1,0 +1,1 @@
+ALTER TABLE "announcements" ALTER COLUMN "author_id" SET DATA TYPE text;

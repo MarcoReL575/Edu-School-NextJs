@@ -99,6 +99,27 @@
       "when": 1782240864674,
       "tag": "0013_volatile_stranger",
       "breakpoints": true
+    },
+    {
+      "idx": 14,
+      "version": "7",
+      "when": 1782439288871,
+      "tag": "0014_cold_iron_man",
+      "breakpoints": true
+    },
+    {
+      "idx": 15,
+      "version": "7",
+      "when": 1782441335198,
+      "tag": "0015_handy_meltdown",
+      "breakpoints": true
+    },
+    {
+      "idx": 16,
+      "version": "7",
+      "when": 1782441471755,
+      "tag": "0016_wealthy_leper_queen",
+      "breakpoints": true
     }
   ]
 }

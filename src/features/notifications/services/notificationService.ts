@@ -78,10 +78,6 @@ class NotificationService{
             return { success: false, message: 'Error al crear la notificación' }
         } 
     }
-
-    async createAndNotify(data: NotificationInsert) {
-
-    }
 }
 
 export const notificationService = new NotificationService(notificationRepository, notificationPusher);

@@ -16,7 +16,6 @@ const items = [
 ]
 
 const menu = [
-  { title: "Eventos", url: "#", icon: IconCalendar },
   { title: "Anuncios", url: "anuncios", icon: IconSpeakerphone },
 ]
 

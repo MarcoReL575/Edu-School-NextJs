@@ -5,7 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { IconCheck } from "@tabler/icons-react";
 import { useForm } from "react-hook-form";
 import { insertAnnouncementSchema } from "../schemas/anuncios-schemas";
-import { InsertAnnouncementInput } from "../types/types";
+import { AnunciosInsert } from "../types/types";
+import { createAnnounceAction } from "../actions/anunciosActions";
+import toast from "react-hot-toast";
+import { redirect } from "next/navigation";
 
 export default function FormCreateAnuncio() {
 
@@ -25,8 +28,15 @@ export default function FormCreateAnuncio() {
         }
     });
 
-    const handleCreateAnnounce = async(data: InsertAnnouncementInput)=> {
-        
+    const handleCreateAnnounce = async(anounce: AnunciosInsert)=> {
+        const { success, message } = await createAnnounceAction(anounce);
+        if(!success) {
+            toast.error(message);
+        }
+        if(success) {
+            toast.success(message);
+            redirect('/dashboard/anuncios');
+        }
     }
 
   return (
@@ -41,7 +51,7 @@ export default function FormCreateAnuncio() {
         {errors.content && <FormError>{errors.content.message}</FormError>}
         
         <FormLabel>¿Para quién es el anuncio?</FormLabel>
-        <select className="border border-t-gray-400 rounded-lg p-2">
+        <select  {...register('targetType')} className="border border-t-gray-400 rounded-lg p-2">
             {
                 optionsNotifications.map((option)=>(
                     <option key={option.key} value={option.key}>{option.value}</option>

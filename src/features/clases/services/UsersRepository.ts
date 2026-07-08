@@ -3,12 +3,14 @@ import { db } from "@/src/db";
 import { students, teachers, user } from "@/src/db/schema";
 import { StudentsInfo, UserSelectType } from "../types/types";
 import { TeachersSelectType } from "../../teachers/types/types";
+import { Role } from "../../auth/types/auth-types";
 
 export interface IUsersRepository{
     selectAllTeachers(): Promise<TeachersSelectType[]>;
     selectInfoStudents(userId: string): Promise<StudentsInfo>;
     selectUser(userId: string): Promise<UserSelectType>;
     selectUsersByStudentsId(tx: any, studentIds: string[]): Promise<{ userId: string | null }[]>;
+    selectUserByRole(role: Role[]): Promise<UserSelectType[]>
 }
 
 class UsersRepository implements IUsersRepository {
@@ -53,6 +55,14 @@ class UsersRepository implements IUsersRepository {
             .select({ userId: students.user_id })
             .from(students)
             .where(inArray(students.id, studentIds));
+    }
+
+    async selectUserByRole(role: Role[]): Promise<UserSelectType[]> {
+        const result = await db
+            .select()
+            .from(user)
+            .where(inArray(user.role, role))
+        return result;
     }
 }
 

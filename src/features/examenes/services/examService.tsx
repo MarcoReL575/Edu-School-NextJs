@@ -3,7 +3,7 @@ import { IStudentsRepository, studentsRepository } from "../../clases/services/S
 import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
 import { ITeacherRepository, teacherRepository } from "../../teachers/clases/teacherRepository";
-import { InsertExamWithQuestions, StudentExamRender, StudentsSubmissions, SubmitExam } from "../types/types";
+import { ExamWithResult, InsertExamWithQuestions, StudentExamRender, StudentsSubmissions, SubmitExam } from "../types/types";
 import { examRepository, IExamRepository } from "./examRepository";
 
 class ExamService {
@@ -123,6 +123,16 @@ class ExamService {
             return { success: false, message: 'Error al obtener información, intenta de nuevo', exam: null, students: [] }
         }
 
+    }
+
+    async getExamAndResult(studentId: string, subjectName: string) {
+        try {
+            const exams = await this.examRepository.selectExamWithResult(studentId, subjectName);
+            return { success: true, message: false, exams }
+        } catch (error) {
+            console.log(error)
+            return { success: true, message: false, exams: [] as ExamWithResult[] }
+        }
     }
 }
 

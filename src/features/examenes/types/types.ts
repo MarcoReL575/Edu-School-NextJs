@@ -123,3 +123,13 @@ export type StudentRowData = {
         submittedAt: string | Date | null;
     }[];
 };
+
+export type ExamWithResult = {
+    examId: string;
+    title: string;
+    createdAt: Date;
+    // Campos de la entrega del alumno (pueden ser null si no lo ha hecho)
+    score: string | null,
+    statusSubmission: string | null;
+    submittedAt: Date | null;
+}

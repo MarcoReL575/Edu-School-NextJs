@@ -124,7 +124,8 @@ class ClasesRepository implements IClasesRepository {
         const result = await db.query.clases.findMany({
             where: eq(clases.groupId, groupId ),
             columns: {
-                id: true
+                id: true,
+                slug: true
             },
             with: {
                 subject: { columns: { name: true } },
@@ -137,6 +138,7 @@ class ClasesRepository implements IClasesRepository {
 
         return result.map((clase)=>({
             id:clase.id,
+            slug: clase.slug,
             subjectName: clase.subject.name,
             teachersName: clase.teacher.name,
             teachersLastname: clase.teacher.lastName,
@@ -170,6 +172,7 @@ class ClasesRepository implements IClasesRepository {
                 id: clases.id,
                 slug: clases.slug,
                 subjectName: subjects.name,
+                groupId: group.id,
                 grade: group.grade,
                 group: group.group,
                 level: group.level,

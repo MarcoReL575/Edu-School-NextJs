@@ -95,6 +95,7 @@ export type GroupCompleteInfo = {
 }
 
 export type ClassesByGroup = {
+    slug: string | null;
     id: string;
     subjectName: string | null;
     teachersName: string | null;

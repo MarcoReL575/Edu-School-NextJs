@@ -4,6 +4,7 @@ import CardsTareas from "./CardsTareas";
 import { IconChartBarPopular, IconClockHour3 } from "@tabler/icons-react";
 import { getColorBySubject } from "./TableHorarioClases";
 import { clases } from "@/src/db/schema";
+import Link from "next/link";
 
 type Props = {
     clase: ClassesByGroup;
@@ -17,7 +18,10 @@ export default function CardClases({ clase }: Props) {
     const attendanceStat = +attendancePercentage.toFixed(2)
 
   return (
-    <div className={`border rounded-xl flex flex-col space-y-3 bg-gray-50 shadow-lg p-2 hover:scale-110 transition-all duration-300 ease-in cursor-pointer ${getColorBySubject(subjectName!)}`}>
+    <Link 
+        href={`/dashboard/mis-clases/${clase.slug}`}
+        className={`border rounded-xl flex flex-col space-y-3 bg-gray-50 shadow-lg p-2 hover:scale-110 transition-all duration-300 ease-in cursor-pointer ${getColorBySubject(subjectName!)}`}
+    >
         <Heading level={3} className=" text-center">{subjectName}</Heading>
         <p className="text-center">Profesor(a): {teachersName} {teachersLastname}</p>
         <div className="flex items-center justify-between text-gray-500">
@@ -32,6 +36,8 @@ export default function CardClases({ clase }: Props) {
                 <span>{totalAttendance > 0 ? attendanceStat : '--' }%</span>
             </p>
         </div>
-    </div>
+    </Link>
   )
 }
+
+

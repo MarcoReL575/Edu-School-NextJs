@@ -18,6 +18,7 @@ export type TeachersClasesAllInfo = {
     id: string;
     slug: string | null;
     subjectName: string;
+    groupId: string;
     grade: string;
     group: string;
     level: string;

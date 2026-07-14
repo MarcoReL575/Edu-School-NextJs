@@ -1,7 +1,7 @@
 import { db } from "@/src/db";
-import { ExamSelectInfo, ExamStudentInfo, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender, StudentsSubmissions } from "../types/types";
+import { ExamSelectInfo, ExamStudentInfo, ExamWithResult, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender, StudentsSubmissions } from "../types/types";
 import { examQuestionOptions, examQuestions, exams, examSubmissions } from "@/src/db/schema/examen-schema";
-import { and, eq, sql } from "drizzle-orm";
+import { and, desc, eq, sql } from "drizzle-orm";
 import { group, students } from "@/src/db/schema";
 import { studentExamRenderSchema } from "../schemas/schema";
 
@@ -15,6 +15,7 @@ export interface IExamRepository {
     submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string): Promise<void>;
     submittedExam(examId: string, studentId: string): Promise<SelectExamubmissions | undefined>;
     selectStudentsWithSubmissions(groupId: string, examId: string): Promise<StudentsSubmissions>;
+    selectExamWithResult(studentId: string, subjectName: string): Promise<ExamWithResult[]>
 }
 
 class ExamRepository implements IExamRepository {
@@ -207,6 +208,29 @@ class ExamRepository implements IExamRepository {
             }
         })
         return studentsSubmissions
+    }
+
+    async selectExamWithResult(studentId: string, subjectName: string): Promise<ExamWithResult[]> {
+        const result = await db
+            .select({
+                examId: exams.id,
+                title: exams.title,
+                createdAt: exams.createdAt,
+                // Campos de la entrega del alumno (pueden ser null si no lo ha hecho)
+                score: examSubmissions.score,
+                statusSubmission: examSubmissions.status, // 'en_progreso', 'entregado'
+                submittedAt: examSubmissions.submittedAt,
+            })
+            .from(exams)
+            .leftJoin(examSubmissions, 
+                and(
+                    eq(examSubmissions.examId, exams.id), 
+                    eq(examSubmissions.studentId, studentId)
+                )
+            )
+            .where(eq(exams.subjectName, subjectName))
+            .orderBy(desc(exams.createdAt))
+        return result
     }
 }
 

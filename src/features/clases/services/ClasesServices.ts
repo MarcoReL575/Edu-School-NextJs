@@ -73,7 +73,12 @@ class ClasesServices {
     }
 
     async getHorarios(claseId: string) {
-        return await this.clasesRepository.selectHorarios(claseId);
+        try {
+            const horarios = await this.clasesRepository.selectHorarios(claseId);
+            return { success: true, message: '', horarios }
+        } catch (error) {
+            return { success: false, message: 'Error al obtener la información', horarios: [] }
+        }
     }
 
     async getInfoClasesAttendance(slug: string) {

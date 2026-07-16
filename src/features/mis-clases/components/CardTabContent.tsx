@@ -2,14 +2,13 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/shared/components/ui/card"
 import { TabsContent } from "@/src/shared/components/ui/tabs"
-import { QueryClient, useQuery } from "@tanstack/react-query";
 import { ReactElement } from "react";
-import { getAttendanceAction, getExamsAndResultActions, getTasksAction } from "../actions/taskActions";
-import { examService } from "../../examenes/services/examService";
-import { taskService } from "../../tasks/services/taskService";
-import { attendanceService } from "../../attendance/services/attendanceService";
+import { getAttendanceAction, getExamsAndResultActions, getHorariosAction, getTasksAction } from "../actions/taskActions";
 import TableExamsAndResult from "./TableExamsAndResult";
-import { ExamWithResult } from "../../examenes/types/types";
+import TableTasks from "./TableTasks";
+import TableAttendances from "./TableAttendances";
+import HorariosTable from "./HorariosTable";
+import { useQuery } from "@tanstack/react-query";
 
 type Props = {
     title: string;
@@ -19,9 +18,10 @@ type Props = {
     studentId: string;
     subjectName: string;
     groupId: string;
+    claseId: string
 }
 
-export default function CardTabContent({ title, icon, description, tabValue, studentId, subjectName, groupId}: Props) {
+export default function CardTabContent({ title, icon, description, tabValue, studentId, subjectName, groupId, claseId }: Props) {
 
     const { data: exams, } = useQuery({
         queryKey: ['examsandResults', studentId],
@@ -38,6 +38,12 @@ export default function CardTabContent({ title, icon, description, tabValue, stu
     const { data: attendances } = useQuery({
         queryKey: ['attendace-student', studentId],
         queryFn: ()=> getAttendanceAction(studentId, subjectName),
+        enabled: tabValue === 'attendance'
+    });
+
+    const { data: horarios } = useQuery({
+        queryKey: ['horarios-student', studentId],
+        queryFn: ()=> getHorariosAction(claseId),
         enabled: tabValue === 'attendance'
     });
 
@@ -58,6 +64,9 @@ export default function CardTabContent({ title, icon, description, tabValue, stu
             </CardContent>
             
             { tabValue === 'exams' && <TableExamsAndResult data={exams?.exams} /> }
+            { tabValue === 'tasks' && <TableTasks data={tasks?.tasks} /> }
+            { tabValue === 'attendance' && <TableAttendances data={attendances?.attendances} /> }
+            { tabValue === 'horarios' && <HorariosTable horarios={horarios?.horarios} /> }
         </Card>
     </TabsContent>
   )

@@ -49,10 +49,10 @@ class TaskService {
     async getAllTasks(groupId: string, studentId: string) {
         try {
             const taskList = await this.taskRepository.selectTasks(groupId, studentId);
-            return { success: true, message: '', data: taskList };
+            return { success: true, message: '', tasks: taskList };
         } catch (error) {
             console.error(error)
-            return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', data: {} as TaskDetails[] };
+            return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', tasks: [] as TaskDetails[] };
         }
     } 
 

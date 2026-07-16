@@ -10,24 +10,25 @@ type Props = {
     subjectName: string;
     studentId: string;
     groupId: string;
+    claseId: string;
 }
 
-export default async function TabsInfoSubject({ subjectName, studentId, groupId }: Props) {
+export default async function TabsInfoSubject({ subjectName, studentId, groupId, claseId }: Props) {
 
     const queryClient = new QueryClient();
-    await  queryClient.prefetchQuery({
+    await queryClient.prefetchQuery({
         queryKey: ['examsandResults', studentId],
         queryFn: ()=> examService.getExamAndResult(studentId, subjectName)
     });
 
-    await  queryClient.prefetchQuery({
+    await queryClient.prefetchQuery({
         queryKey: ['tasks-student', studentId],
         queryFn: ()=> taskService.getAllTasks(groupId, studentId)
     });
 
-    await  queryClient.prefetchQuery({
+    await queryClient.prefetchQuery({
         queryKey: ['attendace-student', studentId],
-        queryFn: ()=> attendanceService.getAttendanceStudentInClass(studentId, subjectName)
+        queryFn: ()=> attendanceService.getAttendanceStudentInClass(studentId, claseId)
     });
 
   return (
@@ -41,10 +42,10 @@ export default async function TabsInfoSubject({ subjectName, studentId, groupId 
                     <TabsTrigger value="attendance"><IconUserCheck /> Asistencias</TabsTrigger>
                 </TabsList>
 
-                <CardTabContent title="Tareas" icon={<IconClipboardList/>} description="Información de tus tareas" tabValue="tasks"  studentId={studentId} subjectName={subjectName} groupId={groupId} />
-                <CardTabContent title="Horarios" icon={<IconClockHour3 />} description="Horarios de clases" tabValue="horarios" studentId={studentId} subjectName={subjectName} groupId={groupId} />
-                <CardTabContent title="Exámenes" icon={<IconChecklist />} description="Información de tus Exámenes" tabValue="exams" studentId={studentId} subjectName={subjectName} groupId={groupId} />
-                <CardTabContent title="Asistencias" icon={<IconUserCheck />} description="Consulta tus asistencias" tabValue="attendance" studentId={studentId} subjectName={subjectName}  groupId={groupId} />
+                <CardTabContent title="Tareas" icon={<IconClipboardList/>} description="Información de tus tareas" tabValue="tasks"  studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId}/>
+                <CardTabContent title="Horarios" icon={<IconClockHour3 />} description="Horarios de clases" tabValue="horarios" studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId} />
+                <CardTabContent title="Exámenes" icon={<IconChecklist />} description="Información de tus Exámenes" tabValue="exams" studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId} />
+                <CardTabContent title="Asistencias" icon={<IconUserCheck />} description="Consulta tus asistencias" tabValue="attendance" studentId={studentId} subjectName={subjectName}  groupId={groupId} claseId={claseId} />
             </Tabs>
         </section>
     </HydrationBoundary>

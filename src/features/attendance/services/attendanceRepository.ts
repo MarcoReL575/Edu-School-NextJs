@@ -1,7 +1,7 @@
 import { db } from "@/src/db";
 import { AttendanceInsert, AttendanceSelect, AttendanceStudentTable } from "../types/types";
 import { attendance, clases, subjects } from "@/src/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, desc, eq } from "drizzle-orm";
 
 export interface IAttendanceRepository {
     insertAttendance(tax: any, attendanceStudents: AttendanceInsert[]): Promise<void>;
@@ -37,12 +37,12 @@ class AttendanceRepository implements IAttendanceRepository {
             .select()
             .from(attendance)
             .where(and(
-                eq(attendance.claseId, claseId),
+                eq(attendance.studentId, studentId),
                 eq(attendance.claseId, claseId)
             ))
+            .orderBy(desc(attendance.date))
         return attendace;
     }
-
 }
 
 export const attendanceRepository = new AttendanceRepository();

@@ -7,7 +7,7 @@ import React, { useMemo } from 'react'
 import { ExamWithResult } from '../../examenes/types/types'
 import { Button } from '@/src/shared/components/ui/button'
 import TableComponent from '@/src/shared/components/table/Table'
-import { formatTime } from '../../tasks/helpers/formatTime'
+import { getCorrectDate } from '../../tasks/helpers/getCorrectDate'
 
 type Props = {
     data: ExamWithResult[] | undefined;
@@ -41,7 +41,7 @@ export default function TableExamsAndResult({ data }: Props) {
         {
             accessorKey: 'createdAt',
             header: () => <span>Fecha Del Exámen</span>,
-            cell: ({ row }) => <div className="font-sm flex gap-x-2 items-center justify-center">{formatTime(row.getValue("createdAt"))}</div>
+            cell: ({ row }) => <div className="font-sm flex gap-x-2 items-center justify-center">{getCorrectDate(row.getValue("createdAt"))}</div>
         },
     ], [], );
     console.log(data)

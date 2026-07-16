@@ -74,7 +74,7 @@ class AttendanceService {
             const attendances = await this.attendanceRepository.selectAttendanceStudentByClass(studentId, claseId);
             return { success: true, message:'', attendances }
         } catch (error) {
-            return { success: false, message:'error al obtener las asistencias', attendances: {} as AttendanceStudentTable[] }
+            return { success: false, message:'error al obtener las asistencias', attendances: [] }
         }
     }
 }

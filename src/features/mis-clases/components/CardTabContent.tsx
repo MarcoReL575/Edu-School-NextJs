@@ -24,25 +24,25 @@ type Props = {
 export default function CardTabContent({ title, icon, description, tabValue, studentId, subjectName, groupId, claseId }: Props) {
 
     const { data: exams, } = useQuery({
-        queryKey: ['examsandResults', studentId],
+        queryKey: ['examsandResults', studentId, claseId],
         queryFn: ()=> getExamsAndResultActions(studentId, subjectName),
         enabled: tabValue === 'exams'
     });
 
     const { data: tasks} = useQuery({
-        queryKey: ['tasks-student', studentId],
-        queryFn: ()=> getTasksAction(studentId, groupId),
+        queryKey: ['tasks-student-subject', studentId, claseId],
+        queryFn: ()=> getTasksAction(studentId, claseId),
         enabled: tabValue === 'tasks'
     });
 
     const { data: attendances } = useQuery({
-        queryKey: ['attendace-student', studentId],
+        queryKey: ['attendace-student', studentId, claseId],
         queryFn: ()=> getAttendanceAction(studentId, subjectName),
         enabled: tabValue === 'attendance'
     });
 
     const { data: horarios } = useQuery({
-        queryKey: ['horarios-student', studentId],
+        queryKey: ['horarios-student', studentId, claseId],
         queryFn: ()=> getHorariosAction(claseId),
         enabled: tabValue === 'attendance'
     });

@@ -44,7 +44,6 @@ export default function TableExamsAndResult({ data }: Props) {
             cell: ({ row }) => <div className="font-sm flex gap-x-2 items-center justify-center">{getCorrectDate(row.getValue("createdAt"))}</div>
         },
     ], [], );
-    console.log(data)
 
   return (
     <section className='p-4'>

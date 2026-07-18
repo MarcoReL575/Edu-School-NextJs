@@ -56,6 +56,16 @@ class TaskService {
         }
     } 
 
+    async getTasksByClase(studentId: string, claseId: string) {
+        try {
+            const taskList = await this.taskRepository.selectTasksBySubject(studentId, claseId);
+            return { success: true, message: '', tasks: taskList };
+        } catch (error) {
+            console.error(error)
+            return { success: false, message: 'Se produjo un error al obtener los datos, vuelva a intentarlo', tasks: [] as TaskDetails[] };
+        }
+    }
+
     async getTasksTeacher(teacherId: string) {
         try {
             const tasksList = await this.taskRepository.selectTasksTeacher(teacherId);

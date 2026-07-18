@@ -7,6 +7,7 @@ import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
 export interface ITaskRepository{
     insertTask(taskInput: TaskInsert): Promise<TaskSelect>;
     selectTasks(groupId: string, studentId: string): Promise<TaskDetails[]>;
+    selectTasksBySubject(studentId: string, claseId: string): Promise<TaskDetails[]>;
     selectTaskByTaksId(taskId: number): Promise<TaskInfoTeacher>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
     selectStatusTask(taskId: number): Promise<StatusTask>;
@@ -54,6 +55,36 @@ class TaskRepository implements ITaskRepository {
                 eq(taskSubmission.studentId, studentId)
             ))
             .where(eq(group.id, groupId))
+        return taskList
+    }
+
+    async selectTasksBySubject(studentId: string, claseId: string): Promise<TaskDetails[]> {
+        const taskList = await db
+            .select({
+                id: clases.id,
+                subjectName: subjects.name,
+                teacherName: teachers.name,
+                teachersLastName: teachers.lastName,
+                teacherUserId: teachers.userId,
+                taskId: tasks.id,
+                taskTitle: tasks.title,
+                taskDescription: tasks.description,
+                taskFechaEntrega: tasks.fechaEntrega,
+                taskCreatedAt: tasks.createdAt,
+                taskStatus: taskSubmission.status,
+                taskGrade: taskSubmission.calificacion,
+                taskFeedback: taskSubmission.feedback
+            })
+            .from(tasks)
+            .innerJoin(clases, eq(tasks.claseId, clases.id))
+            .innerJoin(group, eq(group.id, clases.groupId))
+            .innerJoin(subjects, eq(subjects.id, clases.subjectId))
+            .innerJoin(teachers, eq(teachers.id, clases.teacherId))
+            .leftJoin(taskSubmission, and(
+                eq(taskSubmission.taskId, tasks.id),
+                eq(taskSubmission.studentId, studentId)
+            ))
+            .where(eq(tasks.claseId, claseId))
         return taskList
     }
 

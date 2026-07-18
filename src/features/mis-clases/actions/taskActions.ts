@@ -14,11 +14,11 @@ export async function getExamsAndResultActions(studentId: string, subjectName: s
     return await examService.getExamAndResult(studentId, subjectName);
 }
 
-export async function getTasksAction(studentId: string, groupId: string) {
+export async function getTasksAction(studentId: string, claseId: string) {
     const { session } = await requireAuth();
     if(!session.user) return { success: false, message: 'Error de usuario', tasks: [] }
 
-    return await taskService.getAllTasks(groupId, studentId);
+    return await taskService.getTasksByClase(studentId, claseId);
 }
 
 export async function getAttendanceAction(studentId: string, subjectName: string) {

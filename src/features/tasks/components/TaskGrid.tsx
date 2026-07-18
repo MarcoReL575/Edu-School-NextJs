@@ -12,13 +12,12 @@ type Props = {
 
 export default async function TaskGrid({ userId }: Props) {
     const userInfo = await studentsService.selectStudent(userId);
-    const { success, message, data: taskList } = await getTasksWithDetailsAction(userInfo.groupId, userInfo.id);
+    const { success, message, tasks } = await getTasksWithDetailsAction(userInfo.groupId, userInfo.id);
     if(!success) return <div>El alumno no cuenta con tareas asignadas</div>
     
-    const pending = taskList.filter((task)=> task.taskStatus === 'pendiente' || task.taskStatus === null);
-    const inProgress = taskList.filter((task)=> task.taskStatus === 'entregada');
-    const finished = taskList.filter((task)=> task.taskStatus === 'calificada');
-    console.log(taskList)
+    const pending = tasks.filter((task)=> task.taskStatus === 'pendiente' || task.taskStatus === null);
+    const inProgress = tasks.filter((task)=> task.taskStatus === 'entregada');
+    const finished = tasks.filter((task)=> task.taskStatus === 'calificada');
 
     return (
         <main className="flex flex-col space-y-10">
@@ -29,7 +28,7 @@ export default async function TaskGrid({ userId }: Props) {
             </section>
             <FiltesrsSection />
             <section className="grid 2xl:grid-cols-2 gap-4">
-                <FilterTasks taskList={taskList} />
+                <FilterTasks taskList={tasks} />
             </section>
         </main>
     )

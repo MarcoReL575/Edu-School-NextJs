@@ -17,25 +17,25 @@ export default async function TabsInfoSubject({ subjectName, studentId, groupId,
 
     const queryClient = new QueryClient();
     await queryClient.prefetchQuery({
-        queryKey: ['examsandResults', studentId],
+        queryKey: ['examsandResults', studentId, claseId],
         queryFn: ()=> examService.getExamAndResult(studentId, subjectName)
     });
 
     await queryClient.prefetchQuery({
-        queryKey: ['tasks-student', studentId],
+        queryKey: ['tasks-student', studentId, claseId],
         queryFn: ()=> taskService.getAllTasks(groupId, studentId)
     });
 
     await queryClient.prefetchQuery({
-        queryKey: ['attendace-student', studentId],
+        queryKey: ['attendace-student', studentId, claseId],
         queryFn: ()=> attendanceService.getAttendanceStudentInClass(studentId, claseId)
     });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-        <section className="max-w-4xl w-full mx-auto">
-            <Tabs defaultValue="overview" className="w-100 flex flex-col">
-                <TabsList variant='line'>
+        <section className="">
+            <Tabs defaultValue="tasks" className=" flex flex-col p-4">
+                <TabsList variant='line' className="mx-auto border rounded-lg border-gray-600 bg-gray-100 p-2">
                     <TabsTrigger value="tasks"><IconClipboardList/> Tareas</TabsTrigger>
                     <TabsTrigger value="exams"><IconChecklist /> Exámenes</TabsTrigger>
                     <TabsTrigger value="horarios"><IconClockHour3 /> Horarios</TabsTrigger>

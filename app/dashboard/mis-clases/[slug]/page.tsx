@@ -1,14 +1,12 @@
-import { clasesServices } from "@/src/features/clases/services/ClasesServices";
+import Link from "next/link";
+import { redirect } from "next/navigation";
+import { IconArrowLeft, IconUser } from "@tabler/icons-react";
 import { studentsService } from "@/src/features/clases/services/StudentsService";
-import HorariosTable from "@/src/features/mis-clases/components/HorariosTable";
 import TabsInfoSubject from "@/src/features/mis-clases/components/TabsInfoSubject";
 import { teacherService } from "@/src/features/teachers/clases/teacherService"
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 import { Button } from "@/src/shared/components/ui/button";
-import { IconArrowLeft, IconClockHour3, IconUser } from "@tabler/icons-react";
-import Link from "next/link";
-import { redirect } from "next/navigation";
 
 type Props = {
     params: Promise<{ slug: string }>

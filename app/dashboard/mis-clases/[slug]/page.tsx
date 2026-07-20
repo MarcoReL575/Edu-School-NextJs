@@ -7,6 +7,7 @@ import { teacherService } from "@/src/features/teachers/clases/teacherService"
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 import { Button } from "@/src/shared/components/ui/button";
+import { GridTabsInfoClass } from "@/src/features/mis-clases/components/GridTabsInfoClass";
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -15,11 +16,13 @@ type Props = {
 export default async function ClasePage({ params }: Props) {
     const { session } = await requireAuth();
     if(!session.user) redirect('/auth/signin');
+    const role = session.user.role;
 
-    const { id: studentId } = await studentsService.selectStudent(session.user.id);
+    const { id: studentId } = await studentsService.selectStudent(session.user.id) ?? 'null';
     const { slug } = await params;
     const { subjectName, grade, group, level, id: claseId, teacherName, teacherLastName, groupId } = await teacherService.getAllInfoClase(slug);
-    
+    const studentsInGroup = await studentsService.getStudentsInGroup(groupId);
+
   return (
     <>
         <section>
@@ -42,9 +45,15 @@ export default async function ClasePage({ params }: Props) {
                 Grupo: {grade} {group} {level}
             </p>
         </section>
-        <section>
-            <TabsInfoSubject subjectName={subjectName} studentId={studentId} groupId={groupId} claseId={claseId} />
-        </section>
+        {
+            role === 'maestro' && <GridTabsInfoClass data={studentsInGroup as []} />
+        }
+        {
+            role === 'estudiante' && studentId &&
+            <section>
+                <TabsInfoSubject subjectName={subjectName} studentId={studentId} groupId={groupId} claseId={claseId} />
+            </section>
+        }
     </>
   )
 }

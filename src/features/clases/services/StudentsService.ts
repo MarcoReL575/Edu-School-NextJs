@@ -16,8 +16,14 @@ class StudentsService {
     }
 
     async selectStudent(usrId: string) {
-        const exists = await this.studentsRepository.selectStudentByUserId(usrId);
-        return exists
+        try {
+            const exists = await this.studentsRepository.selectStudentByUserId(usrId);
+            console.log(exists)
+            return exists
+        } catch (error) {
+            console.error(error);
+            return {} as StudentsSelectType
+        }
     }
 
     async getAllStudents() {
@@ -55,6 +61,15 @@ class StudentsService {
         if(!studentsExists.groupId) return { success: true, message: 'El estudiante no existe' }
 
         await this.studentsRepository.deleteStudentById(studentId);
+    }
+
+    async getStudentsInGroup(groupId: string) {
+        try {
+            const students = await this.studentsRepository.selectStudentsInGroup(groupId);
+            return students
+        } catch (error) {
+            return [] as StudentsSelectType[]
+        }
     }
 
 };

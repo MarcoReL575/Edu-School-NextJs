@@ -3,50 +3,28 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/shared/components/ui/card"
 import { TabsContent } from "@/src/shared/components/ui/tabs"
 import { ReactElement } from "react";
-import { getAttendanceAction, getExamsAndResultActions, getHorariosAction, getTasksAction } from "../actions/taskActions";
 import TableExamsAndResult from "./TableExamsAndResult";
 import TableTasks from "./TableTasks";
 import TableAttendances from "./TableAttendances";
 import HorariosTable from "./HorariosTable";
-import { useQuery } from "@tanstack/react-query";
+import { ExamWithResult } from "../../examenes/types/types";
+import { TaskDetails } from "../../tasks/types/types";
+import { AttendanceSelect } from "../../attendance/types/types";
+import { HorariosSelectType } from "../../clases/types/types";
 
 type Props = {
     title: string;
     icon: ReactElement;
     description: string;
-    tabValue: 'tasks' | 'horarios' | 'exams' | 'attendance';
-    studentId: string;
-    subjectName: string;
-    groupId: string;
-    claseId: string
+    tabValue: 'tasks' | 'horarios' | 'exams' | 'attendance' | 'studentsList' | 'tasksStudents' | '';
+    studentId?: string;
+    subjectName?: string;
+    groupId?: string;
+    claseId?: string
+    data: [] | null;
 }
 
-export default function CardTabContent({ title, icon, description, tabValue, studentId, subjectName, groupId, claseId }: Props) {
-
-    const { data: exams, } = useQuery({
-        queryKey: ['examsandResults', studentId, claseId],
-        queryFn: ()=> getExamsAndResultActions(studentId, subjectName),
-        enabled: tabValue === 'exams'
-    });
-
-    const { data: tasks} = useQuery({
-        queryKey: ['tasks-student-subject', studentId, claseId],
-        queryFn: ()=> getTasksAction(studentId, claseId),
-        enabled: tabValue === 'tasks'
-    });
-
-    const { data: attendances } = useQuery({
-        queryKey: ['attendace-student', studentId, claseId],
-        queryFn: ()=> getAttendanceAction(studentId, subjectName),
-        enabled: tabValue === 'attendance'
-    });
-
-    const { data: horarios } = useQuery({
-        queryKey: ['horarios-student', studentId, claseId],
-        queryFn: ()=> getHorariosAction(claseId),
-        enabled: tabValue === 'attendance'
-    });
-
+export default function CardTabContent({ data, title, icon, description, tabValue, studentId, subjectName, groupId, claseId }: Props) {
   return (
     <TabsContent value={tabValue}>
         <Card>
@@ -63,10 +41,11 @@ export default function CardTabContent({ title, icon, description, tabValue, stu
                 You have 12 active projects and 3 pending tasks.
             </CardContent>
             
-            { tabValue === 'exams' && <TableExamsAndResult data={exams?.exams} /> }
-            { tabValue === 'tasks' && <TableTasks data={tasks?.tasks} /> }
-            { tabValue === 'attendance' && <TableAttendances data={attendances?.attendances} /> }
-            { tabValue === 'horarios' && <HorariosTable horarios={horarios?.horarios} /> }
+            { tabValue === 'exams' && <TableExamsAndResult data={data as ExamWithResult[] } /> }
+            { tabValue === 'tasks' && <TableTasks data={data as TaskDetails[]} /> }
+            { tabValue === 'attendance' && <TableAttendances data={data as AttendanceSelect[] } /> }
+            { tabValue === 'horarios' && <HorariosTable horarios={data as HorariosSelectType[] } /> }
+            {/* { tabValue === 'studentsList' && <StudentsInGroup data={data as ExamWithResult[] } /> } */}
         </Card>
     </TabsContent>
   )

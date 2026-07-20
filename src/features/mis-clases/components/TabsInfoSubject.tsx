@@ -2,9 +2,10 @@ import { IconChecklist, IconClipboardList, IconClockHour3, IconUserCheck } from 
 import { Tabs, TabsList, TabsTrigger } from "@/src/shared/components/ui/tabs"
 import CardTabContent from "./CardTabContent"
 import { examService } from "../../examenes/services/examService"
-import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query"
+import { dehydrate, HydrationBoundary, QueryClient, useQuery } from "@tanstack/react-query"
 import { taskService } from "../../tasks/services/taskService"
 import { attendanceService } from "../../attendance/services/attendanceService"
+import { getAttendanceAction, getExamsAndResultActions, getHorariosAction, getTasksAction } from "../actions/taskActions"
 
 type Props = {
     subjectName: string;
@@ -16,19 +17,24 @@ type Props = {
 export default async function TabsInfoSubject({ subjectName, studentId, groupId, claseId }: Props) {
 
     const queryClient = new QueryClient();
-    await queryClient.prefetchQuery({
+    const { data: exams, } = useQuery({
         queryKey: ['examsandResults', studentId, claseId],
-        queryFn: ()=> examService.getExamAndResult(studentId, subjectName)
+        queryFn: ()=> getExamsAndResultActions(studentId, subjectName),
     });
 
-    await queryClient.prefetchQuery({
-        queryKey: ['tasks-student', studentId, claseId],
-        queryFn: ()=> taskService.getAllTasks(groupId, studentId)
+    const { data: tasks} = useQuery({
+        queryKey: ['tasks-student-subject', studentId, claseId],
+        queryFn: ()=> getTasksAction(studentId, claseId),
     });
 
-    await queryClient.prefetchQuery({
+    const { data: attendances } = useQuery({
         queryKey: ['attendace-student', studentId, claseId],
-        queryFn: ()=> attendanceService.getAttendanceStudentInClass(studentId, claseId)
+        queryFn: ()=> getAttendanceAction(studentId, subjectName),
+    });
+
+    const { data: horarios } = useQuery({
+        queryKey: ['horarios-student', studentId, claseId],
+        queryFn: ()=> getHorariosAction(claseId),
     });
 
   return (
@@ -42,10 +48,10 @@ export default async function TabsInfoSubject({ subjectName, studentId, groupId,
                     <TabsTrigger value="attendance"><IconUserCheck /> Asistencias</TabsTrigger>
                 </TabsList>
 
-                <CardTabContent title="Tareas" icon={<IconClipboardList/>} description="Información de tus tareas" tabValue="tasks"  studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId}/>
-                <CardTabContent title="Horarios" icon={<IconClockHour3 />} description="Horarios de clases" tabValue="horarios" studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId} />
-                <CardTabContent title="Exámenes" icon={<IconChecklist />} description="Información de tus Exámenes" tabValue="exams" studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId} />
-                <CardTabContent title="Asistencias" icon={<IconUserCheck />} description="Consulta tus asistencias" tabValue="attendance" studentId={studentId} subjectName={subjectName}  groupId={groupId} claseId={claseId} />
+                <CardTabContent data={tasks?.tasks as []} title="Tareas" icon={<IconClipboardList/>} description="Información de tus tareas" tabValue="tasks"  studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId}/>
+                <CardTabContent data={horarios?.horarios as []} title="Horarios" icon={<IconClockHour3 />} description="Horarios de clases" tabValue="horarios" studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId} />
+                <CardTabContent data={exams?.exams as []} title="Exámenes" icon={<IconChecklist />} description="Información de tus Exámenes" tabValue="exams" studentId={studentId} subjectName={subjectName} groupId={groupId} claseId={claseId} />
+                <CardTabContent data={attendances?.attendances as []} title="Asistencias" icon={<IconUserCheck />} description="Consulta tus asistencias" tabValue="attendance" studentId={studentId} subjectName={subjectName}  groupId={groupId} claseId={claseId} />
             </Tabs>
         </section>
     </HydrationBoundary>

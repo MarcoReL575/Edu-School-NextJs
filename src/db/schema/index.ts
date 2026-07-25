@@ -2,6 +2,7 @@ export * from "./anuncios-schema"
 export * from "./attendance-schema"
 export * from "./auth-schema"
 export * from "./clasesSchemas"
+export * from "./classes-grade"
 export * from "./examen-schema"
 export * from "./groupSchema"
 export * from './horariosSchema'

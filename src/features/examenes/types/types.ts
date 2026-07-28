@@ -21,9 +21,9 @@ export type InsertOptions = typeof examQuestionOptions.$inferInsert;
 
 export type ExamSelectInfo = {
     id: string;
-    slug: string;
     title: string;
-    subjectName: string;
+    slug: string;
+    subjectName: string | null;
     grade: string | null;
     group: string | null;
     level: string | null;
@@ -68,25 +68,26 @@ export type FullExamWithAnswers = {
     subjectName: string;
     status: string;
     slug: string;
-    teacherId: string;
-    groupId: string;
     createdAt: Date;
     updatedAt: Date;
+    teacherId: string;
+    claseId: string;
     questions: {
         id: string;
-        examId: string;
+        createdAt: Date;
         type: string;
         questionText: string;
         points: number;
-        createdAt: Date;
+        examId: string;
         options: {
             id: string;
-            questionId: string;
             text: string;
-            isCorrect: boolean; 
+            isCorrect: boolean;
+            questionId: string;
         }[];
     }[];
 };
+
 
 export type StudentsSubmissions = {
     id: string;

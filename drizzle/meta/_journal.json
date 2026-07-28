@@ -127,6 +127,27 @@
       "when": 1785009946290,
       "tag": "0017_mute_gamma_corps",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1785014415227,
+      "tag": "0018_flashy_brother_voodoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1785268192204,
+      "tag": "0019_overconfident_moon_knight",
+      "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1785270274259,
+      "tag": "0020_easy_carnage",
+      "breakpoints": true
     }
   ]
 }

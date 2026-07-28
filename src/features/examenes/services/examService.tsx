@@ -1,4 +1,5 @@
 
+import { db } from "@/src/db";
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
 import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
@@ -36,6 +37,7 @@ class ExamService {
                 }
             return { success: true, message:'Examen creado' }
         } catch (error) {
+            console.error({ error })
             return { success: false, message:'Hubo un error, intenta de nuevo' }
         }
     }
@@ -45,7 +47,7 @@ class ExamService {
     }
 
     async getStudentsExamsList(studentId: string, groupId: string) {
-        return await examRepository.selectExamListStudents(studentId, groupId)
+        return await examRepository.selectExamListStudents(studentId, groupId);
     }
 
     async getExamBySlug(examSlug: string) {
@@ -90,7 +92,14 @@ class ExamService {
             ? parseFloat(((pointsEarned / totalPointsPossible) * 100).toFixed(2))
             : 0;
 
-            await this.examRepository.submitExam(examData, finalScore, student.id);
+            await db.transaction(async(tx)=> {
+                // 1. Guardar la entrega del examen pasando la transacción 'tx'
+                await this.examRepository.submitExam(examData, finalScore, student.id, tx);
+
+                // 2. Recalcular el promedio ponderado de la materia y actualizar el consolidado
+                // Pasamos 'examData.claseId' (o la relación correspondiente de tu objeto) para identificar el curso
+                await this.examRepository.recalculateSubjectAverage(student.id, examData.claseId, tx);
+            })
             return {
                 success: true,
                 message: "¡Examen entregado con éxito!",

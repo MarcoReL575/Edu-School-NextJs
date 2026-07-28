@@ -12,6 +12,7 @@ import { TeachersClases } from '../../teachers/types/types';
 import { InsertExamWithQuestions } from '../types/types';
 import { convertToSlug } from '@/src/shared/helpers/convertToSlug';
 import { createExamAction } from '../actions/examAction';
+import { useState } from 'react';
 
 type Props = {
     clases: TeachersClases[];
@@ -25,12 +26,13 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
         mode: 'onChange',
         defaultValues: {
             title: '',
-            groupId: '',
             subjectName: '',
+            groupId: '',
             slug: '',
             status: 'activo',
             teacherId: teacherId,
             parcialNum: '',
+            claseId: '',
             questions: [{
                 questionText: '',
                 type: 'multiple',
@@ -48,17 +50,32 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
         name: "questions"
     });
 
-    const handleCreateExam = async(data: InsertExamWithQuestions & { parcialNum: string })=> {
-        const selectedClase = clases.find((clase)=> clase.groupId === data.groupId);
+    const handleClaseChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const selectedClaseId = e.target.value;
 
-        if (!selectedClase || !data.subjectName || !data.parcialNum) {
+        //Asignamos el claseId al formulario
+        methods.setValue('claseId', selectedClaseId, { shouldValidate: true });
+
+        // Buscamos la clase seleccionada
+        const selectedClase = clases.find((c) => c.id === selectedClaseId);
+        if (selectedClase) {
+            // 🌟 Seteamos automáticamente el subjectName dentro de React Hook Form
+            methods.setValue('subjectName', selectedClase.subjectName, { shouldValidate: true });
+        } else {
+            methods.setValue('subjectName', '');
+        }
+    }
+
+    const handleCreateExam = async(data: InsertExamWithQuestions & { parcialNum: string })=> {
+        const selectedClase = clases.find((clase) => clase.id === data.claseId);
+
+        if (!selectedClase || !data.parcialNum) {
             toast.error('Por favor completa Materia, Grupo y Parcial.');
             return;
         }
 
         //Construimos el slug
-        const slugstring = `${data.subjectName} ${selectedClase.level} ${selectedClase.grade} ${selectedClase.group} ${data.parcialNum} parcial`
-        data.slug = convertToSlug(slugstring);
+        data.slug = selectedClase.slug?? `${selectedClase.subjectName} ${selectedClase.level} ${selectedClase.grade} ${selectedClase.group}`
 
         const { success, message } = await createExamAction(data);
         if(!success) {
@@ -82,6 +99,8 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
         {key: 5, number: 5},
         {key: 6, number: 6}
     ]
+    
+    console.log(clases)
 
   return (
     <FormProvider {...methods}>
@@ -93,20 +112,29 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
             <FormInput {...methods.register('teacherId')} id='teachrId' type='hidden'/>
             {methods.formState.errors.subjectName && <FormError>{methods.formState.errors.subjectName.message}</FormError>}
 
+            <FormInput {...methods.register('subjectName')} id='subjectName' type='hidden' />
+            {methods.formState.errors.subjectName && <FormError>{methods.formState.errors.subjectName.message}</FormError>}
+
             <div className='grid grid-cols-3 gap-4'>
                 <div className='flex flex-col'>
-                    <FormLabel htmlFor='subjectName'>Materia/Asignatura</FormLabel>
-                    <FormInput {...methods.register('subjectName')} id='subjectName' type='text' placeholder='Ej. Matemáticas' />
-                    {methods.formState.errors.subjectName && <FormError>{methods.formState.errors.subjectName.message}</FormError>}
-                </div>
-
-                <div className='flex flex-col'>
-                    <FormLabel htmlFor='groupId'>Selecciona el grupo</FormLabel>
-                    <select {...methods.register('groupId')} id='groupId' className='border border-gray-400 p-2 rounded-lg'>
-                        <option value="">--Elige una opción--</option>
+                    <FormLabel htmlFor='classId'>Materia/Asignatura</FormLabel>
+                    <select {...methods.register('claseId')} id='classId' className='border border-gray-400 p-2 rounded-lg' onChange={handleClaseChange}>
+                        <option value="">--Elige una clase--</option>
                         {
                             clases.map((clase)=>(
-                                <option key={clase.id} value={clase.groupId} className=' capitalize'>{clase.level}:{clase.grade}{clase.group}</option>
+                                <option key={clase.id} value={clase.id} className=' capitalize'>{clase.subjectName} - {clase.grade}{clase.group} {clase.level}</option>
+                            ))
+                        }
+                    </select>
+                    {methods.formState.errors.claseId && <FormError>{methods.formState.errors.claseId.message}</FormError>}
+                </div>
+                <div className='flex flex-col'>
+                    <FormLabel htmlFor='groupId'>Materia/Asignatura</FormLabel>
+                    <select {...methods.register('groupId')} id='groupId' className='border border-gray-400 p-2 rounded-lg' onChange={handleClaseChange}>
+                        <option value="">--Elige una clase--</option>
+                        {
+                            clases.map((clase)=>(
+                                <option key={clase.groupId} value={clase.groupId} className=' capitalize'>{clase.grade}{clase.group} {clase.level}</option>
                             ))
                         }
                     </select>

@@ -1,8 +1,8 @@
 import { db } from "@/src/db";
 import { ExamSelectInfo, ExamStudentInfo, ExamWithResult, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender, StudentsSubmissions } from "../types/types";
 import { examQuestionOptions, examQuestions, exams, examSubmissions } from "@/src/db/schema/examen-schema";
-import { and, desc, eq, sql } from "drizzle-orm";
-import { group, students } from "@/src/db/schema";
+import { and, avg, desc, eq, sql } from "drizzle-orm";
+import { clases, classGrades, group, students, subjects } from "@/src/db/schema";
 import { studentExamRenderSchema } from "../schemas/schema";
 
 export interface IExamRepository {
@@ -12,10 +12,11 @@ export interface IExamRepository {
     selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]>;
     selectExam(examSlug: string): Promise<StudentExamRender | undefined>;
     selectExamWithAnswers(examSlug: string): Promise <FullExamWithAnswers | undefined>;
-    submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string): Promise<void>;
+    submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string, tx: any): Promise<void>;
     submittedExam(examId: string, studentId: string): Promise<SelectExamubmissions | undefined>;
     selectStudentsWithSubmissions(groupId: string, examId: string): Promise<StudentsSubmissions>;
-    selectExamWithResult(studentId: string, subjectName: string): Promise<ExamWithResult[]>
+    selectExamWithResult(studentId: string, subjectName: string): Promise<ExamWithResult[]>;
+    recalculateSubjectAverage(studentId: string, claseId: string, tx: any): Promise<void>;
 }
 
 class ExamRepository implements IExamRepository {
@@ -59,16 +60,20 @@ class ExamRepository implements IExamRepository {
                 level: group.level,
                 status: exams.status,
                 createdAt: exams.createdAt,
+                // 1. Conteo de preguntas asociadas al examen
                 questionsCount: sql<number>`count(distinct ${examQuestions.id})`.mapWith(Number),
+                // 2. Alumnos totales pertenecientes al grupo de la clase
                 totalStudents: sql<number>`(
                     select count(*) from ${students} 
-                    where ${students.groupId} = ${exams.groupId}
+                    where ${students.groupId} = ${clases.groupId}
                 )`.mapWith(Number),
+                // 3. Cantidad de alumnos que ya entregaron el examen
                 submittedCount: sql<number>`(
                     select count(*) from ${examSubmissions} 
                     where ${examSubmissions.examId} = ${exams.id} 
                     and ${examSubmissions.status} = 'entregado'
                 )`.mapWith(Number),
+                // 4. Promedio general de calificación obtenido en el examen
                 averageScore: sql<number>`coalesce(
                     (select avg(${examSubmissions.score}) 
                     from ${examSubmissions} 
@@ -77,16 +82,23 @@ class ExamRepository implements IExamRepository {
                 )`.mapWith(Number)
             })
             .from(exams)
+            .leftJoin(clases, eq(exams.claseId, clases.id))
+            .leftJoin(subjects, eq(clases.subjectId, subjects.id))
+            .leftJoin(group, eq(clases.groupId, group.id))
             .leftJoin(examQuestions, eq(exams.id, examQuestions.examId))
-            .leftJoin(group, eq(exams.groupId, group.id))
             .where(eq(exams.teacherId, teacherId))
             .groupBy(
                 exams.id, 
+                exams.title,
+                exams.slug,
+                exams.status,
+                exams.createdAt,
+                clases.groupId,
                 group.grade, 
                 group.group, 
                 group.level
             )
-            .orderBy(exams.createdAt);
+            .orderBy(desc(exams.createdAt));
         return result
     }
 
@@ -112,8 +124,9 @@ class ExamRepository implements IExamRepository {
                 submittedAt: examSubmissions.submittedAt
             })
             .from(exams)
+            .innerJoin(clases, eq(exams.claseId, clases.id))
+            .leftJoin(group, eq(clases.groupId, group.id))
             .leftJoin(examQuestions, eq(exams.id, examQuestions.examId))
-            .leftJoin(group, eq(exams.groupId, group.id))
             .leftJoin(
                 examSubmissions, 
                 and(
@@ -168,7 +181,7 @@ class ExamRepository implements IExamRepository {
         return exam
     }
 
-    async submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string): Promise<void> {
+    async submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string, claseId: string): Promise<void> {
         await db.insert(examSubmissions).values({
             examId: examData.id,
             studentId: studentId,
@@ -231,6 +244,40 @@ class ExamRepository implements IExamRepository {
             .where(eq(exams.subjectName, subjectName))
             .orderBy(desc(exams.createdAt))
         return result
+    }
+
+    async recalculateSubjectAverage(studentId: string, claseId: string, tx: any): Promise<void> {
+        // 1. Obtener el promedio de todos los exámenes entregados por el alumno en ESTA clase
+        const [result] = await tx
+            .select({
+                averageScore: avg(examSubmissions.score)
+            })
+            .from(examSubmissions)
+            .innerJoin(exams, eq(examSubmissions.examId, exams.id))
+            .where(
+                and(
+                    eq(examSubmissions.studentId, studentId),
+                    eq(exams.groupId, tx.select({ groupId: clases.groupId }).from(clases).where(eq(clases.id, claseId))),
+                    eq(examSubmissions.status, 'entregado')
+                )
+            );
+
+        const newAverage = result?.averageScore ? parseFloat(Number(result.averageScore).toFixed(2)) : 0;
+
+        // 2. Actualizar tu tabla consolidada (ej. enrollments o class_grades)
+        // Nota: Reemplaza 'enrollments' por el nombre exacto de la tabla donde decidiste guardar la calificación final
+        await tx
+            .update(classGrades) 
+            .set({ 
+                finalGrade: newAverage.toString(),
+                updatedAt: new Date()
+            })
+            .where(
+                and(
+                    eq(classGrades.studentId, studentId),
+                    eq(classGrades.claseId, claseId)
+                )
+            );
     }
 }
 

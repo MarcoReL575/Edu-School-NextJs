@@ -2,6 +2,7 @@ import { boolean, decimal, integer, pgTable, text, timestamp, uuid, varchar } fr
 import { teachers } from "./teachersSchema";
 import { group } from "./groupSchema";
 import { students } from "./studentsSchema";
+import { clases } from "./clasesSchemas";
 
 export const exams = pgTable('exams', {
     id: uuid('id').defaultRandom().primaryKey(),
@@ -13,6 +14,7 @@ export const exams = pgTable('exams', {
     // Relación con el docente creador (Asumiendo tabla 'users' existente)
     teacherId: uuid('teacher_id').notNull().references(() => teachers.id),
     groupId: uuid('group_id').notNull().references(() => group.id),
+    claseId: uuid('clase_id').notNull().references(() => clases.id),
 
     createdAt: timestamp('created_at').defaultNow().notNull(),
     updatedAt: timestamp('updated_at').defaultNow().notNull(),

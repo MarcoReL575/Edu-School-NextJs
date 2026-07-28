@@ -1,0 +1,2 @@
+ALTER TABLE "exams" ADD COLUMN "group_id" uuid NOT NULL;--> statement-breakpoint
+ALTER TABLE "exams" ADD CONSTRAINT "exams_group_id_group_id_fk" FOREIGN KEY ("group_id") REFERENCES "public"."group"("id") ON DELETE no action ON UPDATE no action;

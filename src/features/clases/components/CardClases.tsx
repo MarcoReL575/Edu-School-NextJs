@@ -1,21 +1,21 @@
 import Heading from "@/src/shared/components/typography/Heading";
 import { ClassesByGroup } from "../types/types"
-import CardsTareas from "./CardsTareas";
 import { IconChartBarPopular, IconClockHour3 } from "@tabler/icons-react";
-import { getColorBySubject } from "./TableHorarioClases";
-import { clases } from "@/src/db/schema";
 import Link from "next/link";
+import { getColorBySubject } from "../../tasks/helpers/getColorCardClass";
 
 type Props = {
     clase: ClassesByGroup;
 }
 
 export default function CardClases({ clase }: Props) {
-    const { subjectName, teachersLastname, teachersName } = clase;
+    const { subjectName, teachersLastname, teachersName, finalGrade  } = clase;
     const totalAttendance = clase.attendances.length
     const attendance = clase.attendances.filter((attendance)=> attendance.status === 'asistencia');
     const attendancePercentage = (attendance.length * 100) / (totalAttendance)
     const attendanceStat = +attendancePercentage.toFixed(2)
+
+    const finalGradeScore = finalGrade === '0' ? '--' : finalGrade
 
   return (
     <Link 
@@ -28,7 +28,7 @@ export default function CardClases({ clase }: Props) {
             <p className="flex items-center gap-x-1"> 
                 <IconChartBarPopular size={20} />
                 <span className="">Promedio: </span>
-                <span>8.5</span>
+                <span>{finalGradeScore}</span>
             </p>
             <p className="flex items-center gap-x-1"> 
                 <IconClockHour3 size={20} />

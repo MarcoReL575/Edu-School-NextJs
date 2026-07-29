@@ -1,5 +1,5 @@
 import { db } from "@/src/db"
-import { attendance, clases, group, horarios, subjects, teachers } from "@/src/db/schema"
+import { attendance, clases, classGrades, group, horarios, subjects, teachers } from "@/src/db/schema"
 import { ClasesInfoByAttendance, ClasesInfoComplete, ClasesInsertType, ClasesSelectType, ClassesByGroup, GroupCompleteInfo, HorariosInsertType, HorariosSelectType } from "../types/types"
 import { and, asc, eq } from "drizzle-orm";
 import { TeachersClases, TeachersClasesAllInfo } from "../../teachers/types/types";
@@ -130,6 +130,7 @@ class ClasesRepository implements IClasesRepository {
             with: {
                 subject: { columns: { name: true } },
                 teacher: { columns: { name: true, lastName: true } },
+                scores: { columns: { finalGrade: true, updatedAt: true } },
                 attendances: {
                     where: eq(attendance.studentId, studentId)
                 }
@@ -142,7 +143,9 @@ class ClasesRepository implements IClasesRepository {
             subjectName: clase.subject.name,
             teachersName: clase.teacher.name,
             teachersLastname: clase.teacher.lastName,
-            attendances: clase.attendances
+            attendances: clase.attendances,
+            finalGrade: clase.scores?.finalGrade?? '0',
+            finalGradeUpdatedAt: clase.scores?.updatedAt ?? null
         }))
     }
 

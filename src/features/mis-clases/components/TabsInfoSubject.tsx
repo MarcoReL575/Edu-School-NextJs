@@ -1,10 +1,7 @@
+import { dehydrate, HydrationBoundary, QueryClient, useQuery } from "@tanstack/react-query"
 import { IconChecklist, IconClipboardList, IconClockHour3, IconUserCheck } from "@tabler/icons-react"
 import { Tabs, TabsList, TabsTrigger } from "@/src/shared/components/ui/tabs"
 import CardTabContent from "./CardTabContent"
-import { examService } from "../../examenes/services/examService"
-import { dehydrate, HydrationBoundary, QueryClient, useQuery } from "@tanstack/react-query"
-import { taskService } from "../../tasks/services/taskService"
-import { attendanceService } from "../../attendance/services/attendanceService"
 import { getAttendanceAction, getExamsAndResultActions, getHorariosAction, getTasksAction } from "../actions/taskActions"
 
 type Props = {
@@ -17,25 +14,31 @@ type Props = {
 export default async function TabsInfoSubject({ subjectName, studentId, groupId, claseId }: Props) {
 
     const queryClient = new QueryClient();
-    const { data: exams, } = useQuery({
-        queryKey: ['examsandResults', studentId, claseId],
-        queryFn: ()=> getExamsAndResultActions(studentId, subjectName),
-    });
 
-    const { data: tasks} = useQuery({
-        queryKey: ['tasks-student-subject', studentId, claseId],
-        queryFn: ()=> getTasksAction(studentId, claseId),
-    });
+    await Promise.all([
+        queryClient.prefetchQuery({
+            queryKey: ['examsandResults', studentId, claseId],
+            queryFn: () => getExamsAndResultActions(studentId, subjectName),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ['tasks-student-subject', studentId, claseId],
+            queryFn: () => getTasksAction(studentId, claseId),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ['attendace-student', studentId, claseId],
+            queryFn: () => getAttendanceAction(studentId, subjectName),
+        }),
+        queryClient.prefetchQuery({
+            queryKey: ['horarios-student', studentId, claseId],
+            queryFn: () => getHorariosAction(claseId),
+        }),
+    ])
 
-    const { data: attendances } = useQuery({
-        queryKey: ['attendace-student', studentId, claseId],
-        queryFn: ()=> getAttendanceAction(studentId, subjectName),
-    });
+    const exams = queryClient.getQueryData(['examsandResults', studentId, claseId]) as any;
+    const tasks = queryClient.getQueryData(['tasks-student-subject', studentId, claseId]) as any;
+    const attendances = queryClient.getQueryData(['attendace-student', studentId, claseId]) as any;
+    const horarios = queryClient.getQueryData(['horarios-student', studentId, claseId]) as any;
 
-    const { data: horarios } = useQuery({
-        queryKey: ['horarios-student', studentId, claseId],
-        queryFn: ()=> getHorariosAction(claseId),
-    });
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>

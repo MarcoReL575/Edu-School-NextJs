@@ -2,9 +2,9 @@ import Link from "next/link"
 import { Route } from "next"
 import Heading from "@/src/shared/components/typography/Heading"
 import { getCorrectDate } from "../helpers/getCorrectDate"
-import { getColorBySubject } from "../../clases/components/TableHorarioClases"
 import { TaskTeacher } from "../types/types"
 import { IconCalendar, IconUsers } from "@tabler/icons-react"
+import { getColorBySubject } from "../helpers/getColorCardClass"
 
 type Props = {
     task: TaskTeacher

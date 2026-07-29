@@ -1,6 +1,5 @@
-'use client'
 
-import { useSuspenseQuery } from "@tanstack/react-query"
+import { QueryClient, useQuery } from "@tanstack/react-query"
 import { getStudentsSubjectsAction } from "../actions/clasesAction"
 import CardClases from "./CardClases"
 
@@ -9,13 +8,17 @@ type Props = {
     studentId: string;
 }
 
-export default function ClasesSectionGrid({ groupId, studentId }: Props) {
+export default async function ClasesSectionGrid({ groupId, studentId }: Props) {
 
-    const { data: clases} = useSuspenseQuery({ 
-        queryKey: ['miSubjects', groupId], 
-        queryFn: async()=> await getStudentsSubjectsAction(groupId, studentId),
-        staleTime: 5 * 60 * 1000
-    });
+    const clases = await getStudentsSubjectsAction(groupId, studentId);
+
+    if (!clases || clases.length === 0) {
+        return (
+            <div className="w-full text-center mt-5">
+                <p>Aún no tienes clases asignadas, revisa el tema con algún director de la escuela.</p>
+            </div>
+        );
+    }
 
   return ( 
     <section className="grid grid-cols-2 xl:grid-cols-3  gap-8">

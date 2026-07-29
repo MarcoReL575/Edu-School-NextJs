@@ -101,6 +101,8 @@ export type ClassesByGroup = {
     teachersName: string | null;
     teachersLastname: string | null;
     attendances: AttendanceSelect[]
+    finalGrade: string | null;
+    finalGradeUpdatedAt: Date;
 }
 
 export type AttendanceStatus = "asistencia" | "falta" | "retardo" | "justificado";

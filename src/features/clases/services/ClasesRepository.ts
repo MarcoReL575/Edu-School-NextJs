@@ -180,12 +180,14 @@ class ClasesRepository implements IClasesRepository {
                 group: group.group,
                 level: group.level,
                 teacherName: teachers.name,
-                teacherLastName: teachers.lastName
+                teacherLastName: teachers.lastName,
+                finalScore: classGrades.finalGrade
             })
             .from(clases)
             .innerJoin(subjects, eq(subjects.id, clases.subjectId))
             .innerJoin(group, eq(group.id, clases.groupId))
             .innerJoin(teachers, eq(teachers.id, clases.teacherId))
+            .innerJoin(classGrades, eq(classGrades.claseId, clases.id ))
             .where(eq(clases.slug, slug))
         return teachersClases
     }

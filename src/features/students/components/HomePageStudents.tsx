@@ -39,13 +39,13 @@ export default async function HomePageStudents() {
           </div>
         </div>
       </section>
-      <section>
-        <TableHorarioClases horariosStudent={horariosStudent} />
-      </section>
       <section className='grid grid-cols-3 sm:grid-cols-3 gap-4'>
         <CardStatsHome titleCard='promedio general' content={8.9} icon={<IconBook2 size={20}/>} />
         <CardStatsHome titleCard='asistencia total' content={attendancePercentage} icon={<IconCalendarCheck size={20} />} />
         <CardStatsHome titleCard='tareas pendientes' content={taskPendientes} icon={<IconChecklist size={20} />} />
+      </section>
+      <section>
+        <TableHorarioClases horariosStudent={horariosStudent} />
       </section>
     </>
   )

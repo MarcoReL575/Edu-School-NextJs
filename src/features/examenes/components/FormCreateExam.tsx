@@ -75,7 +75,7 @@ export default function FormCreateExam({ clases, teacherId }: Props) {
         }
 
         //Construimos el slug
-        data.slug = selectedClase.slug?? `${selectedClase.subjectName} ${selectedClase.level} ${selectedClase.grade} ${selectedClase.group}`
+        data.slug = selectedClase.slug ? `${selectedClase.slug}-${data.parcialNum}` : `${selectedClase.subjectName} ${selectedClase.level} ${selectedClase.grade} ${selectedClase.group}`
 
         const { success, message } = await createExamAction(data);
         if(!success) {

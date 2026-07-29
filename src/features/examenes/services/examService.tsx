@@ -105,6 +105,7 @@ class ExamService {
                 message: "¡Examen entregado con éxito!",
             };
         } catch (error) {
+            console.error({error})
             return {
                 success: false,
                 message: "Error al engtregar examen",

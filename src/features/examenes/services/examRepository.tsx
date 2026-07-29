@@ -257,7 +257,7 @@ class ExamRepository implements IExamRepository {
             .where(
                 and(
                     eq(examSubmissions.studentId, studentId),
-                    eq(exams.groupId, tx.select({ groupId: clases.groupId }).from(clases).where(eq(clases.id, claseId))),
+                    eq(exams.claseId, claseId),
                     eq(examSubmissions.status, 'entregado')
                 )
             );
@@ -267,17 +267,20 @@ class ExamRepository implements IExamRepository {
         // 2. Actualizar tu tabla consolidada (ej. enrollments o class_grades)
         // Nota: Reemplaza 'enrollments' por el nombre exacto de la tabla donde decidiste guardar la calificación final
         await tx
-            .update(classGrades) 
-            .set({ 
+            .insert(classGrades) 
+            .values({ 
+                studentId: studentId,
+                claseId: claseId,
                 finalGrade: newAverage.toString(),
                 updatedAt: new Date()
             })
-            .where(
-                and(
-                    eq(classGrades.studentId, studentId),
-                    eq(classGrades.claseId, claseId)
-                )
-            );
+            .onConflictDoUpdate({
+                target: [classGrades.studentId, classGrades.claseId], // Llave única compuesta
+                set: { 
+                    finalGrade: newAverage.toString(),
+                    updatedAt: new Date()
+                }
+            })
     }
 }
 

@@ -24,5 +24,5 @@ export type TeachersClasesAllInfo = {
     level: string;
     teacherName: string; 
     teacherLastName: string;
-    finalScore: string
+    finalScore: string | null
 }

@@ -12,3 +12,8 @@ export type AttendanceStudentTable = {
     status: StatusAttendance;
     subjectName: string;
 }
+
+export type AttendanceResult = {
+    totalClasses: number;
+    attendedClasses: number;
+}

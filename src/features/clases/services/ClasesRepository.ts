@@ -20,7 +20,7 @@ export interface IClasesRepository {
     createHorario(input: HorariosInsertType): Promise<void>;
     setHorario(input: HorariosSelectType): Promise<void>;
     selectAllInfoByGroup(groupId: string): Promise<GroupCompleteInfo[]>;
-    selectClaseBySlug(slug: string): Promise<ClasesSelectType>;
+    selectClaseBySlug(slug: string): Promise<TeachersClasesAllInfo>;
 }
 
 class ClasesRepository implements IClasesRepository {
@@ -269,14 +269,28 @@ class ClasesRepository implements IClasesRepository {
         return groupInfo
     }
 
-    async selectClaseBySlug(slug: string): Promise<ClasesSelectType> {
+    async selectClaseBySlug(slug: string): Promise<TeachersClasesAllInfo> {
         const [result] = await db 
-            .select()
+            .select({
+                id: clases.id,
+                slug: clases.slug,
+                subjectName: subjects.name,
+                groupId: group.id,
+                grade: group.grade,
+                group: group.group,
+                level: group.level,
+                teacherName: teachers.name,
+                teacherLastName: teachers.lastName,
+                finalScore: classGrades.finalGrade
+            })
             .from(clases)
+            .innerJoin(subjects, eq(subjects.id, clases.subjectId))
+            .innerJoin(group, eq(group.id, clases.groupId))
+            .innerJoin(teachers, eq(teachers.id, clases.teacherId))
+            .leftJoin(classGrades, eq(classGrades.claseId, clases.id))
             .where(eq(clases.slug, slug))
         return result
     }
-
 }
 
 export const clasesRepository = new ClasesRepository()

@@ -28,7 +28,7 @@ class TeacherService {
     }
 
     async getAllInfoClase(claseId: string) {
-       return await this.clasesRepository.selectAllInfoTeachersClases(claseId);
+       return await this.clasesRepository.selectClaseBySlug(claseId);
     }
 }
 

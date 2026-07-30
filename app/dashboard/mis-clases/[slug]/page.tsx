@@ -24,7 +24,7 @@ export default async function ClasePage({ params }: Props) {
     const { slug } = await params;
     const { subjectName, grade, group, level, id: claseId, teacherName, teacherLastName, groupId, finalScore } = await teacherService.getAllInfoClase(slug);
     const studentsInGroup = await studentsService.getStudentsInGroup(groupId);
-    const finalScoreClass= +finalScore
+    const finalScoreClass = finalScore !== null ? +finalScore : 0
 
   return (
     <>
@@ -48,15 +48,16 @@ export default async function ClasePage({ params }: Props) {
                 </div>
             </div>
             <div>
-                <div className={clsx("py-4 rounded-lg text-white border border-gray-500 text-center flex items-center justify-around",
-                    finalScoreClass >= 7 ? 'bg-green-300' : 'bg-red-600'
+                <div className={clsx("py-2 rounded-lg text-white border border-gray-500 text-center flex items-center justify-around",
+                    finalScoreClass >= 7 ? 'bg-green-300' : 'bg-red-600',
+                    finalScore === null && 'bg-blue-300' ,
                 )}>
                     <div>
                         <IconChartBarPopular size={40} />
                     </div>
                     <div>
-                        <p>Promedio</p> 
-                        <p className="text-center">{finalScore}</p>
+                        <p className=" text-xl font-semibold">Promedio Final</p> 
+                        <p className="text-center text-2xl font-bold">{finalScore}{finalScore === null && '--' }</p>
                     </div>
                 </div>
             </div>
@@ -67,8 +68,7 @@ export default async function ClasePage({ params }: Props) {
         {
             role === 'estudiante' && studentId &&
             <section>
-                <TabsInfoSubject subjectName={subjectName} studentId={studentId} groupId={groupId} claseId={claseId} finalScore={finalScore} />
-                <div>{}</div>
+                <TabsInfoSubject subjectName={subjectName} studentId={studentId} groupId={groupId} claseId={claseId} finalScore={finalScoreClass} />
             </section>
         }
     </>

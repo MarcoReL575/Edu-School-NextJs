@@ -9,6 +9,7 @@ type Props = {
     studentId: string;
     groupId: string;
     claseId: string;
+    finalScore: string;
 }
 
 export default async function TabsInfoSubject({ subjectName, studentId, groupId, claseId }: Props) {

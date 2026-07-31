@@ -3,7 +3,7 @@ import { db } from "@/src/db";
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
 import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
-import { ITeacherRepository, teacherRepository } from "../../teachers/clases/teacherRepository";
+import { ITeacherRepository, teacherRepository } from "../../teachers/services/teacherRepository";
 import { ExamWithResult, InsertExamWithQuestions, StudentExamRender, StudentsSubmissions, SubmitExam } from "../types/types";
 import { examRepository, IExamRepository } from "./examRepository";
 

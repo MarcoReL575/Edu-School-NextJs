@@ -3,7 +3,7 @@
 import { requireAuth } from "@/src/lib/auth-server";
 import { InsertExamWithQuestions, SubmitExam } from "../types/types";
 import { examService } from "../services/examService";
-import { teacherService } from "../../teachers/clases/teacherService";
+import { teacherService } from "../../teachers/services/teacherService";
 
 export async function createExamAction(data: InsertExamWithQuestions) {
     const { session } = await requireAuth();

@@ -2,7 +2,7 @@ import Heading from '@/src/shared/components/typography/Heading'
 import { IconPlus } from '@tabler/icons-react'
 import Link from 'next/link'
 import { examService } from '../services/examService'
-import { teacherService } from '../../teachers/clases/teacherService'
+import { teacherService } from '../../teachers/services/teacherService'
 import CardExamTeacher from './CardExamTeacher'
 
 type Props = {

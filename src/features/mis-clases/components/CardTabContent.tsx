@@ -10,7 +10,8 @@ import HorariosTable from "./HorariosTable";
 import { ExamWithResult } from "../../examenes/types/types";
 import { TaskDetails } from "../../tasks/types/types";
 import { AttendanceSelect } from "../../attendance/types/types";
-import { HorariosSelectType } from "../../clases/types/types";
+import { HorariosSelectType, StudentsAndScoresInfo } from "../../clases/types/types";
+import StudentsInGroup from "./StudentsInGroup";
 
 type Props = {
     title: string;
@@ -45,7 +46,7 @@ export default function CardTabContent({ data, title, icon, description, tabValu
             { tabValue === 'tasks' && <TableTasks data={data as TaskDetails[]} /> }
             { tabValue === 'attendance' && <TableAttendances data={data as AttendanceSelect[] } /> }
             { tabValue === 'horarios' && <HorariosTable horarios={data as HorariosSelectType[] } /> }
-            {/* { tabValue === 'studentsList' && <StudentsInGroup data={data as ExamWithResult[] } /> } */}
+            { tabValue === 'studentsList' && <StudentsInGroup data={data as StudentsAndScoresInfo[] } /> }
         </Card>
     </TabsContent>
   )

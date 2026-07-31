@@ -118,3 +118,16 @@ export type ClasesInfoByAttendance = {
     level: string;
     students: StudentAttendance[];
 } 
+
+
+export type StudentsAndScoresInfo = {
+    id: string;
+    name: string;
+    last_name: string;
+    inscrito: boolean;
+    matricula: string;
+    grade: string;
+    group: string;
+    level: string;
+    scoreFinal: string | null;
+}

@@ -1,5 +1,5 @@
 import CreateExam from "@/src/features/examenes/components/CreateExam";
-import { teacherService } from "@/src/features/teachers/clases/teacherService";
+import { teacherService } from "@/src/features/teachers/services/teacherService";
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 import { Button } from "@/src/shared/components/ui/button";

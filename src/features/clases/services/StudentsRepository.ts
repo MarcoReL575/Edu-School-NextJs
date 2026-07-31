@@ -1,7 +1,7 @@
 import { db } from "@/src/db";
-import { StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
-import { group, students, subjects } from "@/src/db/schema";
-import { asc, desc, eq } from "drizzle-orm";
+import { StudentsAndScoresInfo, StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
+import { classGrades, group, students, subjects } from "@/src/db/schema";
+import { asc, desc, eq, sql } from "drizzle-orm";
 import { CreateStudent } from "../schema/clasesSchemas";
 import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
 
@@ -14,6 +14,7 @@ export interface IStudentsRepository{
     selectAllStudents(): Promise<StudentsTable[]>;
     selectInfoStudent(userId: string): Promise<StudentsSelectType>;
     selectStudentsInGroup(groupId: string): Promise<StudentsSelectType[]>;
+    selectStudentsInfoInGroup(groupId: string, claseId: string): Promise<StudentsAndScoresInfo[]>;
 };
 
 class StudentsRepository implements IStudentsRepository {
@@ -95,5 +96,26 @@ class StudentsRepository implements IStudentsRepository {
             .where(eq(students.groupId, groupId))
         return studentsList;
     }
+
+    async selectStudentsInfoInGroup(groupId: string, claseId: string): Promise<StudentsAndScoresInfo[]> {
+        const studentsList = await db
+            .select({
+                id: students.id,
+                name: students.name,
+                last_name: students.lastName,
+                inscrito: students.inscrito,
+                matricula: students.matricula,
+                grade: group.grade,
+                group: group.group,
+                level: group.level,
+                scoreFinal: classGrades.finalGrade
+            })
+            .from(students)
+            .innerJoin(group, eq(group.id, students.groupId))
+            .leftJoin(classGrades, sql`${classGrades.studentId} = ${students.id} AND ${classGrades.claseId} = ${claseId}`)
+            .where(eq(students.groupId, groupId))
+        return studentsList
+    }
+
 }
 export const studentsRepository = new StudentsRepository();

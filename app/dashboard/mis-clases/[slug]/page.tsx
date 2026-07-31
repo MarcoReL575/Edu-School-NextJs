@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { IconArrowLeft, IconChartBarPopular, IconUser } from "@tabler/icons-react";
 import { studentsService } from "@/src/features/clases/services/StudentsService";
 import TabsInfoSubject from "@/src/features/mis-clases/components/TabsInfoSubject";
-import { teacherService } from "@/src/features/teachers/clases/teacherService"
+import { teacherService } from "@/src/features/teachers/services/teacherService"
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 import { Button } from "@/src/shared/components/ui/button";
@@ -20,11 +20,12 @@ export default async function ClasePage({ params }: Props) {
     if(!session.user) redirect('/auth/signin');
     const role = session.user.role;
 
-    const { id: studentId } = await studentsService.selectStudent(session.user.id) ?? 'null';
+    const { id: studentId  } = await studentsService.selectStudent(session.user.id) ?? 'null';
     const { slug } = await params;
     const { subjectName, grade, group, level, id: claseId, teacherName, teacherLastName, groupId, finalScore } = await teacherService.getAllInfoClase(slug);
-    const studentsInGroup = await studentsService.getStudentsInGroup(groupId);
+    const studentsInfo = await studentsService.getListStudentsWithScores(groupId, claseId)
     const finalScoreClass = finalScore !== null ? +finalScore : 0
+    console.log(studentsInfo)
 
   return (
     <>
@@ -63,7 +64,7 @@ export default async function ClasePage({ params }: Props) {
             </div>
         </section>
         {
-            role === 'maestro' && <GridTabsInfoClass data={studentsInGroup as []} />
+            role === 'maestro' && <GridTabsInfoClass data={studentsInfo as []} />
         }
         {
             role === 'estudiante' && studentId &&

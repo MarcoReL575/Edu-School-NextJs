@@ -1,7 +1,7 @@
 import { redirect } from 'next/navigation';
 import { IconSettings } from '@tabler/icons-react'
 import FormCreateExam from './FormCreateExam';
-import { teacherService } from '../../teachers/clases/teacherService';
+import { teacherService } from '../../teachers/services/teacherService';
 import { requireAuth } from '@/src/lib/auth-server';
 import { TeachersClases } from '../../teachers/types/types'
 

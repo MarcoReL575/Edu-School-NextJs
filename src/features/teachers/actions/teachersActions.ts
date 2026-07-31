@@ -1,7 +1,7 @@
 'use server'
 
 import { requireAuth } from "@/src/lib/auth-server";
-import { teacherService } from "../clases/teacherService";
+import { teacherService } from "../services/teacherService";
 import { TeachersClases, TeachersSelectType } from "../types/types";
 
 export async function getInfoTeachersClases(claseId: string) {

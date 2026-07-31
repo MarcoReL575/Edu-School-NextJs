@@ -9,9 +9,12 @@ type Props = {
 }
 
 export async function GridTabsInfoClass({ data }: Props) {
+
+
+
     return (
-        <Tabs defaultValue="students" className="w-100 flex flex-col bg-blue-800">
-            <TabsList variant={'line'} className="space-x-4 p-2 border border-blue-600">
+        <Tabs defaultValue="studentsList" className="flex flex-col mx-auto w-full max-w-4xl space-y-4">
+            <TabsList variant={'line'} className="space-x-4 p-2 border border-blue-600 mx-auto">
                 <TabsTrigger value="studentsList" className="px-2"><IconUsers /> Alumnos Inscritos</TabsTrigger>
                 <TabsTrigger value="tasksStudents" className="px-2"><IconClipboardList /> Tareas Asignadas</TabsTrigger>
                 <TabsTrigger value="examsStudents" className="px-2"><IconChecklist /> Exámenes</TabsTrigger>

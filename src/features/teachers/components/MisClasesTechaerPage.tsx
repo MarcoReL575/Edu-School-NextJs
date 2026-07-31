@@ -1,5 +1,5 @@
 import { FullSession } from "@/src/lib/auth-server"
-import { teacherService } from "../clases/teacherService";
+import { teacherService } from "../services/teacherService";
 import CardClasesTeacher from "./CardClasesTeacher";
 import Heading from "@/src/shared/components/typography/Heading";
 

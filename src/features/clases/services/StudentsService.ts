@@ -1,5 +1,5 @@
 import { db } from "@/src/db";
-import { GroupSelectType, StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
+import { GroupSelectType, StudentsAndScoresInfo, StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
 import { groupRepository, IGroupRepository } from "./GroupRepository";
 import { IStudentsRepository, studentsRepository } from "./StudentsRepository";
 import { CreateStudent } from "../schema/clasesSchemas";
@@ -69,6 +69,15 @@ class StudentsService {
             return students
         } catch (error) {
             return [] as StudentsSelectType[]
+        }
+    }
+
+    async getListStudentsWithScores(groupId: string, claseId: string) {
+        try {
+            const students = await this.studentsRepository.selectStudentsInfoInGroup(groupId, claseId)
+            return students
+        } catch (error) {
+            return [] as StudentsAndScoresInfo[]
         }
     }
 

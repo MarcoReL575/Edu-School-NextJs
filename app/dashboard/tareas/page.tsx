@@ -1,7 +1,7 @@
 import ButtonOpenModalTask from "@/src/features/tasks/components/ButtonOpenModalTask";
 import PageTasksTeacher from "@/src/features/tasks/components/PageTasksTeacher";
 import TaskGrid from "@/src/features/tasks/components/TaskGrid";
-import { teacherService } from "@/src/features/teachers/clases/teacherService";
+import { teacherService } from "@/src/features/teachers/services/teacherService";
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 

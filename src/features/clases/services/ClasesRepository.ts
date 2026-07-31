@@ -1,8 +1,9 @@
 import { db } from "@/src/db"
-import { attendance, clases, classGrades, group, horarios, subjects, teachers } from "@/src/db/schema"
+import { attendance, clases, classGrades, group, horarios, students, subjects, teachers } from "@/src/db/schema"
 import { ClasesInfoByAttendance, ClasesInfoComplete, ClasesInsertType, ClasesSelectType, ClassesByGroup, GroupCompleteInfo, HorariosInsertType, HorariosSelectType } from "../types/types"
-import { and, asc, eq } from "drizzle-orm";
+import { and, asc, eq, sql } from "drizzle-orm";
 import { TeachersClases, TeachersClasesAllInfo } from "../../teachers/types/types";
+import { count } from "console";
 
 
 export interface IClasesRepository {
@@ -159,13 +160,27 @@ class ClasesRepository implements IClasesRepository {
                 grade: group.grade,
                 group: group.group,
                 level: group.level,
-                teacherId: teachers.id
+                teacherId: teachers.id,
+                averageScore: sql<number | null>`avg(${classGrades.finalGrade})`,
+                totalStudents: sql<number>`count(DISTINCT ${students.id})`,
             })
             .from(clases)
             .where(eq(clases.teacherId, teacherId))
             .innerJoin(subjects, eq(subjects.id, clases.subjectId))
             .innerJoin(group, eq (group.id, clases.groupId))
             .innerJoin(teachers, eq (clases.teacherId, teachers.id))
+            .leftJoin(students, eq(students.groupId, group.id))
+            .leftJoin(classGrades, eq(classGrades.claseId, clases.id))
+            .groupBy(
+                clases.id,
+                clases.slug,
+                subjects.name,
+                group.id,
+                group.grade,
+                group.group,
+                group.level,
+                teachers.id,
+            );
         return clasesList;
     }
 

@@ -11,6 +11,8 @@ export type TeachersClases = {
     grade: string;
     level: string;
     groupId: string;
+    averageScore: number | null;
+    totalStudents: number | null;
 }
 
 

@@ -51,7 +51,9 @@ export type TaskTeacher = {
     subjectName: string;
     groupName: string;
     gradeName: string;
-    level: string  
+    level: string;
+    totalStudents: number;
+    totalSubmitted: number;  
 }
 
 

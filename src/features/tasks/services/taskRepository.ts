@@ -124,7 +124,9 @@ class TaskRepository implements ITaskRepository {
                 subjectName: subjects.name,
                 groupName: group.group,
                 gradeName: group.grade,
-                level:  group.level
+                level:  group.level,
+                totalStudents: sql<number>`(SELECT count(${students.id}) FROM ${students} WHERE ${students.groupId} = ${clases.groupId})`,
+                totalSubmitted: sql<number>`(SELECT count(${taskSubmission.studentId}) FROM ${taskSubmission} WHERE ${taskSubmission.taskId} = ${tasks.id})`
             })
             .from(tasks)
             .innerJoin(clases, eq(clases.id, tasks.claseId))

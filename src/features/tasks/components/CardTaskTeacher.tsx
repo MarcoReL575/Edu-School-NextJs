@@ -29,7 +29,7 @@ export default function CardTaskTeacher({ task }: Props) {
             </p>
             <p className="flex items-center justify-between">
                 <span>Entregadas: </span>
-                <span className="flex items-center gap-x-2"> 20/30<IconUsers /></span>
+                <span className="flex items-center gap-x-2"> {task.totalSubmitted}/{task.totalStudents}<IconUsers /></span>
             </p>
         </div>
         <div className="flex items-center justify-end mt-4"> 

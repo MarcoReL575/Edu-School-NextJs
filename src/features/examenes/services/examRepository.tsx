@@ -1,5 +1,5 @@
 import { db } from "@/src/db";
-import { ExamSelectInfo, ExamStudentInfo, ExamWithResult, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender, StudentsSubmissions } from "../types/types";
+import { ExamSelectInfo, ExamStudentInfo, ExamWithResult, FullExamWithAnswers, InsertExamWithQuestions, SelectExam, SelectExamubmissions, StudentExamRender, StudentRowData, StudentsSubmissions } from "../types/types";
 import { examQuestionOptions, examQuestions, exams, examSubmissions } from "@/src/db/schema/examen-schema";
 import { and, avg, desc, eq, sql } from "drizzle-orm";
 import { clases, classGrades, group, students, subjects } from "@/src/db/schema";
@@ -9,6 +9,7 @@ export interface IExamRepository {
     createExamTransaction(dataExam: InsertExamWithQuestions): Promise<SelectExam>;
     deletExam(examId: string, teacherId: string): Promise<void>;
     selectExams(teacherId: string): Promise<ExamSelectInfo[]>;
+    selectExamsByClass(claseId: string, teacherId: string): Promise<ExamSelectInfo[]>;
     selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]>;
     selectExam(examSlug: string): Promise<StudentExamRender | undefined>;
     selectExamWithAnswers(examSlug: string): Promise <FullExamWithAnswers | undefined>;
@@ -101,6 +102,64 @@ class ExamRepository implements IExamRepository {
             .orderBy(desc(exams.createdAt));
         return result
     }
+
+    async selectExamsByClass(claseId: string, teacherId: string): Promise<ExamSelectInfo[]> {
+        const result = await db
+            .select({
+                id: exams.id,
+                title: exams.title,
+                slug: exams.slug,
+                subjectName: exams.subjectName,
+                grade: group.grade,
+                group: group.group,
+                level: group.level,
+                status: exams.status,
+                createdAt: exams.createdAt,
+                // 1. Conteo de preguntas asociadas al examen
+                questionsCount: sql<number>`count(distinct ${examQuestions.id})`.mapWith(Number),
+                // 2. Alumnos totales pertenecientes al grupo de la clase
+                totalStudents: sql<number>`(
+                    select count(*) from ${students} 
+                    where ${students.groupId} = ${clases.groupId}
+                )`.mapWith(Number),
+                // 3. Cantidad de alumnos que ya entregaron el examen
+                submittedCount: sql<number>`(
+                    select count(*) from ${examSubmissions} 
+                    where ${examSubmissions.examId} = ${exams.id} 
+                    and ${examSubmissions.status} = 'entregado'
+                )`.mapWith(Number),
+                // 4. Promedio general de calificación obtenido en el examen
+                averageScore: sql<number>`coalesce(
+                    (select avg(${examSubmissions.score}) 
+                    from ${examSubmissions} 
+                    where ${examSubmissions.examId} = ${exams.id}
+                    and ${examSubmissions.status} = 'entregado'), 0
+                )`.mapWith(Number)
+            })
+            .from(exams)
+            .leftJoin(clases, eq(exams.claseId, clases.id))
+            .leftJoin(subjects, eq(clases.subjectId, subjects.id))
+            .leftJoin(group, eq(clases.groupId, group.id))
+            .leftJoin(examQuestions, eq(exams.id, examQuestions.examId))
+            .where(and(
+                eq(exams.claseId, claseId),
+                eq(exams.teacherId, teacherId)
+            ))
+            .groupBy(
+                exams.id, 
+                exams.title,
+                exams.slug,
+                exams.status,
+                exams.createdAt,
+                clases.groupId,
+                group.grade, 
+                group.group, 
+                group.level
+            )
+            .orderBy(desc(exams.createdAt));
+        return result
+    }
+
 
     async selectExamListStudents(studentId: string, groupId: string): Promise<ExamStudentInfo[]> {
         const result = await db 

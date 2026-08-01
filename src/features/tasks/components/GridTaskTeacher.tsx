@@ -1,23 +1,12 @@
-'use client'
-
-import { QueryClient, useQuery } from "@tanstack/react-query"
-import { getTasksTeacherAction } from "../actions/tasksAction"
 import CardTaskTeacher from "./CardTaskTeacher"
+import { TaskTeacher } from "../types/types"
 
 type Props = {
-    teacherId: string
+    taskList: TaskTeacher[]
 }
 
 
-export default function GridTaskTeacher({ teacherId }: Props) {
-   
-    const { data: taskList, isLoading, isError } = useQuery({
-        queryKey: ['tasksList', teacherId],
-        queryFn: ()=> getTasksTeacherAction(teacherId),
-    })
-
-    if(isLoading) return <div>Cargando...</div>;
-    if(isError) return <div>Error al cargar los datos, Vuelva a intentarlo</div>;
+export default function GridTaskTeacher({ taskList }: Props) {
 
   return (
     <>

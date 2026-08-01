@@ -12,7 +12,7 @@ type Props = {
     data: StudentsAndScoresInfo[] | undefined;
 }
 
-export default function StudentsInGroup({ data }: Props) {
+export default function TasksListClass({ data }: Props) {
 
     if(data === undefined) return <div>No se encontraron datos</div>
 

@@ -7,17 +7,19 @@ import TableExamsAndResult from "./TableExamsAndResult";
 import TableTasks from "./TableTasks";
 import TableAttendances from "./TableAttendances";
 import HorariosTable from "./HorariosTable";
-import { ExamWithResult } from "../../examenes/types/types";
-import { TaskDetails } from "../../tasks/types/types";
+import { ExamSelectInfo, ExamWithResult } from "../../examenes/types/types";
+import { TaskDetails, TaskTeacher } from "../../tasks/types/types";
 import { AttendanceSelect } from "../../attendance/types/types";
 import { HorariosSelectType, StudentsAndScoresInfo } from "../../clases/types/types";
 import StudentsInGroup from "./StudentsInGroup";
+import GridTaskTeacher from "../../tasks/components/GridTaskTeacher";
+import CardExamTeacher from "../../examenes/components/CardExamTeacher";
 
 type Props = {
     title: string;
     icon: ReactElement;
     description: string;
-    tabValue: 'tasks' | 'horarios' | 'exams' | 'attendance' | 'studentsList' | 'tasksStudents' | '';
+    tabValue: 'tasks' | 'horarios' | 'exams' | 'attendance' | 'studentsList' | 'taskClasesList' | 'examsList';
     studentId?: string;
     subjectName?: string;
     groupId?: string;
@@ -47,6 +49,17 @@ export default function CardTabContent({ data, title, icon, description, tabValu
             { tabValue === 'attendance' && <TableAttendances data={data as AttendanceSelect[] } /> }
             { tabValue === 'horarios' && <HorariosTable horarios={data as HorariosSelectType[] } /> }
             { tabValue === 'studentsList' && <StudentsInGroup data={data as StudentsAndScoresInfo[] } /> }
+            { tabValue === 'taskClasesList' && <GridTaskTeacher taskList={data as TaskTeacher[] } /> }
+            { tabValue === 'examsList' &&
+                <section className='grid grid-cols-2 gap-4'>
+                    {data !== null && data.length > 0
+                        ?   data.map((exam: ExamSelectInfo)=> (
+                                <CardExamTeacher key={exam.id} exam={exam} />
+                            )) 
+                        :   <div>Aún no hay examenes creados</div>
+                    }
+                    </section>
+            }
         </Card>
     </TabsContent>
   )

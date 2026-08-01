@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { IconArrowLeft, IconChartBarPopular, IconUser } from "@tabler/icons-react";
+import clsx from "clsx";
 import { studentsService } from "@/src/features/clases/services/StudentsService";
 import TabsInfoSubject from "@/src/features/mis-clases/components/TabsInfoSubject";
 import { teacherService } from "@/src/features/teachers/services/teacherService"
@@ -8,8 +9,6 @@ import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 import { Button } from "@/src/shared/components/ui/button";
 import { GridTabsInfoClass } from "@/src/features/mis-clases/components/GridTabsInfoClass";
-import clsx from "clsx";
-import { CircleDivideIcon } from "lucide-react";
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -25,7 +24,6 @@ export default async function ClasePage({ params }: Props) {
     const { subjectName, grade, group, level, id: claseId, teacherName, teacherLastName, groupId, finalScore } = await teacherService.getAllInfoClase(slug);
     const studentsInfo = await studentsService.getListStudentsWithScores(groupId, claseId)
     const finalScoreClass = finalScore !== null ? +finalScore : 0
-    console.log(studentsInfo)
 
   return (
     <>
@@ -64,7 +62,7 @@ export default async function ClasePage({ params }: Props) {
             </div>
         </section>
         {
-            role === 'maestro' && <GridTabsInfoClass data={studentsInfo as []} />
+            role === 'maestro' && <GridTabsInfoClass data={studentsInfo as []} claseId={claseId} />
         }
         {
             role === 'estudiante' && studentId &&

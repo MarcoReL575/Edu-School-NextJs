@@ -46,6 +46,10 @@ class ExamService {
         return await examRepository.selectExams(teacherId);
     }
 
+    async getExamsByClass(claseId: string, teacherId: string) {
+        return await examRepository.selectExamsByClass(claseId, teacherId);
+    }
+
     async getStudentsExamsList(studentId: string, groupId: string) {
         return await examRepository.selectExamListStudents(studentId, groupId);
     }

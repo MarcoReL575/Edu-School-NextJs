@@ -28,3 +28,17 @@ export type TeachersClasesAllInfo = {
     teacherLastName: string;
     finalScore: string | null
 }
+
+export type InfoHorariosTechaer = {
+    claseId: string;
+    slug: string | null;
+    subjectName: string;
+    grade: string;
+    groupName: string;
+    level: string;
+    dia: "lunes" | "martes" | "miercoles" | "jueves" | "viernes";
+    inicio: string;
+    fin: string;
+}
+
+export type DaysOfWeek = "lunes" | "martes" | "miercoles" | "jueves" | "viernes"

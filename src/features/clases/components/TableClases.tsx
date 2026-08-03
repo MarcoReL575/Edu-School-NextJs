@@ -13,11 +13,7 @@ import { Card, CardAction, CardDescription, CardHeader, CardTitle } from "@/src/
 import TableComponent from "@/src/shared/components/table/Table";
 import { ClasesInfoComplete } from "../types/types";
 
-type Props = {
-    link: string;
-}
-
-export default function TableClases({ link }: Props) {
+export default function TableClases() {
     const openModal = useModalStore((state)=> state.openModal);
 
     const {data: listClases, isLoading, isError} = useQuery({
@@ -68,11 +64,13 @@ export default function TableClases({ link }: Props) {
             cell: ({ row }) => <div className="font-medium">{row.getValue("teacher")}</div>,
         },
         {
-            accessorKey: 'id',
+            accessorKey: 'slug',
             header: () => <Button variant="ghost">Ver/Agregar horarios</Button>,
             cell: ({row}) => (
                 <div className="flex items-center justify-center gap-x-2">
-                    <Button><Link href={`/dashboard/${link}/${(row.original as any).id}` as Route}>Más info</Link></Button>
+                    <Button>
+                        <Link href={`/dashboard/clases/${row.getValue('slug')}` as Route}>Más info</Link>
+                    </Button>
                 </div>
             ) 
         },

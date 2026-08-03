@@ -1,6 +1,7 @@
 import { ITeacherRepository, teacherRepository } from "./teacherRepository";
-import { TeachersClases, TeachersSelectType } from "../types/types";
+import { TeachersSelectType } from "../types/types";
 import { clasesRepository, IClasesRepository } from "../../clases/services/ClasesRepository";
+import { getTodayDayName } from "../../tasks/helpers/getActualDay";
 
 class TeacherService {
     constructor(
@@ -29,6 +30,16 @@ class TeacherService {
 
     async getAllInfoClase(claseId: string) {
        return await this.clasesRepository.selectClaseBySlug(claseId);
+    }
+
+    async getActualHorarioTeacherClases(teacherId: string) {
+        // const todayName = getTodayDayName();  
+        const todayName = 'jueves' 
+        try {
+            return await this.teacherRepository.selectTeacherClases(teacherId, todayName);
+        } catch (error) {
+            console.error(error)
+        } 
     }
 }
 

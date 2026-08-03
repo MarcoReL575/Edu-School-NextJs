@@ -2,15 +2,21 @@ import InfoClase from '@/src/features/clases/components/InfoClase'
 import { clasesServices } from '@/src/features/clases/services/ClasesServices'
 import { IconArrowLeft, IconChevronLeft } from '@tabler/icons-react'
 import Link from 'next/link'
+import { notFound } from 'next/navigation'
 
 type Props = {
-  params: Promise<{ id: string }>
+  params: Promise<{ slug: string }>
 }
 
 export default async function ClassPage({ params }: Props) {
-  const claseId = (await params).id
-  const infoClases = await clasesServices.claseById(claseId);
-  const horariosClase = await clasesServices.getHorarios(claseId);
+  const claseSlug = (await params).slug
+  const { clase } = await clasesServices.claseBySlug(claseSlug);
+  if(!clase || !clase.id) {
+    notFound()
+  }
+  console.log(clase.id)
+  
+  const { horarios } = await clasesServices.getHorarios(clase.id);
 
   return (
     <>
@@ -20,7 +26,7 @@ export default async function ClassPage({ params }: Props) {
           Regresar
         </Link>
       </div>
-      <InfoClase clase={infoClases} horarios={horariosClase} />
+      <InfoClase clase={clase} horarios={horarios} claseId={clase.id} />
     </>
   )
 }

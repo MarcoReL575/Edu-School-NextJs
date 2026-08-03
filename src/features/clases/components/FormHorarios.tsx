@@ -7,12 +7,10 @@ import { Form, FormError, FormInput, FormLabel, FormSubmit } from "@/src/shared/
 import { daysOfWeek } from "@/src/shared/data/daysOfWeek";
 import { HorariosInsertType } from "../types/types";
 import { CreateHorarioSchema } from "../schema/clasesSchemas";
-import { createHorarioClaseAction, editHorarioClaseAction } from "../actions/clasesAction";
-
+import { createHorarioClaseAction, editHorarioClaseAction, getClaseBySlugAction } from "../actions/clasesAction";
 import { useClasesStore } from "../store/useClasesStore";
 import { Route } from "next";
 import { useModalStore } from "@/src/shared/store/useModalStore";
-
 
 export default function FormHorarios() {
 
@@ -20,14 +18,16 @@ export default function FormHorarios() {
     const horarioClase = useClasesStore((state)=> state.horarioClase);
     const isOpen = useModalStore((state) => state.isOpen);
     const closeModal = useModalStore((state) => state.closeModal);
+    const claseId = useClasesStore((state)=> state.claseId);
     const type = useModalStore((state) => state.type);
-    const { id } = useParams();
+    const params = useParams();
+    const slug = params?.slug as string;
 
     const { register, reset, handleSubmit, formState: { errors } } = useForm<HorariosInsertType>({
         resolver: zodResolver(CreateHorarioSchema),
         mode: 'onBlur',
         defaultValues: {
-            claseId: horarioClase.claseId?? id,
+            claseId: horarioClase.claseId?? claseId,
             dayOfWeek: horarioClase.dayOfWeek?? 'lunes',
             startTime: horarioClase.startTime?? '07:00',
             endTime: horarioClase.endTime?? '08:00'
@@ -36,6 +36,7 @@ export default function FormHorarios() {
 
     
     const handleCreatehorario = async(input: HorariosInsertType)=> {
+        console.log("Datos del formulario enviados:", input);
         if(horarioClase.id) {
             //si existe un horario Editamos
             const { success, message } = await editHorarioClaseAction({
@@ -52,7 +53,7 @@ export default function FormHorarios() {
                 toast.success(message);
                 reset();
                 closeModal();
-                redirect(`/dashboard/clases/${id}` as Route);
+                redirect(`/dashboard/clases/${slug}` as Route);
             }
 
         }
@@ -65,15 +66,20 @@ export default function FormHorarios() {
                 toast.success(message);
                 reset();
                 closeModal();
-                redirect(`/dashboard/clases/${id}` as Route);
+                redirect(`/dashboard/clases/${slug}` as Route);
             }
         }
     }
 
+    const onError = (errors: any) => {
+        console.log("Errores de validación en RHF:", errors);
+        toast.error("Revisa los campos del formulario");
+    };
+
   return (
     <Form 
         className="flex flex-col"
-        onSubmit={handleSubmit(handleCreatehorario)}
+        onSubmit={handleSubmit(handleCreatehorario, onError)}
     >
         <FormLabel htmlFor="dayOfWeek">Día</FormLabel>
         <select {...register('dayOfWeek')} id="dayOfWeek" className="py-3 px-4 border border-gray-300 rounded-lg">

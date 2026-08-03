@@ -7,6 +7,8 @@ interface ClasesProps {
     userId: string;
     actualStudentGroup: GroupSelectType;
     horarioClase: HorariosSelectType;
+    claseId: string;
+    setClaseId: (claseId: string) => void;
     setNameClass: (nameClass: ClasesInfoComplete) => void;
     setUserId: (userId: string) => void;
     setActualStudentGroup: (value: GroupSelectType) => void;
@@ -18,6 +20,8 @@ export const useClasesStore = create<ClasesProps>()((set) => ({
     userId: '',
     actualStudentGroup: {} as GroupSelectType,
     horarioClase: {} as HorariosSelectType,
+    claseId: '',
+    setClaseId: (claseId) => set({ claseId }),
     setActualStudentGroup: (value)=> set({ actualStudentGroup: value }), 
     setNameClass: (nameClass)=> set({ nameClass }),
     setUserId: (userId)=> set({ userId }),

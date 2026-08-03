@@ -23,7 +23,7 @@ export default function SignInForm() {
     }
     if(success){
       toast.success(message);
-      redirect('/dashboard');
+      redirect('/dashboard/home');
     }
   }
 

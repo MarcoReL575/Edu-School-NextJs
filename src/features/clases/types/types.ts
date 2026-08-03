@@ -31,6 +31,7 @@ export type ClasesInfoComplete =  {
     group: string;
     grado: string;
     level: string;
+    slug: string | null;
 }
 
 export type TypeAction = 'clase' | 'grupo' | 'students'

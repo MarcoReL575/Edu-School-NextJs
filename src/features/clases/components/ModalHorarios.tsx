@@ -8,6 +8,7 @@ import { useClasesStore } from '../store/useClasesStore';
 import { HorariosSelectType } from '../types/types';
 import { useModalStore } from '@/src/shared/store/useModalStore';
 
+
 export default function ModalHorarios() {
 
     const isOpen = useModalStore((state) => state.isOpen);

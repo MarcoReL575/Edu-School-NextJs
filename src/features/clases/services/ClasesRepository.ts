@@ -11,6 +11,7 @@ export interface IClasesRepository {
     findClaseById(subjectId: string, groupId: string): Promise<boolean>;
     selectAllClases(): Promise<ClasesInfoComplete[]>;
     selectClaseById(claseId: string): Promise<ClasesInfoComplete>;
+    selectClaseInfoBySlug(slug: string): Promise<ClasesInfoComplete>;
     selectClaseAttendance(slug: string): Promise<ClasesInfoByAttendance | null>;
     selectClasesByGroup(groupId: string, studentId: string): Promise<ClassesByGroup[]>;
     selectClasesByTeachersId(teacherId: string): Promise<TeachersClases[]>;
@@ -55,11 +56,12 @@ class ClasesRepository implements IClasesRepository {
         const result = await db
             .select({
                 id: clases.id,
+                slug: clases.slug,
                 subject: subjects.name,
                 teacher: teachers.name,
                 group: group.group,
                 grado: group.grade,
-                level: group.level
+                level: group.level,
             })
             .from(clases)
             .innerJoin( subjects, eq(clases.subjectId, subjects.id))
@@ -72,6 +74,7 @@ class ClasesRepository implements IClasesRepository {
         const [result] = await db
             .select({
                 id: clases.id,
+                slug: clases.slug,
                 subject: subjects.name,
                 teacher: teachers.name,
                 group: group.group,
@@ -82,7 +85,26 @@ class ClasesRepository implements IClasesRepository {
             .innerJoin(subjects, eq(clases.subjectId, subjects.id))
             .innerJoin(teachers, eq(clases.teacherId, teachers.id))
             .innerJoin(group, eq(clases.groupId, group.id) )
-            .where( eq(clases.id, claseId) )
+            .where( eq(clases.id, claseId))
+        return result
+    }
+
+    async selectClaseInfoBySlug(slug: string): Promise<ClasesInfoComplete> {
+        const [result] = await db
+            .select({
+                id: clases.id,
+                slug: clases.slug,
+                subject: subjects.name,
+                teacher: teachers.name,
+                group: group.group,
+                grado: group.grade,
+                level: group.level,
+            })
+            .from(clases)
+            .innerJoin(subjects, eq(clases.subjectId, subjects.id))
+            .innerJoin(teachers, eq(clases.teacherId, teachers.id))
+            .innerJoin(group, eq(clases.groupId, group.id) )
+            .where( eq(clases.slug, slug))
         return result
     }
 

@@ -10,6 +10,10 @@ export async function getAllClasesAction() {
     return await clasesServices.getAllClasses();
 }
 
+export async function getClaseBySlugAction(slug: string) {
+    return await clasesServices.getInfoClaseBySlug(slug)
+}
+
 export async function createClassAction(data: ClasesInsertType) {
     const { session } = await requireAuth()
     if(session?.user.role !== 'admin') return { success: false, message: 'El usuario no tiene los permisos necesarios' };
@@ -25,11 +29,16 @@ export async function createHorarioClaseAction(input: HorariosInsertType) {
     const { session } = await requireAuth()
     if(session?.user.role !== 'admin') return { success: false, message: 'El usuario no tiene los permisos necesarios' };
 
-    const response = CreateHorarioSchema.safeParse(input);
-    if(!response.success) return { success: false, message: 'Error de validación' };
+    try {
+        const response = CreateHorarioSchema.safeParse(input);
+        if(!response.success) return { success: false, message: 'Error de validación' };
 
-    const create = await clasesServices.createHorario(response.data);
-    return create
+        const create = await clasesServices.createHorario(response.data);
+        return create
+    } catch (error) {
+        console.error(error);
+        return { success: false, message: 'No se pudo crear el horario' }
+    }
 }
 
 

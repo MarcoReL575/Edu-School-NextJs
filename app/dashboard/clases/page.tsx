@@ -23,7 +23,7 @@ export default async function ClasesPage() {
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       <Heading level={1}>Pagina de Clases</Heading>
-      <TableClases link='clases' />
+      <TableClases />
     </HydrationBoundary>
   )
 }

@@ -11,15 +11,18 @@ import { useModalStore } from "@/src/shared/store/useModalStore";
 type Props = {
   clase: ClasesInfoComplete;
   horarios: HorariosSelectType[];
+  claseId: string;
 }
 
-export default function InfoClase({ clase, horarios }: Props) {
+export default function InfoClase({ clase, horarios, claseId }: Props) {
 
   const { grado, group, level, subject, teacher } = clase;
   const openModal = useModalStore((state) => state.openModal);
-  const setHorarioClase = useClasesStore((state) => state.setHorarioClase)
+  const setHorarioClase = useClasesStore((state) => state.setHorarioClase);
+  const setClaseId = useClasesStore((state)=> state.setClaseId);
 
   const handleCreateHorario = ()=> {
+    setClaseId(claseId);
     setHorarioClase({} as HorariosSelectType)
     openModal('modalHorarios');
   }

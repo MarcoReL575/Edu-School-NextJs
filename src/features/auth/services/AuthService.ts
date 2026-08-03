@@ -72,7 +72,6 @@ class AuthService {
     async login(input: SignInProps) {
         try {
             const userExists = await this.authRepository.userExists(input.email);
-            console.log(userExists)
             if(!userExists) return { success: false, message: 'El usuario no existe'}
 
             await this.authRepository.signin(input);

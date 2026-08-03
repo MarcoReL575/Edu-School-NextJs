@@ -1,5 +1,5 @@
 import { clasesRepository, IClasesRepository } from "./ClasesRepository";
-import { ClasesInfoByAttendance, ClasesInsertType, ClasesSelectType, HorariosInsertType, HorariosSelectType } from "../types/types";
+import { ClasesInfoByAttendance, ClasesInfoComplete, ClasesInsertType, ClasesSelectType, HorariosInsertType, HorariosSelectType } from "../types/types";
 import { ISubjectsRepository, subjectsRepository } from "./SubjectsRepository";
 import { IGroupRepository, groupRepository } from "./GroupRepository";
 
@@ -41,6 +41,15 @@ class ClasesServices {
 
     async claseById(claseId: string) {
         return await this.clasesRepository.selectClaseById(claseId);
+    }
+
+    async claseBySlug(slug: string) {
+        try {
+            const clase =  await this.clasesRepository.selectClaseInfoBySlug(slug);
+            return { success: true, clase }
+        } catch (error) {
+            return { success: false, clase: {} as ClasesInfoComplete }
+        }
     }
 
     async getAllClasessByGroup(groupId: string) {

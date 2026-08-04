@@ -1,7 +1,8 @@
 import { ITeacherRepository, teacherRepository } from "./teacherRepository";
-import { TeachersSelectType } from "../types/types";
+import { TeachersInsertType, TeachersSelectType } from "../types/types";
 import { clasesRepository, IClasesRepository } from "../../clases/services/ClasesRepository";
 import { getTodayDayName } from "../../tasks/helpers/getActualDay";
+import { NewTeacherSchema } from "../schema/schema";
 
 class TeacherService {
     constructor(
@@ -38,8 +39,49 @@ class TeacherService {
         try {
             return await this.teacherRepository.selectTeacherClases(teacherId, todayName);
         } catch (error) {
-            console.error(error)
         } 
+    }
+
+    async getAllTechaersList() {
+        try {
+            const teachers = await this.teacherRepository.selectAllTeachers()
+            return { success: true, message: '', teachers }
+        } catch (error) {
+            return { success: false, message: 'Hubo un error al obtener la lista de maestros', teachers: [] as TeachersSelectType[] }
+        }
+    }
+
+    async createNewTeacher(infoTeacher: TeachersInsertType) {
+        try {
+            const { success, data } = NewTeacherSchema.safeParse(infoTeacher);
+            if(!success) return { success: false, message: 'Error en las datos de validación' }
+
+            await this.teacherRepository.insertNewTeacher(data);
+            return { success: true, message: 'El maestro fue añadido correctamente' }
+        } catch (error) {
+            return { success: false, message: 'Error al agregar maestro' }
+        }
+    }
+
+    async getTeacherInfo(slug: string) {
+        try {
+            const teacherInfo = await this.teacherRepository.selectTeacherBySlug(slug);
+            return { success: true, message: '', teacherInfo }
+        } catch (error) {
+            return { success: false, message: 'Error al agregar maestro', teacherInfo: {} as TeachersSelectType }
+        }
+    }
+
+    async updateInfoTeacher(infoTeacher: TeachersInsertType, slugOld: string) {
+        try {
+            const { success, data } = NewTeacherSchema.safeParse(infoTeacher);
+            if(!success) return { success: false, message: 'Error en las datos de validación' }
+
+            await this.teacherRepository.setTeacherInfo(data, slugOld);
+            return { success: true, message: 'Los datos fueron actualizados' }
+        } catch (error) {
+            return { success: false, message: 'Error al editar la información' }
+        }
     }
 }
 

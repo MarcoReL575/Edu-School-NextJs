@@ -1,11 +1,15 @@
 import { db } from "@/src/db";
-import { DaysOfWeek, InfoHorariosTechaer, TeachersSelectType } from "../types/types";
+import { DaysOfWeek, InfoHorariosTechaer, TeachersInsertType, TeachersSelectType } from "../types/types";
 import { clases, group, horarios, subjects, teachers } from "@/src/db/schema";
-import { and, eq } from "drizzle-orm";
+import { and, asc, desc, eq } from "drizzle-orm";
 
 export interface ITeacherRepository {
     selectById(userId: string): Promise<TeachersSelectType>;
     selectTeacherClases(teacherId: string, todayName:DaysOfWeek): Promise<InfoHorariosTechaer[]>;
+    selectAllTeachers(): Promise<TeachersSelectType[]>;
+    insertNewTeacher(infoTeacher: TeachersInsertType): Promise<void>;
+    selectTeacherBySlug(slug: string): Promise<TeachersSelectType>;
+    setTeacherInfo(infoTeacher: TeachersInsertType, slugOld: string): Promise<void>;
 }
 
 class TeacherRepository implements ITeacherRepository {
@@ -43,6 +47,52 @@ class TeacherRepository implements ITeacherRepository {
             .orderBy(horarios.startTime); // Ordena las clases por hora de inicio
         return todaySchedule;
     }
+
+    async selectAllTeachers(): Promise<TeachersSelectType[]> {
+        const result = await db
+            .select()
+            .from(teachers)
+            .orderBy(
+                desc(teachers.level),
+                teachers.lastName
+            )
+        return result
+    }
+
+    async insertNewTeacher(infoTeacher: TeachersInsertType): Promise<void> {
+        const { lastName, name, level, slug } = infoTeacher
+        await db
+            .insert(teachers)
+            .values({
+                lastName,
+                name,
+                level,
+                slug
+            })
+    }
+
+    async selectTeacherBySlug(slug: string): Promise<TeachersSelectType> {
+        const [teacher] = await db
+            .select()
+            .from(teachers)
+            .where(eq(teachers.slug, slug))
+        return teacher;
+    }
+
+    async setTeacherInfo(infoTeacher: TeachersInsertType, slugOld: string): Promise<void> {
+        console.log(infoTeacher);
+        const { name, lastName, level, slug } = infoTeacher;
+        await db
+            .update(teachers)
+            .set({
+                name, 
+                lastName, 
+                level, 
+                slug
+            })
+            .where(eq(teachers.slug, slugOld))
+    }
+
 }
 
 export const teacherRepository = new TeacherRepository();

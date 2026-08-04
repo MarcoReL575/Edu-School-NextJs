@@ -148,6 +148,27 @@
       "when": 1785270274259,
       "tag": "0020_easy_carnage",
       "breakpoints": true
+    },
+    {
+      "idx": 21,
+      "version": "7",
+      "when": 1785789315824,
+      "tag": "0021_outstanding_brother_voodoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 22,
+      "version": "7",
+      "when": 1785789448629,
+      "tag": "0022_short_wilson_fisk",
+      "breakpoints": true
+    },
+    {
+      "idx": 23,
+      "version": "7",
+      "when": 1785790044590,
+      "tag": "0023_magical_the_anarchist",
+      "breakpoints": true
     }
   ]
 }

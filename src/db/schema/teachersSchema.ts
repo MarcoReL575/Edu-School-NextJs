@@ -8,6 +8,6 @@ export const teachers = pgTable('teachers', {
     lastName: text("last_name").notNull(),
     level: text("level").notNull(),
     code_teacher: text("code_teacher").notNull().unique().$defaultFn(()=> nanoid(6)),
-    
+    slug: text('slug').notNull().unique(),
     userId: text('user_id').references(()=> user.id)
 });

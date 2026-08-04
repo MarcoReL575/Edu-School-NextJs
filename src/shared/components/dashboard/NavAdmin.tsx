@@ -10,8 +10,7 @@ import { usePathname } from "next/navigation"
 const items = [
   { title: "Grupos", url: "groups", icon: IconFolderPlus },
   { title: "Clases", url: "clases", icon: IconFolderPlus },
-  { title: "Maestros", url: "#", icon: IconSchool } ,
-  { title: "Padre/Tutor", url: "#", icon: IconUserShield },
+  { title: "Maestros", url: "maestros", icon: IconSchool } ,
   { title: "Estudiantes", url: "students", icon: IconUsers, },
 ]
 

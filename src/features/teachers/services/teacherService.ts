@@ -83,6 +83,15 @@ class TeacherService {
             return { success: false, message: 'Error al editar la información' }
         }
     }
+
+    async deleteTeacher(slug: string) {
+        try {
+            await this.teacherRepository.deleteTeacher(slug);
+            return { success: true, message: 'El maestro se ha eliminado' }
+        } catch (error) {
+            return { success: false, message: 'Error al eliminar al maestro' }
+        }
+    }
 }
 
 export const teacherService = new TeacherService(teacherRepository, clasesRepository);

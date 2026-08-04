@@ -10,6 +10,7 @@ export interface ITeacherRepository {
     insertNewTeacher(infoTeacher: TeachersInsertType): Promise<void>;
     selectTeacherBySlug(slug: string): Promise<TeachersSelectType>;
     setTeacherInfo(infoTeacher: TeachersInsertType, slugOld: string): Promise<void>;
+    deleteTeacher(teacherSlug: string): Promise<void>;
 }
 
 class TeacherRepository implements ITeacherRepository {
@@ -93,6 +94,11 @@ class TeacherRepository implements ITeacherRepository {
             .where(eq(teachers.slug, slugOld))
     }
 
+    async deleteTeacher(teacherSlug: string): Promise<void> {
+        await db
+            .delete(teachers)
+            .where(eq(teachers.slug, teacherSlug))
+    }
 }
 
 export const teacherRepository = new TeacherRepository();

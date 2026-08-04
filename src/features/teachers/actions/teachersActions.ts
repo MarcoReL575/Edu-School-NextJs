@@ -33,9 +33,15 @@ export async function addNewTeacherAction(infoTeacher: TeachersInsertType) {
 }
 
 export async function editInfoTeacherAction(infoTeacher: TeachersInsertType, slugOld: string) {
-    console.log(infoTeacher)
     const { session } = await requireAuth();
     if(session.user.role !== 'admin') return { success: false, message: 'El usuario no cuenta con los permisso necesarios' } 
 
     return teacherService.updateInfoTeacher(infoTeacher, slugOld);
+}
+
+export async function deleteTeacherAction(slug: string) {
+    const { session } = await requireAuth();
+    if(session.user.role !== 'admin') return { success: false, message: 'El usuario no cuenta con los permisso necesarios' } 
+
+    return teacherService.deleteTeacher(slug);
 }

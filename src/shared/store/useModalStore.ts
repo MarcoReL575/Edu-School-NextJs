@@ -3,7 +3,7 @@ import { create } from "zustand";
 // store/useModalStore.ts
 export type ModalType = 'assignGroup' | 'createClases' | 'createGroup' | 'createStudent' | 
   'modalDeleteGroup' | 'modalHorarios' | 'modalDeleteClase' | 'modalDeleteStudent' | 'modalCreateTask' | 
-  'modalSubmittedTask' | 'modalGradeTask' | null;
+  'modalSubmittedTask' | 'modalGradeTask' | 'modalDeleteTeacher' | null;
 
 interface ModalStore {
   type: ModalType;

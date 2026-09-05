@@ -1,4 +1,4 @@
-import { groupService } from "@/src/features/clases/services/GroupService";
+import { groupService } from "@/src/features/group/services/GroupService";
 
 export async function GET() {
     const groupsList = await groupService.getAllGroups();

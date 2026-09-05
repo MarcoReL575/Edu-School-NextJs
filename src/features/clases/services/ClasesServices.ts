@@ -1,7 +1,7 @@
 import { clasesRepository, IClasesRepository } from "./ClasesRepository";
 import { ClasesInfoByAttendance, ClasesInfoComplete, ClasesInsertType, ClasesSelectType, HorariosInsertType, HorariosSelectType } from "../types/types";
 import { ISubjectsRepository, subjectsRepository } from "./SubjectsRepository";
-import { IGroupRepository, groupRepository } from "./GroupRepository";
+import { IGroupRepository, groupRepository } from "../../group/services/GroupRepository";
 
 class ClasesServices {
     constructor(

@@ -1,16 +1,13 @@
 import { clases, horarios, subjects, teachers, user } from "@/src/db/schema";
-import { group } from "@/src/db/schema/groupSchema";
 import z from "zod";
 import { CreateClasesSchema } from "../schema/clasesSchemas";
 import { AttendanceSelect } from "../../attendance/types/types";
 import { StudentsSelectType } from "../../students/types/types";
+import { GroupSelectType } from "../../group/types/types";
 
 
 export type HorariosSelectType = typeof horarios.$inferSelect;
 export type HorariosInsertType = typeof horarios.$inferInsert;
-
-export type GroupSelectType = typeof group.$inferSelect;
-export type GroupInsertType = typeof group.$inferInsert;
 
 export type SubjetcsSelectType = typeof subjects.$inferSelect;
 export type SubjetcsInsertType = typeof subjects.$inferInsert;

@@ -3,10 +3,10 @@
 import { useModalStore } from "../store/useModalStore";
 import ModalAssignGroup from "@/src/features/clases/components/ModalAssignGroup"
 import ModalCreateClases from "@/src/features/clases/components/ModalCreateClases"
-import ModalCreateGroup from "@/src/features/clases/components/ModalCreateGroup"
+import ModalCreateGroup from "@/src/features/group/components/ModalCreateGroup"
 import ModalCreateStudent from "@/src/features/students/components/ModalCreateStudent"
 import ModalDeleteClases from "@/src/features/clases/components/ModalDeleteClases";
-import ModalDeleteGroup from "@/src/features/clases/components/ModalDeleteGroup"
+import ModalDeleteGroup from "@/src/features/group/components/ModalDeleteGroup"
 import ModalDeleteStudent from "@/src/features/students/components/ModalDeleteStudent";
 import ModalHorarios from "@/src/features/clases/components/ModalHorarios"
 import ModalCreateTask from "@/src/features/tasks/components/ModalCreateTask";

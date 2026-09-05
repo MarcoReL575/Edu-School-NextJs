@@ -1,7 +1,7 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query'
 import { Metadata } from 'next';
-import TableGroups from '@/src/features/clases/components/TableGroups'
-import { getAllGroupsAction } from '@/src/features/clases/actions/groupActions';
+import TableGroups from '@/src/features/group/components/TableGroups'
+import { getAllGroupsAction } from '@/src/features/group/actions/groupActions';
 
 export const metadata: Metadata = {
   title: 'Edu-School: Grupos'

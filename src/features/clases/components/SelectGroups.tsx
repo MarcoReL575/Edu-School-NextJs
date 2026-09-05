@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { ClasesInputType, GroupSelectType } from '../types/types'
+import { ClasesInputType } from '../types/types'
+import { GroupSelectType } from '../../group/types/types'
 import { FormError, FormLabel } from '@/src/shared/components/form'
 import { useClasesStore } from '../store/useClasesStore';
 

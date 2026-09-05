@@ -2,12 +2,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import toast from "react-hot-toast";
-import { assignGroupToStudentAction } from "../actions/groupActions";
+import { assignGroupToStudentAction } from "../../group/actions/groupActions";
 import { Form, FormLabel, FormSubmit } from "@/src/shared/components/form";
 import SelectGroups from "./SelectGroups";
-import { AssignGroupSchema, AssignGroupType } from "../schema/clasesSchemas";
+import { AssignGroupSchema, AssignGroupType } from "../../group/schemas/groupSchemas";
 import { useClasesStore } from "../store/useClasesStore";
-import { useGroupStore } from "../store/useGroupStore";
+import { useGroupStore } from "../../group/store/useGroupStore";
 import { useModalStore } from "@/src/shared/store/useModalStore";
 
 

@@ -3,7 +3,7 @@
 import { requireAuth } from "@/src/lib/auth-server";
 import { groupService } from "../services/GroupService";
 import { GroupInsertType, GroupSelectType } from "../types/types";
-import { CreateGroupSchema, UpdateGroupSchema } from "../schema/clasesSchemas";
+import { CreateGroupSchema, UpdateGroupSchema } from "../schemas/groupSchemas";
 
 export async function getAllGroupsAction() {
     return await groupService.getAllGroups();

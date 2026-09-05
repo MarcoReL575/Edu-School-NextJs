@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { db } from "@/src/db";
 import { clases, group, students, user } from "@/src/db/schema";
-import { GroupInsertType, GroupSelectType } from "../types/types"
+import { GroupInsertType, GroupSelectType } from "../types/types";
 
 export interface IGroupRepository {
     selectGroups(): Promise<GroupSelectType[]>;

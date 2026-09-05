@@ -1,5 +1,6 @@
 import { create } from 'zustand'
-import { ClasesInfoComplete, GroupSelectType, HorariosClases, HorariosInsertType, HorariosSelectType } from '../types/types';
+import { ClasesInfoComplete, HorariosClases, HorariosInsertType, HorariosSelectType } from '../types/types';
+import { GroupSelectType } from '../../group/types/types';
 import { boolean } from 'zod';
 
 interface ClasesProps {

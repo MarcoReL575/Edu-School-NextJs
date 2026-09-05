@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormError, FormLabel, FormSubmit } from "@/src/shared/components/form";
-import { CreateGroupSchema } from "../schema/clasesSchemas";
+import { CreateGroupSchema } from "../schemas/groupSchemas";
 import { useGroupStore } from "../store/useGroupStore";
 import { GroupInsertType, GroupSelectType } from "../types/types"
 import { createGroupAction, setGroupAction } from "../actions/groupActions";

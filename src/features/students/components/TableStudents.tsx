@@ -7,13 +7,14 @@ import { IconCirclePlus, IconArrowsUpDown } from "@tabler/icons-react"
 import { Route } from "next"
 import Link from "next/link"
 import { getListStudentsAction } from "../actions/studentsActions"
-import { useGroupStore } from "../store/useGroupStore"
+import { useGroupStore } from "../../clases/store/useGroupStore"
 import { Button } from "@/src/shared/components/ui/button"
 import TableComponent from "@/src/shared/components/table/Table"
 import { Card, CardHeader, CardTitle, CardDescription, CardAction } from "@/src/shared/components/ui/card"
 import { useModalStore } from "@/src/shared/store/useModalStore"
-import { MenuOptions } from "./MenuOptions"
-import { GroupSelectType, StudentsTable } from "../types/types"
+import { MenuOptions } from "../../clases/components/MenuOptions"
+import { GroupSelectType } from "../../clases/types/types"
+import { StudentsTable } from "../types/types"
 
 export default function TableStudents() {
     const openModal = useModalStore((state)=> state.openModal);

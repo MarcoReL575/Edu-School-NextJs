@@ -1,8 +1,9 @@
-import { clases, horarios, students, subjects, teachers, user } from "@/src/db/schema";
+import { clases, horarios, subjects, teachers, user } from "@/src/db/schema";
 import { group } from "@/src/db/schema/groupSchema";
 import z from "zod";
 import { CreateClasesSchema } from "../schema/clasesSchemas";
 import { AttendanceSelect } from "../../attendance/types/types";
+import { StudentsSelectType } from "../../students/types/types";
 
 
 export type HorariosSelectType = typeof horarios.$inferSelect;
@@ -13,9 +14,6 @@ export type GroupInsertType = typeof group.$inferInsert;
 
 export type SubjetcsSelectType = typeof subjects.$inferSelect;
 export type SubjetcsInsertType = typeof subjects.$inferInsert;
-
-export type StudentsSelectType = typeof students.$inferSelect;
-export type StudentsInsertType = typeof students.$inferInsert;
 
 export type ClasesSelectType = typeof clases.$inferSelect;
 export type ClasesInsertType = typeof clases.$inferInsert;
@@ -58,32 +56,6 @@ export type GroupColumns = {
     id?: string | undefined 
 }
 
-export type StudentsInfo = {
-    id: string;
-    email: string;
-    role: string;
-    image: string | null;
-    name: string;
-    last_name: string;
-    nivel_estudios: string;
-    group_id: string | null;
-    user_id: string | null;
-}
-
-
-export type StudentsTable = {
-    id: string;
-    name: string;
-    last_name: string;
-    inscrito: boolean;
-    matricula: string;
-    grade: string;
-    group: string;
-    level: string;
-    user_id: string | null;
-    group_id: string;
-}
-
 export type GroupCompleteInfo = {
     claseId: string;
     subjectName: string;
@@ -118,17 +90,4 @@ export type ClasesInfoByAttendance = {
     group: string;
     level: string;
     students: StudentAttendance[];
-} 
-
-
-export type StudentsAndScoresInfo = {
-    id: string;
-    name: string;
-    last_name: string;
-    inscrito: boolean;
-    matricula: string;
-    grade: string;
-    group: string;
-    level: string;
-    scoreFinal: string | null;
 }

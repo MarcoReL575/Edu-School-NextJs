@@ -2,7 +2,7 @@ import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, Ta
 import { ITaskRepository, taskRepository } from "./taskRepository";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
 import { groupRepository, IGroupRepository } from "../../clases/services/GroupRepository";
-import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
+import { IStudentsRepository, studentsRepository } from "../../students/services/StudentsRepository";
 import { getCorrectDate } from "../helpers/getCorrectDate";
 import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 

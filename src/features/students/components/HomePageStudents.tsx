@@ -3,7 +3,7 @@ import { requireAuth } from '@/src/lib/auth-server';
 import { IconBook2, IconCalendarCheck, IconChecklist, IconUserCheck } from '@tabler/icons-react';
 import TableHorarioClases from '../../clases/components/TableHorarioClases';
 import { clasesServices } from '../../clases/services/ClasesServices';
-import { studentsService } from '../../clases/services/StudentsService';
+import { studentsService } from '../services/StudentsService';
 import Heading from '@/src/shared/components/typography/Heading';
 import CardStatsHome from '../../home/components/cardStatsHome';
 import { taskService } from '../../tasks/services/taskService';

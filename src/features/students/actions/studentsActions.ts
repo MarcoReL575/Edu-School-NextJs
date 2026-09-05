@@ -2,8 +2,8 @@
 
 import { requireAuth } from "@/src/lib/auth-server";
 import { studentsService } from "../services/StudentsService";
-import { CreateStudent, CreateStudentSchema, EditStudentSchema } from "../schema/clasesSchemas";
-import { StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
+import { CreateStudent, CreateStudentSchema, EditStudentSchema } from "../schemas/studentsSchemas";
+import { StudentsInsertType } from "../types/types";
 
 export async function getListStudentsAction() {
     const { session } = await requireAuth();
@@ -20,7 +20,7 @@ export async function createStudentAction(student: CreateStudent) {
     const response = CreateStudentSchema.safeParse(student);
     if(!response.success) return { success: false, message: '*Error de validación' }
 
-    await studentsService.createStudent(student);
+    await studentsService.createStudent(response.data);
     return { success: true, message: 'Estudiante inscrito' }
 }
 

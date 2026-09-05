@@ -2,8 +2,7 @@ import { db } from "@/src/db";
 import { StudentsAndScoresInfo, StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
 import { classGrades, group, students, subjects } from "@/src/db/schema";
 import { asc, desc, eq, sql } from "drizzle-orm";
-import { CreateStudent } from "../schema/clasesSchemas";
-import { taskSubmission } from "@/src/db/schema/taskSubmissions-schema";
+import { CreateStudent } from "../schemas/studentsSchemas";
 
 export interface IStudentsRepository{
     createStudent(student: CreateStudent): Promise<void>;

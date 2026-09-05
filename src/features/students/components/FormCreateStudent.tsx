@@ -7,11 +7,11 @@ import { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { createStudentAction, editStudentAction } from '../actions/studentsActions'
 import { useStudentStore } from '../store/useStudentStore'
-import { useGroupStore } from '../store/useGroupStore'
+import { useGroupStore } from '../../clases/store/useGroupStore'
 import { Form, FormError, FormInput, FormLabel, FormSubmit } from '@/src/shared/components/form'
-import { CreateStudent, CreateStudentSchema } from '../schema/clasesSchemas'
+import { CreateStudent, CreateStudentSchema } from '../schemas/studentsSchemas'
 import { useModalStore } from '@/src/shared/store/useModalStore'
-import { GroupSelectType } from '../types/types'
+import { GroupSelectType } from '../../clases/types/types'
 
 export default function FormCreateStudent() {
 

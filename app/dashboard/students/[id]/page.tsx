@@ -1,6 +1,6 @@
 import { students } from "@/src/db/schema";
 import { groupService } from "@/src/features/clases/services/GroupService";
-import { studentsService } from "@/src/features/clases/services/StudentsService";
+import { studentsService } from "@/src/features/students/services/StudentsService";
 import { redirect } from "next/navigation";
 
 type Props = {

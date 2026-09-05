@@ -1,5 +1,5 @@
 
-import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
+import { IStudentsRepository, studentsRepository } from "../../students/services/StudentsRepository";
 import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
 import { ITeacherRepository, teacherRepository } from "../../teachers/services/teacherRepository";

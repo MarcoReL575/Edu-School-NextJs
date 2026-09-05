@@ -3,7 +3,7 @@
 import { requireAuth } from "@/src/lib/auth-server";
 import { notificationService } from "../services/notificationService";
 import { SubmitTasksStudents, TaskDetails, TaskSubmissionSelect } from "../../tasks/types/types";
-import { studentsService } from "../../clases/services/StudentsService";
+import { studentsService } from "../../students/services/StudentsService";
 import { NotificationSelect } from "../types/types";
 
 export async function clearAllNotificationAction() {

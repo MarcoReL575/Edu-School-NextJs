@@ -4,7 +4,7 @@ import Heading from '@/src/shared/components/typography/Heading'
 import FormCreateStudent from './FormCreateStudent'
 import { useModalStore } from '@/src/shared/store/useModalStore'
 import { useStudentStore } from '../store/useStudentStore'
-import { CreateStudent } from '../schema/clasesSchemas'
+import { CreateStudent } from '../schemas/studentsSchemas'
 
 
 export default function ModalCreateStudent() {

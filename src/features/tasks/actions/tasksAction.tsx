@@ -4,7 +4,7 @@ import { requireAuth } from "@/src/lib/auth-server";
 import { taskService } from "../services/taskService";
 import { CreateTask, GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { CreateTaskSchema } from "../schemas/schemas";
-import { studentsService } from "../../clases/services/StudentsService";
+import { studentsService } from "../../students/services/StudentsService";
 
 export async function createTaskAction(taskInput: CreateTask) {
     const { session } = await requireAuth();

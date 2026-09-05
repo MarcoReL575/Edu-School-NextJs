@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/src/shared/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/src/shared/components/ui/tabs";
 import CardTabContent from "./CardTabContent";
-import { studentsService } from "../../clases/services/StudentsService";
+import { studentsService } from "../../students/services/StudentsService";
 import { IconChecklist, IconClipboardList, IconListCheck, IconUsers } from "@tabler/icons-react";
 import { taskService } from "../../tasks/services/taskService";
 import { teacherService } from "../../teachers/services/teacherService";

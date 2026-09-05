@@ -1,7 +1,8 @@
 import { eq, inArray } from "drizzle-orm";
 import { db } from "@/src/db";
 import { students, teachers, user } from "@/src/db/schema";
-import { StudentsInfo, UserSelectType } from "../types/types";
+import { UserSelectType } from "../types/types";
+import { StudentsInfo } from "../../students/types/types";
 import { TeachersSelectType } from "../../teachers/types/types";
 import { Role } from "../../auth/types/auth-types";
 

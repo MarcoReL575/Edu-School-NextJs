@@ -1,11 +1,12 @@
 import { Button } from "@/src/shared/components/ui/button"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/src/shared/components/ui/dropdown-menu"
 import { IconDots, IconEdit, IconTrash } from "@tabler/icons-react"
-import { GroupSelectType, StudentsSelectType, StudentsTable } from "../types/types";
+import { GroupSelectType } from "../types/types";
+import { StudentsTable } from "../../students/types/types";
 import { useGroupStore } from "../store/useGroupStore";
 import { useModalStore } from "@/src/shared/store/useModalStore";
-import { useStudentStore } from "../store/useStudentStore";
-import { CreateStudent } from "../schema/clasesSchemas";
+import { useStudentStore } from "../../students/store/useStudentStore";
+import { CreateStudent } from "../../students/schemas/studentsSchemas";
 
 type Props = {
   group?: GroupSelectType;

@@ -1,8 +1,8 @@
-import { db } from "@/src/db";
-import { GroupSelectType, StudentsAndScoresInfo, StudentsInsertType, StudentsSelectType, StudentsTable } from "../types/types";
-import { groupRepository, IGroupRepository } from "./GroupRepository";
+import { StudentsAndScoresInfo, StudentsInsertType, StudentsSelectType } from "../types/types";
+import { GroupSelectType } from "../../clases/types/types";
+import { groupRepository, IGroupRepository } from "../../clases/services/GroupRepository";
 import { IStudentsRepository, studentsRepository } from "./StudentsRepository";
-import { CreateStudent } from "../schema/clasesSchemas";
+import { CreateStudent } from "../schemas/studentsSchemas";
 
 class StudentsService {
     constructor(

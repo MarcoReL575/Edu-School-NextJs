@@ -1,5 +1,5 @@
 import { IconChecklist, IconClipboardOff, IconClipboardText } from "@tabler/icons-react";
-import { studentsService } from "../../clases/services/StudentsService";
+import { studentsService } from "../../students/services/StudentsService";
 import { getTasksWithDetailsAction } from "../actions/tasksAction"
 import CardStatsTask from "./CardStatsTask";
 import FilterTasks from "./FilterTasks";

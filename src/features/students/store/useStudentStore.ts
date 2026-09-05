@@ -1,6 +1,5 @@
 import { create } from 'zustand'
-import { StudentsInsertType, StudentsSelectType, StudentsTable } from '../types/types';
-import { CreateStudent } from '../schema/clasesSchemas';
+import { CreateStudent } from '../schemas/studentsSchemas';
 
 
 interface StudentStore {

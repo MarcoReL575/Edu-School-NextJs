@@ -1,4 +1,4 @@
-import { studentsService } from "../../clases/services/StudentsService"
+import { studentsService } from "../../students/services/StudentsService"
 import { examService } from "../services/examService"
 import CardExamStudent from "./CardExamStudent";
 

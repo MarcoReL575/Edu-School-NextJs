@@ -6,7 +6,7 @@ import React, { useMemo } from 'react'
 import { Card, CardHeader, CardTitle, CardDescription } from '@/src/shared/components/ui/card'
 import { Button } from '@/src/shared/components/ui/button'
 import TableComponent from '@/src/shared/components/table/Table'
-import { StudentsAndScoresInfo } from '../../clases/types/types'
+import { StudentsAndScoresInfo } from '../../students/types/types'
 
 type Props = {
     data: StudentsAndScoresInfo[] | undefined;

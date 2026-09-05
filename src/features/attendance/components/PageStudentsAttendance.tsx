@@ -4,7 +4,7 @@ import { requireAuth } from "@/src/lib/auth-server";
 import { redirect } from "next/navigation";
 import TableStudentAttendance from "./TableStudentAttendance";
 import { dehydrate, HydrationBoundary, QueryClient } from "@tanstack/react-query";
-import { studentsService } from "../../clases/services/StudentsService";
+import { studentsService } from "../../students/services/StudentsService";
 import { getAttendancesByStudentAction } from "../actions/attendanceActions";
 
 export default async function PageStudentsAttendance() {

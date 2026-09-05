@@ -1,6 +1,6 @@
 import { dehydrate, HydrationBoundary, QueryClient } from '@tanstack/react-query';
 import { cache } from 'react';
-import { studentsService } from '../services/StudentsService';
+import { studentsService } from '../../students/services/StudentsService';
 import { getStudentsSubjectsAction } from '../actions/clasesAction';
 import ClasesSectionGrid from './ClasesSectionGrid';
 import { FullSession } from '@/src/lib/auth-server';

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { IconArrowLeft, IconChartBarPopular, IconUser } from "@tabler/icons-react";
 import clsx from "clsx";
-import { studentsService } from "@/src/features/clases/services/StudentsService";
+import { studentsService } from "@/src/features/students/services/StudentsService";
 import TabsInfoSubject from "@/src/features/mis-clases/components/TabsInfoSubject";
 import { teacherService } from "@/src/features/teachers/services/teacherService"
 import { requireAuth } from "@/src/lib/auth-server";

@@ -1,4 +1,4 @@
-import { studentsService } from "@/src/features/clases/services/StudentsService"
+import { studentsService } from "@/src/features/students/services/StudentsService"
 
 export async function GET() {
     const studentsList = await studentsService.getAllStudents();

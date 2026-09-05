@@ -1,6 +1,7 @@
 import ButtonOpenModalTask from "@/src/features/tasks/components/ButtonOpenModalTask";
 import PageTasksTeacher from "@/src/features/tasks/components/PageTasksTeacher";
 import TaskGrid from "@/src/features/tasks/components/TaskGrid";
+import TareasTutorSection from "@/src/features/tasks/components/TareasTutorSection";
 import { teacherService } from "@/src/features/teachers/services/teacherService";
 import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
@@ -25,6 +26,7 @@ export default async function TareasPage() {
         <main>
             { role === 'estudiante' && <TaskGrid userId={session.user.id} /> }
             { role === 'maestro'  && <TechaerTasksList userId={session.user.id} /> }
+            { role === 'tutor' && <TareasTutorSection /> }
         </main>
     </>
   )

@@ -169,6 +169,13 @@
       "when": 1785790044590,
       "tag": "0023_magical_the_anarchist",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1788633417011,
+      "tag": "0024_demonic_quicksilver",
+      "breakpoints": true
     }
   ]
 }

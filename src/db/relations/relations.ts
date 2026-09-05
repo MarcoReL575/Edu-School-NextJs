@@ -8,6 +8,7 @@ import { attendance } from "../schema/attendance-schema";
 import { examQuestionOptions, examQuestions, exams, examSubmissions } from "../schema/examen-schema";
 import { announcements } from "../schema/anuncios-schema";
 import { classGrades, user } from "../schema";
+import { parents, parentStudents } from "../schema/parentsSchema";
 
 export const subjectsRelations = relations(subjects, ({ many }) => ({
     clases: many(clases),
@@ -55,7 +56,23 @@ export const studentsRelations = relations(students, ({ one, many }) => ({
         fields: [students.id],
         references: [attendance.studentId],
     }),
-    examSubmissions: many(examSubmissions) 
+    examSubmissions: many(examSubmissions),
+    parentStudents: many(parentStudents)
+}));
+
+export const parentsRelations = relations(parents, ({ many }) => ({
+    parentStudents: many(parentStudents),
+}));
+
+export const parentStudentsRelations = relations(parentStudents, ({ one }) => ({
+    parent: one(parents, {
+        fields: [parentStudents.parentId],
+        references: [parents.id],
+    }),
+    student: one(students, {
+        fields: [parentStudents.studentId],
+        references: [students.id],
+    }),
 }));
 
 export const examsQuestionsRelations = relations(examQuestions, ({ one, many }) => ({

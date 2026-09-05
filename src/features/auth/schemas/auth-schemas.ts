@@ -12,6 +12,9 @@ export const SignUpSchema = z.object({
 }).refine((data)=> data.password === data.confirmPassword, {
     error: '*Las contraseñas no coinciden',
     path: ['confirmPassword']
+}).refine((data)=> data.role !== 'tutor' || data.roleId.split(',').some((matricula)=> matricula.trim().length > 0), {
+    error: '*Ingresa al menos una matrícula',
+    path: ['roleId']
 })
 
 export const SignInSchema = z.object({

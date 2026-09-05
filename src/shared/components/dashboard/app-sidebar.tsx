@@ -5,6 +5,7 @@ import { NavSecondary } from "./NavSecondary"
 import { TooltipProvider } from "../ui/tooltip"
 import { Role } from "@/src/features/auth/types/auth-types"
 import { NavAdmin } from "./NavAdmin"
+import { NavTutor } from "./NavTutor"
 
 export function AppSidebar({ userRole, ...props }: { userRole: Role } & React.ComponentProps<typeof Sidebar>) {
   return (
@@ -13,6 +14,7 @@ export function AppSidebar({ userRole, ...props }: { userRole: Role } & React.Co
         <SidebarContent>
           {userRole === 'admin' && <NavAdmin />}
           {userRole === 'estudiante' || userRole === 'maestro' ? <NavMain /> : null}
+          {userRole === 'tutor' && <NavTutor />}
           <NavSecondary />
         </SidebarContent>
       </Sidebar>

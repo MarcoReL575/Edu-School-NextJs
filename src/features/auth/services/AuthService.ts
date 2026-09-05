@@ -16,7 +16,11 @@ class AuthService {
 
     async teacherExists(input: SignUpProps) {
         return await this.authRepository.selectTeacher(input);
-    } 
+    }
+
+    async studentForTutorExists(matricula: string) {
+        return await this.authRepository.selectStudentByMatricula(matricula);
+    }
 
     async createAccount(input: SignUpProps) {
         try {
@@ -52,6 +56,27 @@ class AuthService {
                     return { success: true, message: 'Cuenta creada' }
                 }
             };
+
+            //Si el rol es tutor, verificamos que cada hijo (estudiante) exista y esté inscrito
+            if(role === 'tutor') {
+                const matriculas = roleId.split(',').map((matricula) => matricula.trim()).filter(Boolean);
+                if(matriculas.length === 0) return { success: false, message: '*Error en los datos ingresados' }
+
+                const studentsFound = [];
+                for (const matricula of matriculas) {
+                    const { enrolledStudent, studentInfo } = await this.studentForTutorExists(matricula);
+                    if(!enrolledStudent || !studentInfo) return { success: false, message: '*Error en los datos ingresados' }
+                    studentsFound.push(studentInfo);
+                }
+
+                const { user } = await this.signUp(input);
+                await authRepository.roleAssign(role, input.email);
+                const parent = await authRepository.createParent({ name: input.name, lastName: input.lastname, userId: user.id });
+                for (const studentInfo of studentsFound) {
+                    await authRepository.linkParentToStudent(parent.id, studentInfo.id);
+                }
+                return { success: true, message: 'Cuenta creada' }
+            }
 
             if(role === 'admin' && roleId === 'admin12345') {
                 console.log({role, roleId})

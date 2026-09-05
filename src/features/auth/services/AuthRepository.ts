@@ -1,7 +1,7 @@
 import { headers } from "next/headers";
 import { and, eq } from "drizzle-orm";
 import { db } from "@/src/db";
-import { students, teachers, user } from "@/src/db/schema";
+import { parents, parentStudents, students, teachers, user } from "@/src/db/schema";
 import { auth } from "@/src/lib/auth";
 import { InfoStudent, Role, SignInProps, SignUpProps, TeacherInfo } from "../types/auth-types"
 import { User } from "better-auth";
@@ -13,8 +13,12 @@ export interface IAuthRepository {
     insertStudentId(id: string, matricula:string): Promise<void>;
     insertTeacherId(id: string, matricula:string): Promise<void>;
     userExists(email: string): Promise<User | undefined>;
-    
+
     selectTeacher(input: SignUpProps): Promise<TeacherInfo>;
+
+    selectStudentByMatricula(matricula: string): Promise<InfoStudent>;
+    createParent(input: { name: string, lastName: string, userId: string }): Promise<{ id: string }>;
+    linkParentToStudent(parentId: string, studentId: string): Promise<void>;
 }
 
 class AuthRepository implements IAuthRepository {
@@ -86,6 +90,42 @@ class AuthRepository implements IAuthRepository {
                 userId: id
             })
             .where(eq(teachers.code_teacher, matricula))
+    }
+
+    async selectStudentByMatricula(matricula: string): Promise<InfoStudent> {
+        const studentInfo = await db
+            .query
+            .students
+            .findFirst({
+                where: (students, { eq }) => (
+                    eq(students.matricula, matricula)
+                )
+            })
+        return {
+            enrolledStudent: !!studentInfo?.inscrito,
+            studentInfo: studentInfo
+        }
+    }
+
+    async createParent(input: { name: string, lastName: string, userId: string }): Promise<{ id: string }> {
+        const [parent] = await db
+            .insert(parents)
+            .values({
+                name: input.name,
+                lastName: input.lastName,
+                user_id: input.userId
+            })
+            .returning({ id: parents.id })
+        return parent
+    }
+
+    async linkParentToStudent(parentId: string, studentId: string): Promise<void> {
+        await db
+            .insert(parentStudents)
+            .values({
+                parentId,
+                studentId
+            })
     }
 
     async selectTeacher(input: SignUpProps): Promise<TeacherInfo> {

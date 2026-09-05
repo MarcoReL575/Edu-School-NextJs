@@ -83,10 +83,11 @@ export default function SignUpForm() {
             <FormLabel htmlFor="schoolId">
                 {role === 'estudiante' && 'Matrícula / ID Escolar' }
                 {role === 'maestro' && 'Clave Docenter' }
-                {role === 'tutor' && 'Matrícula del alumno' }
+                {role === 'tutor' && 'Matrícula(s) del/los alumno(s)' }
                 {role === 'admin' && 'Código de Acceso Administrativo' }
             </FormLabel>
-            <FormInput {...register('roleId')} id="schoolId" type="text" />
+            <FormInput {...register('roleId')} id="schoolId" type="text" placeholder={role === 'tutor' ? 'Ej. ABC123, DEF456' : undefined} />
+            {role === 'tutor' && <span className="text-sm text-gray-500">Si tienes más de un hijo, separa las matrículas con comas</span>}
             {role === 'admin' && <span className="flex items-center gap-x-2 text-sm text-yellow-600 font-semibold"><AlertCircle /> Este código es proporcionado por la Institución</span> }
             {errors.roleId && <FormError>{errors.roleId.message}</FormError>}
         </div>

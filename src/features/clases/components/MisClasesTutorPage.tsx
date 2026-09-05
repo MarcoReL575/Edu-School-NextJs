@@ -31,6 +31,13 @@ export default async function MisClasesTutorPage({ session }: Props) {
         <>
             <Heading level={2}>Bienvenido(a), {session.user.name}</Heading>
 
+            <p className="text-gray-500">
+                {children.length === 1 
+                    ? 'Dale un seguimiento a las clases de tu hijo.'
+                    : 'Dale un seguimiento a las clases de tus hijos.'
+                }
+            </p>
+
             <section className="">
                 {children.length >= 2 ? (
                     <Tabs defaultValue={children[0].id} className="flex flex-col">

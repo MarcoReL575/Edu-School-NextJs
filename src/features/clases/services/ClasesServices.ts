@@ -28,7 +28,7 @@ class ClasesServices {
         const subjectName = await this.subjectsRepository.selectById(input.subjectId);
         const group = await this.groupRepository.selectGroup(input.groupId);
 
-        const slug = `${subjectName.name}-${group.grade}-${group.group}`
+        const slug = `${subjectName.name}-${group.level}-${group.grade}-${group.group}`
             .normalize("NFD") // Separa los acentos de las letras (ej: í -> i + ´)
             .replace(/[\u0300-\u036f]/g, "") // Elimina los signos de acentuación
             .toLowerCase()

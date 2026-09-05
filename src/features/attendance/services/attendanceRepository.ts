@@ -4,6 +4,7 @@ import { attendance, clases, subjects } from "@/src/db/schema";
 import { and, count, desc, eq, sql } from "drizzle-orm";
 
 export interface IAttendanceRepository {
+    runTransaction<T>(fn: (tx: any) => Promise<T>): Promise<T>;
     insertAttendance(tax: any, attendanceStudents: AttendanceInsert[]): Promise<void>;
     selectAttendanceStudent(studentId: string): Promise<AttendanceStudentTable[]>;
     selectAttendanceStudentByClass(studentId: string, claseId: string): Promise<AttendanceSelect[]>;
@@ -11,6 +12,10 @@ export interface IAttendanceRepository {
 }
 
 class AttendanceRepository implements IAttendanceRepository {
+    async runTransaction<T>(fn: (tx: any) => Promise<T>): Promise<T> {
+        return await db.transaction(fn);
+    }
+
     async insertAttendance(tx: any, attendanceStudents: AttendanceInsert[]): Promise<void> {
         await tx
             .insert(attendance)

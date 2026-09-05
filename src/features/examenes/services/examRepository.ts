@@ -6,6 +6,7 @@ import { clases, classGrades, group, students, subjects } from "@/src/db/schema"
 import { studentExamRenderSchema } from "../schemas/schema";
 
 export interface IExamRepository {
+    runTransaction<T>(fn: (tx: any) => Promise<T>): Promise<T>;
     createExamTransaction(dataExam: InsertExamWithQuestions): Promise<SelectExam>;
     deletExam(examId: string, teacherId: string): Promise<void>;
     selectExams(teacherId: string): Promise<ExamSelectInfo[]>;
@@ -21,6 +22,10 @@ export interface IExamRepository {
 }
 
 class ExamRepository implements IExamRepository {
+    async runTransaction<T>(fn: (tx: any) => Promise<T>): Promise<T> {
+        return await db.transaction(fn);
+    }
+
     async createExamTransaction(dataExam: InsertExamWithQuestions): Promise<SelectExam> {
         const { questions, ...examData } = dataExam;
 
@@ -240,8 +245,8 @@ class ExamRepository implements IExamRepository {
         return exam
     }
 
-    async submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string, claseId: string): Promise<void> {
-        await db.insert(examSubmissions).values({
+    async submitExam(examData: FullExamWithAnswers, finalScore:number, studentId: string, tx: any): Promise<void> {
+        await tx.insert(examSubmissions).values({
             examId: examData.id,
             studentId: studentId,
             score: finalScore.toString(),

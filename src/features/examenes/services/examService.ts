@@ -1,5 +1,4 @@
 
-import { db } from "@/src/db";
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
 import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
@@ -96,7 +95,7 @@ class ExamService {
             ? parseFloat(((pointsEarned / totalPointsPossible) * 100).toFixed(2))
             : 0;
 
-            await db.transaction(async(tx)=> {
+            await this.examRepository.runTransaction(async(tx)=> {
                 // 1. Guardar la entrega del examen pasando la transacción 'tx'
                 await this.examRepository.submitExam(examData, finalScore, student.id, tx);
 

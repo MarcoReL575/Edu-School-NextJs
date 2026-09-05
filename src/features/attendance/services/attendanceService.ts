@@ -1,4 +1,3 @@
-import { db } from "@/src/db";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
 import { AttendanceStudentTable, StatusAttendance } from "../types/types";
 import { IAttendanceRepository, attendanceRepository } from "./attendanceRepository";
@@ -18,7 +17,7 @@ class AttendanceService {
     ){}
 
     async takeAttendance(attendance: Record<string, boolean>, claseId: string) {
-        return await db.transaction(async (tx) => {
+        return await this.attendanceRepository.runTransaction(async (tx) => {
             try {
                 const today = new Date().toISOString().split('T')[0]; // Formato YYYY-MM-DD
                 const studentIds = Object.keys(attendance);

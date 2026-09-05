@@ -11,7 +11,7 @@ export interface ITaskRepository{
     selectTaskByTaksId(taskId: number): Promise<TaskInfoTeacher>;
     selectTasksTeacher(teacherId: string): Promise<TaskTeacher[]>;
     selectStatusTask(taskId: number): Promise<StatusTask>;
-    insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect>;
+    submitTaskWithAttachments(taskId: number, studentId: string, attachments: { fileUrl: string; fileName: string; fileType: string }[]): Promise<TaskSubmissionSelect>;
     selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]>;
     selectGroupIdByTaskId(taskId: number): Promise<string>;
     setTaskSubmission(submissionId: string, grade: number, feedback: string): Promise<TaskSubmissionSelect>;
@@ -137,25 +137,39 @@ class TaskRepository implements ITaskRepository {
         return taskTeachers;
     }
 
-    async insertStudentSubmission(taskId: number, studentId: string): Promise<TaskSubmissionSelect> {
-        const [result] = await db
-            .insert(taskSubmission)
-            .values({
-                studentId,
-                taskId,
-                status: 'entregada',
-                submittedAt: new Date(),
-            })
-            .returning()
-        return result;
-    }
-
     async selectStatusTask(taskId: number): Promise<StatusTask> {
         const [result] = await db
             .select({ status: taskSubmission.status })
             .from(taskSubmission)
             .where(eq(taskSubmission.taskId, taskId))
         return result.status as StatusTask;
+    }
+
+    async submitTaskWithAttachments(taskId: number, studentId: string, attachments: { fileUrl: string; fileName: string; fileType: string }[]): Promise<TaskSubmissionSelect> {
+        return await db.transaction(async (tx) => {
+            const [submissionResult] = await tx
+                .insert(taskSubmission)
+                .values({
+                    studentId,
+                    taskId,
+                    status: 'entregada',
+                    submittedAt: new Date(),
+                })
+                .returning()
+
+            if (attachments.length > 0) {
+                await tx.insert(taskAttachments).values(
+                    attachments.map((file) => ({
+                        fileUrl: file.fileUrl,
+                        fileName: file.fileName,
+                        fileType: file.fileType,
+                        taskSubmissionId: submissionResult.id
+                    }))
+                );
+            }
+
+            return submissionResult;
+        });
     }
 
     async selectSubmissionTasktudents(groupId: string, taskId: number): Promise<SubmitTasksStudents[]> {

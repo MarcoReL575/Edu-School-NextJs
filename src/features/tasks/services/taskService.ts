@@ -1,7 +1,5 @@
-import { db } from "@/src/db";
 import { GradeTasks, StatusTask, StudentSubmissionInput, SubmitTasksStudents, TaskDetails, TaskInfoTeacher, TaskInsert, TaskSelect, TaskSubmissionSelect, TaskTeacher } from "../types/types";
 import { ITaskRepository, taskRepository } from "./taskRepository";
-import { taskAttachments } from "@/src/db/schema";
 import { INotificationRepository, notificationRepository } from "../../notifications/services/notificationRepository";
 import { groupRepository, IGroupRepository } from "../../clases/services/GroupRepository";
 import { IStudentsRepository, studentsRepository } from "../../clases/services/StudentsRepository";
@@ -77,17 +75,8 @@ class TaskService {
 
     async submitTask(task: StudentSubmissionInput, studentId: string) {
         try {
-            return await db.transaction(async (tx) => {
-                const submissionResult = await this.taskRepository.insertStudentSubmission(+task.taskId, studentId);
-                const attachmentsData = task.attachments.map((file) => ({
-                    fileUrl: file.fileUrl,
-                    fileName: file.fileName,
-                    fileType: file.fileType,
-                    taskSubmissionId: submissionResult.id
-                }));
-                await tx.insert(taskAttachments).values(attachmentsData);
-                return { success: true, message: 'Tarea entregada con éxito' }
-            });
+            await this.taskRepository.submitTaskWithAttachments(+task.taskId, studentId, task.attachments);
+            return { success: true, message: 'Tarea entregada con éxito' }
         } catch (error) {
             return { success: false, message: 'Se produjo un error al entregar la tarea, vuelva a intentarlo' }
         }

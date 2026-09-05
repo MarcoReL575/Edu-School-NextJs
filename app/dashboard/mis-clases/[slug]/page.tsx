@@ -9,6 +9,7 @@ import { requireAuth } from "@/src/lib/auth-server";
 import Heading from "@/src/shared/components/typography/Heading";
 import { Button } from "@/src/shared/components/ui/button";
 import { GridTabsInfoClass } from "@/src/features/mis-clases/components/GridTabsInfoClass";
+import { getTutorChildrenAction } from "@/src/features/parents/actions/parentsActions";
 
 type Props = {
     params: Promise<{ slug: string }>
@@ -24,6 +25,12 @@ export default async function ClasePage({ params }: Props) {
     const { subjectName, grade, group, level, id: claseId, teacherName, teacherLastName, groupId, finalScore } = await teacherService.getAllInfoClase(slug);
     const studentsInfo = await studentsService.getListStudentsWithScores(groupId, claseId)
     const finalScoreClass = finalScore !== null ? +finalScore : 0
+
+    let tutorStudentId: string | undefined;
+    if (role === 'tutor') {
+        const children = await getTutorChildrenAction();
+        tutorStudentId = children.find((child) => child.groupId === groupId)?.id;
+    }
 
   return (
     <>
@@ -68,6 +75,12 @@ export default async function ClasePage({ params }: Props) {
             role === 'estudiante' && studentId &&
             <section>
                 <TabsInfoSubject subjectName={subjectName} studentId={studentId} groupId={groupId} claseId={claseId} finalScore={finalScoreClass} />
+            </section>
+        }
+        {
+            role === 'tutor' && tutorStudentId &&
+            <section>
+                <TabsInfoSubject subjectName={subjectName} studentId={tutorStudentId} groupId={groupId} claseId={claseId} finalScore={finalScoreClass} />
             </section>
         }
     </>

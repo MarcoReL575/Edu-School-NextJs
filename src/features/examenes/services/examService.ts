@@ -5,6 +5,7 @@ import { INotificationRepository, notificationRepository } from "../../notificat
 import { ITeacherRepository, teacherRepository } from "../../teachers/services/teacherRepository";
 import { ExamWithResult, InsertExamWithQuestions, StudentExamRender, StudentsSubmissions, SubmitExam } from "../types/types";
 import { examRepository, IExamRepository } from "./examRepository";
+import { IParentsRepository, parentsRepository } from "../../parents/services/ParentsRepository";
 
 class ExamService {
     constructor(
@@ -12,7 +13,8 @@ class ExamService {
         private studentsRepository: IStudentsRepository,
         private notificationRepository: INotificationRepository,
         private teacherRepository: ITeacherRepository,
-        private notificationPusher: INotificationPublisher
+        private notificationPusher: INotificationPublisher,
+        private parentsRepository: IParentsRepository
     ){}
 
     async createExam(data: InsertExamWithQuestions) {
@@ -20,14 +22,25 @@ class ExamService {
             await examRepository.createExamTransaction(data);
             const listStudents = await this.studentsRepository.selectStudentsInGroup(data.groupId);
             if(listStudents.length > 0) {
-                const notificationsPayload = listStudents.filter((student)=> student.user_id !== null).map((student)=>({
-                    userId: student.user_id as string,
+                const parentsUserIds = await this.parentsRepository.selectParentsUserIdByStudentIds(listStudents.map((student) => student.id));
+                const notificationsPayload = [
+                    ...listStudents.filter((student)=> student.user_id !== null).map((student)=>({
+                        userId: student.user_id as string,
+                        title: `Examen creado: ${data.subjectName}`,
+                        message: `Nuevo Examen: ${data.title}` ,
+                        type: 'task_created' as const ,
+                        isRead: false,
+                        redirectUrl: '/dashboard/examenes',
+                    })),
+                    ...parentsUserIds.map((userId)=>({
+                        userId,
                         title: `Examen creado: ${data.subjectName}`,
                         message: `Nuevo Examen: ${data.title}` ,
                         type: 'task_created' as const ,
                         isRead: false,
                         redirectUrl: '/dashboard/examenes',
                     }))
+                ]
                     // Insertamos todas las notificaciones en un solo query a la base de datos
                     if(notificationsPayload.length > 0) {
                         const insertedNotifications = await this.notificationRepository.insertMany(notificationsPayload);
@@ -149,4 +162,4 @@ class ExamService {
     }
 }
 
-export const examService = new ExamService(examRepository, studentsRepository, notificationRepository, teacherRepository, notificationPusher);
+export const examService = new ExamService(examRepository, studentsRepository, notificationRepository, teacherRepository, notificationPusher, parentsRepository);

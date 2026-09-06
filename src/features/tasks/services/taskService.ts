@@ -5,6 +5,7 @@ import { groupRepository, IGroupRepository } from "../../group/services/GroupRep
 import { IStudentsRepository, studentsRepository } from "../../students/services/StudentsRepository";
 import { getCorrectDate } from "../helpers/getCorrectDate";
 import { INotificationPublisher, notificationPusher } from "../../notifications/services/NotificationPusher";
+import { IParentsRepository, parentsRepository } from "../../parents/services/ParentsRepository";
 
 class TaskService {
     constructor(
@@ -12,7 +13,8 @@ class TaskService {
         private notificationRepository : INotificationRepository,
         private groupRepository: IGroupRepository,
         private studentsRepository: IStudentsRepository,
-        private notificationPusher: INotificationPublisher
+        private notificationPusher: INotificationPublisher,
+        private parentsRepository: IParentsRepository
     ){}
 
     async createTask(taskInput: TaskInsert){
@@ -23,14 +25,25 @@ class TaskService {
             const group = await this.groupRepository.selectGroupByClaseId(task.claseId);
             const listStudents = await this.studentsRepository.selectStudentsInGroup(group.id);
             if(listStudents.length > 0) {
-                const notificationsPayload = listStudents.filter((student)=> student.user_id !== null).map((student)=>({
-                    userId: student.user_id as string,
-                    title: `Nueva tarea: ${infoTask.subjectName}`,
-                    message: `${infoTask.title} - ${task.description}. Fecha de entrega: ${getCorrectDate(task.fechaEntrega)}` ,
-                    type: 'task_created' as const ,
-                    isRead: false,
-                    redirectUrl: '/dashboard/tareas',
-                }))
+                const parentsUserIds = await this.parentsRepository.selectParentsUserIdByStudentIds(listStudents.map((student) => student.id));
+                const notificationsPayload = [
+                    ...listStudents.filter((student)=> student.user_id !== null).map((student)=>({
+                        userId: student.user_id as string,
+                        title: `Nueva tarea: ${infoTask.subjectName}`,
+                        message: `${infoTask.title} - ${task.description}. Fecha de entrega: ${getCorrectDate(task.fechaEntrega)}` ,
+                        type: 'task_created' as const ,
+                        isRead: false,
+                        redirectUrl: '/dashboard/tareas',
+                    })),
+                    ...parentsUserIds.map((userId)=>({
+                        userId,
+                        title: `Nueva tarea: ${infoTask.subjectName}`,
+                        message: `${infoTask.title} - ${task.description}. Fecha de entrega: ${getCorrectDate(task.fechaEntrega)}` ,
+                        type: 'task_created' as const ,
+                        isRead: false,
+                        redirectUrl: '/dashboard/tareas',
+                    }))
+                ]
                 // Insertamos todas las notificaciones en un solo query a la base de datos
                 if(notificationsPayload.length > 0) {
                     const insertedNotifications = await this.notificationRepository.insertMany(notificationsPayload);
@@ -160,4 +173,4 @@ class TaskService {
     }
 }
 
-export const taskService = new TaskService(taskRepository, notificationRepository, groupRepository, studentsRepository, notificationPusher);
+export const taskService = new TaskService(taskRepository, notificationRepository, groupRepository, studentsRepository, notificationPusher, parentsRepository);

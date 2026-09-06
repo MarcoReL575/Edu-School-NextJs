@@ -16,8 +16,8 @@ class MisclasesService {
         const totalAttendaces = await attendanceRepository.selectTotalAttendance(studentId);
 
         // 3. Formatear y calcular los valores finales
-        const avgScore = globalScore.finalGrade 
-            ? parseFloat(Number(globalScore.finalGrade).toFixed(1)) 
+        const avgScore = globalScore?.finalGrade
+            ? parseFloat(Number(globalScore.finalGrade).toFixed(1))
             : 0;
 
         const total = totalAttendaces?.totalClasses || 0;

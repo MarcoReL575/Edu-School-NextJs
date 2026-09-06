@@ -10,7 +10,6 @@ import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbP
 
 // Diccionario para traducir rutas a nombres amigables
 const routeMap: Record<string, string> = {
-  dashboard: "Inicio",
   students: "Estudiantes",
   groups: "Grupos",
   clases: "Clases",
@@ -21,13 +20,13 @@ const routeMap: Record<string, string> = {
 
 export function DynamicBreadcrumbs() {
   const pathname = usePathname()
-  const segments = pathname.split("/").filter(Boolean)
+  const segments = pathname.split("/").filter((segment) => segment && segment !== "dashboard")
 
   return (
     <Breadcrumb>
       <BreadcrumbList>
         {segments.map((segment, index) => {
-          const href = `/${segments.slice(0, index + 1).join("/")}`
+          const href = `/dashboard/${segments.slice(0, index + 1).join("/")}`
           const isLast = index === segments.length - 1
           const label = routeMap[segment] || segment // Si no está en el mapa, muestra el ID o el slug tal cual
 

@@ -1,11 +1,16 @@
-import { eq, inArray } from "drizzle-orm";
+import { and, eq, inArray } from "drizzle-orm";
 import { db } from "@/src/db";
 import { parents, parentStudents, students } from "@/src/db/schema";
 import { StudentsSelectType } from "../../students/types/types";
+import { ParentsSelectType } from "../types/types";
 
 export interface IParentsRepository {
     selectChildrenByUserId(userId: string): Promise<StudentsSelectType[]>;
     selectParentsUserIdByStudentIds(studentIds: string[]): Promise<string[]>;
+    selectParentByUserId(userId: string): Promise<ParentsSelectType | undefined>;
+    linkStudent(parentId: string, studentId: string): Promise<void>;
+    unlinkStudent(parentId: string, studentId: string): Promise<void>;
+    isStudentLinked(parentId: string, studentId: string): Promise<boolean>;
 }
 
 class ParentsRepository implements IParentsRepository {
@@ -41,6 +46,33 @@ class ParentsRepository implements IParentsRepository {
         return parentsList
             .map((parent) => parent.user_id)
             .filter((userId): userId is string => userId !== null);
+    }
+    async selectParentByUserId(userId: string): Promise<ParentsSelectType | undefined> {
+        const [parent] = await db
+            .select()
+            .from(parents)
+            .where(eq(parents.user_id, userId))
+        return parent;
+    }
+
+    async linkStudent(parentId: string, studentId: string): Promise<void> {
+        await db
+            .insert(parentStudents)
+            .values({ parentId, studentId })
+    }
+
+    async unlinkStudent(parentId: string, studentId: string): Promise<void> {
+        await db
+            .delete(parentStudents)
+            .where(and(eq(parentStudents.parentId, parentId), eq(parentStudents.studentId, studentId)))
+    }
+
+    async isStudentLinked(parentId: string, studentId: string): Promise<boolean> {
+        const [link] = await db
+            .select()
+            .from(parentStudents)
+            .where(and(eq(parentStudents.parentId, parentId), eq(parentStudents.studentId, studentId)))
+        return !!link;
     }
 }
 

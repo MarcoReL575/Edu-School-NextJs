@@ -14,6 +14,7 @@ export interface IStudentsRepository{
     selectInfoStudent(userId: string): Promise<StudentsSelectType>;
     selectStudentsInGroup(groupId: string): Promise<StudentsSelectType[]>;
     selectStudentsInfoInGroup(groupId: string, claseId: string): Promise<StudentsAndScoresInfo[]>;
+    selectStudentByMatricula(matricula: string): Promise<StudentsSelectType | undefined>;
 };
 
 class StudentsRepository implements IStudentsRepository {
@@ -114,6 +115,14 @@ class StudentsRepository implements IStudentsRepository {
             .leftJoin(classGrades, sql`${classGrades.studentId} = ${students.id} AND ${classGrades.claseId} = ${claseId}`)
             .where(eq(students.groupId, groupId))
         return studentsList
+    }
+
+    async selectStudentByMatricula(matricula: string): Promise<StudentsSelectType | undefined> {
+        const [student] = await db
+            .select()
+            .from(students)
+            .where(eq(students.matricula, matricula))
+        return student;
     }
 
 }

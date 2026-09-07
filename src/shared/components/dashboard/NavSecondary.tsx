@@ -4,11 +4,12 @@ import Link from "next/link"
 import * as React from "react"
 import { IconSettings, IconSearch } from "@tabler/icons-react"
 import { SidebarGroup, SidebarGroupContent, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from "../ui/sidebar"
+import { Route } from "next"
 
 const items = [
   {
     title: "Settings",
-    url: "settings",
+    url: "ajustes",
     icon: IconSettings,
   },
   {
@@ -27,7 +28,7 @@ export function NavSecondary({ ...props }: React.ComponentProps<typeof SidebarGr
             <SidebarMenuItem key={item.title}>
               <SidebarMenuButton asChild>
                 <Link 
-                  href={'/dashboard'}
+                  href={`/dashboard/${item.url}` as Route}
                 >
                   <item.icon />
                   <span>{item.title}</span>

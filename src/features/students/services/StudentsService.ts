@@ -72,6 +72,10 @@ class StudentsService {
         }
     }
 
+    async getStudentByMatricula(matricula: string) {
+        return await this.studentsRepository.selectStudentByMatricula(matricula);
+    }
+
     async getListStudentsWithScores(groupId: string, claseId: string) {
         try {
             const students = await this.studentsRepository.selectStudentsInfoInGroup(groupId, claseId)

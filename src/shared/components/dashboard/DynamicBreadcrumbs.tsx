@@ -15,6 +15,7 @@ const routeMap: Record<string, string> = {
   clases: "Clases",
   home: "Inicio",
   settings: "Configuración",
+  ajustes: "Ajustes",
   "mis-clases": "Mis Clases",
 }
 
